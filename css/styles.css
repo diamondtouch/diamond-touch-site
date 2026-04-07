@@ -874,6 +874,11 @@ input, select, textarea { font: inherit; }
   flex-direction: column;
   gap: 1.5rem;
   position: relative;
+  transition: border-color var(--dur-base) var(--ease-out),
+              box-shadow var(--dur-base) var(--ease-out),
+              transform var(--dur-base) var(--ease-out),
+              background var(--dur-base) var(--ease-out);
+  cursor: pointer;
 }
 
 .pkg-col--featured {
@@ -887,6 +892,24 @@ input, select, textarea { font: inherit; }
     transform: scale(1.02);
     z-index: 1;
   }
+}
+
+/* Hover: highlight whichever card is hovered, dim others */
+.packages__table:hover .pkg-col {
+  border-color: var(--clr-border);
+  box-shadow: none;
+  background: var(--clr-surface);
+  transform: none;
+  opacity: 0.6;
+}
+
+.packages__table:hover .pkg-col:hover {
+  border-color: var(--clr-pink);
+  background: linear-gradient(180deg, rgba(233,30,140,0.07) 0%, var(--clr-surface) 100%);
+  box-shadow: 0 0 0 1px rgba(233,30,140,0.2), var(--shadow-pink);
+  transform: translateY(-4px) scale(1.02);
+  opacity: 1;
+  z-index: 2;
 }
 
 .pkg-col__badge {
