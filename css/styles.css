@@ -610,6 +610,12 @@ input, select, textarea { font: inherit; }
   }
 }
 
+@media (min-width: 1024px) {
+  .services__grid {
+    grid-template-columns: repeat(3, 1fr);
+  }
+}
+
 .service-card {
   background: var(--clr-surface);
   border: 1px solid var(--clr-border);
@@ -697,6 +703,88 @@ input, select, textarea { font: inherit; }
   border-radius: 50%;
 }
 
+.service-card--featured {
+  border-top: 2px solid var(--clr-pink);
+  box-shadow: var(--shadow-pink);
+  position: relative;
+}
+
+.service-card__badge {
+  position: absolute;
+  top: 0.75rem;
+  right: 0.75rem;
+  background: var(--clr-pink);
+  color: #fff;
+  font-size: 0.6875rem;
+  font-weight: 700;
+  letter-spacing: 0.05em;
+  text-transform: uppercase;
+  padding: 0.25rem 0.6rem;
+  border-radius: var(--radius-pill);
+  z-index: 1;
+}
+
+.service-card__time {
+  font-size: 0.75rem;
+  color: var(--clr-muted);
+  font-style: italic;
+}
+
+/* ─── ADD-ONS ─────────────────────────────────────────────── */
+.addons {
+  margin-top: 3rem;
+  padding-top: 2.5rem;
+  border-top: 1px solid var(--clr-border);
+}
+
+.addons__title {
+  font-family: var(--font-display);
+  font-size: 1.5rem;
+  font-weight: 400;
+  margin-bottom: 1.25rem;
+  text-align: center;
+}
+
+.addons__grid {
+  display: grid;
+  grid-template-columns: 1fr;
+  gap: 0.625rem;
+}
+
+@media (min-width: 640px) {
+  .addons__grid {
+    grid-template-columns: repeat(2, 1fr);
+  }
+}
+
+@media (min-width: 1024px) {
+  .addons__grid {
+    grid-template-columns: repeat(3, 1fr);
+  }
+}
+
+.addon-item {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 0.625rem 1rem;
+  background: var(--clr-surface);
+  border: 1px solid var(--clr-border);
+  border-radius: var(--radius-md);
+  font-size: 0.875rem;
+}
+
+.addon-item__name {
+  color: var(--clr-text);
+}
+
+.addon-item__price {
+  color: var(--clr-pink);
+  font-weight: 600;
+  white-space: nowrap;
+  margin-left: 0.75rem;
+}
+
 /* ─── WHY US ─────────────────────────────────────────────── */
 .why-us {
   background: var(--clr-surface);
@@ -765,7 +853,14 @@ input, select, textarea { font: inherit; }
 
 @media (min-width: 768px) {
   .packages__table {
-    grid-template-columns: repeat(3, 1fr);
+    grid-template-columns: repeat(2, 1fr);
+    align-items: start;
+  }
+}
+
+@media (min-width: 1100px) {
+  .packages__table {
+    grid-template-columns: repeat(4, 1fr);
     align-items: start;
   }
 }

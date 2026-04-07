@@ -10,7 +10,7 @@ const SUPABASE_URL      = "https://fjafmptbzydqizafuaru.supabase.co";
 const SUPABASE_ANON_KEY = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImZqYWZtcHRienlkcWl6YWZ1YXJ1Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzU1MzI2NDUsImV4cCI6MjA5MTEwODY0NX0.XT_T3h9wsoPJqMTeBV0ohoCbAiDc8oFdZg7LHxoAeAM";
 const APP_ID            = "sandbox-sq0idb-e4hfCqcraP5ssqJLEEJcoA";
 const LOCATION_ID       = "YOUR_LOCATION_ID"; // replace before going live
-const DEPOSIT_AMOUNT    = 2500; // $25.00 in cents
+const DEPOSIT_AMOUNT    = 5000; // $50.00 in cents
 
 /* ─── Supabase bookings table (run once to create):
 CREATE TABLE bookings (
