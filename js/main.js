@@ -311,6 +311,29 @@
 })();
 
 
+/* ─── Service Card Expand ───────────────────────────────── */
+(function initServiceExpand() {
+  document.querySelectorAll(".service-card__expand-btn").forEach(btn => {
+    btn.addEventListener("click", () => {
+      const details = btn.closest(".service-card").querySelector(".service-card__details");
+      const isOpen = details.classList.contains("open");
+      // Close all
+      document.querySelectorAll(".service-card__details.open").forEach(d => d.classList.remove("open"));
+      document.querySelectorAll(".service-card__expand-btn.open").forEach(b => {
+        b.classList.remove("open");
+        b.setAttribute("aria-expanded", "false");
+      });
+      // Open this one if it was closed
+      if (!isOpen) {
+        details.classList.add("open");
+        btn.classList.add("open");
+        btn.setAttribute("aria-expanded", "true");
+      }
+    });
+  });
+})();
+
+
 /* ─── Smooth Anchor Scroll (offset for nav) ─────────────── */
 (function initSmoothScroll() {
   const navH = parseInt(getComputedStyle(document.documentElement).getPropertyValue('--nav-h'), 10) || 72;
