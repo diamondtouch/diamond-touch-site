@@ -602,6 +602,19 @@ input, select, textarea { font: inherit; }
   flex-shrink: 0;
 }
 
+.ba-item {
+  display: flex;
+  flex-direction: column;
+  gap: 0.875rem;
+}
+
+.ba-caption {
+  text-align: center;
+  font-size: 0.875rem;
+  color: var(--clr-muted);
+  letter-spacing: 0.04em;
+}
+
 @keyframes marqueeScroll {
   from { transform: translateX(0); }
   to   { transform: translateX(-50%); }
