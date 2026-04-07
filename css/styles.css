@@ -257,6 +257,8 @@ input, select, textarea { font: inherit; }
   width: auto;
   display: block;
   object-fit: contain;
+  mix-blend-mode: lighten;
+  filter: brightness(1.1);
 }
 
 @media (max-width: 768px) {
@@ -277,10 +279,10 @@ input, select, textarea { font: inherit; }
 }
 
 .nav__link {
-  font-size: 0.8125rem;
+  font-size: 0.9375rem;
   font-weight: 400;
-  letter-spacing: 0.06em;
-  color: var(--clr-muted);
+  letter-spacing: 0.04em;
+  color: rgba(245,245,245,0.8);
   transition: color var(--dur-fast) var(--ease-out);
   position: relative;
 }
