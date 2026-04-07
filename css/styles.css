@@ -49,7 +49,7 @@
   --shadow-pink:    0 8px 32px rgba(233, 30, 140, 0.22), 0 2px 8px rgba(233, 30, 140, 0.12);
 
   /* Nav */
-  --nav-h:          72px;
+  --nav-h:          80px;
 }
 
 /* ─── Reset ─────────────────────────────────────────────── */
@@ -253,17 +253,17 @@ input, select, textarea { font: inherit; }
 }
 
 .nav__logo-img {
-  height: 44px;
+  height: 64px;
   width: auto;
   display: block;
   object-fit: contain;
   mix-blend-mode: lighten;
-  filter: brightness(1.1);
+  filter: brightness(1.15);
 }
 
 @media (max-width: 768px) {
   .nav__logo-img {
-    height: 36px;
+    height: 52px;
   }
 }
 
@@ -279,10 +279,10 @@ input, select, textarea { font: inherit; }
 }
 
 .nav__link {
-  font-size: 0.9375rem;
+  font-size: 1rem;
   font-weight: 400;
   letter-spacing: 0.04em;
-  color: rgba(245,245,245,0.8);
+  color: rgba(245,245,245,0.9);
   transition: color var(--dur-fast) var(--ease-out);
   position: relative;
 }
