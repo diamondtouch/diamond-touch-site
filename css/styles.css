@@ -570,13 +570,13 @@ input, select, textarea { font: inherit; }
   background: var(--clr-surface);
   border-top: 1px solid var(--clr-border);
   border-bottom: 1px solid var(--clr-border);
-  padding-block: 0.875rem;
+  padding-block: 1.25rem;
 }
 
 .marquee__track {
   display: flex;
   width: max-content;
-  animation: marqueeScroll 28s linear infinite;
+  animation: marqueeScroll 50s linear infinite;
 }
 
 .marquee__track:hover {
@@ -587,12 +587,19 @@ input, select, textarea { font: inherit; }
   display: flex;
   align-items: center;
   white-space: nowrap;
-  font-size: 0.75rem;
+  font-size: 0.9375rem;
   font-weight: 500;
-  letter-spacing: 0.15em;
+  letter-spacing: 0.12em;
   text-transform: uppercase;
-  color: var(--clr-muted);
-  padding-right: 2rem;
+  color: rgba(245,245,245,0.85);
+  padding-right: 3.5rem;
+  gap: 3.5rem;
+}
+
+.marquee__sep {
+  color: var(--clr-pink);
+  font-size: 0.75rem;
+  flex-shrink: 0;
 }
 
 @keyframes marqueeScroll {
