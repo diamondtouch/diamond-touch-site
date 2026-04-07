@@ -252,19 +252,17 @@ input, select, textarea { font: inherit; }
   margin-right: auto;
 }
 
-.nav__diamond {
-  width: 18px;
-  height: 18px;
-  color: var(--clr-pink);
-  flex-shrink: 0;
+.nav__logo-img {
+  height: 44px;
+  width: auto;
+  display: block;
+  object-fit: contain;
 }
 
-.nav__logo-text {
-  font-family: var(--font-display);
-  font-size: 1.0625rem;
-  font-weight: 500;
-  letter-spacing: 0.12em;
-  color: var(--clr-text);
+@media (max-width: 768px) {
+  .nav__logo-img {
+    height: 36px;
+  }
 }
 
 .nav__links {
