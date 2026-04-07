@@ -1048,9 +1048,16 @@ input, select, textarea { font: inherit; }
   background-position: center;
 }
 
+/* Before: same image but made to look dirty/dull with CSS filters */
+.ba-slider__before {
+  filter: saturate(0.2) brightness(0.65) contrast(0.85) sepia(0.3);
+}
+
+/* After: full color, bright, clean */
 .ba-slider__after {
   clip-path: inset(0 50% 0 0);
   transition: clip-path 0ms;
+  filter: saturate(1.15) brightness(1.05) contrast(1.05);
 }
 
 .ba-slider__handle {
