@@ -1,0 +1,117 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Sign In — Diamond Touch Detailing</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300;0,400;0,500;0,600;1,300;1,400&family=DM+Sans:ital,opsz,wght@0,9..40,300;0,9..40,400;0,9..40,500;0,9..40,600;1,9..40,300&display=swap" rel="stylesheet" />
+  <link rel="stylesheet" href="../css/portal.css" />
+</head>
+<body>
+
+<div class="auth-page">
+  <div class="auth-card">
+
+    <div class="auth-logo">
+      <a href="/">
+        <img src="../assets/logo-horizontal.png" alt="Diamond Touch Detailing" />
+      </a>
+    </div>
+
+    <div class="auth-box">
+      <h1 class="auth-heading">Welcome back</h1>
+      <p class="auth-sub">Sign in to your account to manage bookings &amp; more.</p>
+
+      <div class="alert alert--error" id="errorMsg" role="alert"></div>
+
+      <form id="loginForm" novalidate>
+        <div class="form-group">
+          <label class="form-label" for="email">Email address</label>
+          <input class="form-input" type="email" id="email" name="email" placeholder="you@example.com" required autocomplete="email" />
+        </div>
+
+        <div class="form-group">
+          <label class="form-label" for="password">Password</label>
+          <input class="form-input" type="password" id="password" name="password" placeholder="••••••••" required autocomplete="current-password" />
+        </div>
+
+        <a href="reset-password.html" class="auth-link">Forgot password?</a>
+
+        <button type="submit" class="btn btn--primary btn--full" id="submitBtn">
+          Sign In
+        </button>
+      </form>
+    </div>
+
+    <p class="auth-footer">
+      New here? <a href="signup.html">Create an account</a>
+    </p>
+
+  </div>
+</div>
+
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2/dist/umd/supabase.js"></script>
+<script src="../js/supabase-config.js"></script>
+<script src="../js/auth.js"></script>
+<script>
+(async () => {
+  // Already logged in? Redirect.
+  const session = await getSession();
+  if (session) {
+    const profile = await getUserProfile();
+    window.location.href = profile?.is_admin
+      ? '../admin/dashboard.html'
+      : 'dashboard.html';
+    return;
+  }
+
+  const form = document.getElementById('loginForm');
+  const errorMsg = document.getElementById('errorMsg');
+  const submitBtn = document.getElementById('submitBtn');
+
+  function showError(msg) {
+    errorMsg.textContent = msg;
+    errorMsg.classList.add('visible');
+  }
+
+  function hideError() {
+    errorMsg.classList.remove('visible');
+  }
+
+  form.addEventListener('submit', async (e) => {
+    e.preventDefault();
+    hideError();
+
+    const email = form.email.value.trim();
+    const password = form.password.value;
+
+    if (!email || !password) {
+      showError('Please enter your email and password.');
+      return;
+    }
+
+    submitBtn.disabled = true;
+    submitBtn.innerHTML = '<span class="spinner"></span>';
+
+    const { error } = await _supabase.auth.signInWithPassword({ email, password });
+
+    if (error) {
+      showError(error.message || 'Sign in failed. Please try again.');
+      submitBtn.disabled = false;
+      submitBtn.textContent = 'Sign In';
+      return;
+    }
+
+    // Check admin status before redirect
+    const profile = await getUserProfile();
+    window.location.href = profile?.is_admin
+      ? '../admin/dashboard.html'
+      : 'dashboard.html';
+  });
+})();
+</script>
+
+</body>
+</html>

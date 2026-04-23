@@ -1,0 +1,141 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Create Account — Diamond Touch Detailing</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300;0,400;0,500;0,600;1,300;1,400&family=DM+Sans:ital,opsz,wght@0,9..40,300;0,9..40,400;0,9..40,500;0,9..40,600;1,9..40,300&display=swap" rel="stylesheet" />
+  <link rel="stylesheet" href="../css/portal.css" />
+</head>
+<body>
+
+<div class="auth-page">
+  <div class="auth-card">
+
+    <div class="auth-logo">
+      <a href="/">
+        <img src="../assets/logo-horizontal.png" alt="Diamond Touch Detailing" />
+      </a>
+    </div>
+
+    <div class="auth-box">
+      <h1 class="auth-heading">Create your account</h1>
+      <p class="auth-sub">Join to manage bookings, track service history, and more.</p>
+
+      <div class="alert alert--error" id="errorMsg" role="alert"></div>
+      <div class="alert alert--success" id="successMsg" role="status"></div>
+
+      <form id="signupForm" novalidate>
+        <div class="form-group">
+          <label class="form-label" for="fullName">Full name</label>
+          <input class="form-input" type="text" id="fullName" name="fullName" placeholder="Jane Smith" required autocomplete="name" />
+        </div>
+
+        <div class="form-group">
+          <label class="form-label" for="email">Email address</label>
+          <input class="form-input" type="email" id="email" name="email" placeholder="you@example.com" required autocomplete="email" />
+        </div>
+
+        <div class="form-group">
+          <label class="form-label" for="phone">Phone number</label>
+          <input class="form-input" type="tel" id="phone" name="phone" placeholder="(555) 000-0000" autocomplete="tel" />
+        </div>
+
+        <div class="form-group">
+          <label class="form-label" for="password">Password</label>
+          <input class="form-input" type="password" id="password" name="password" placeholder="At least 8 characters" required autocomplete="new-password" minlength="8" />
+        </div>
+
+        <div class="form-group">
+          <label class="form-label" for="confirmPassword">Confirm password</label>
+          <input class="form-input" type="password" id="confirmPassword" name="confirmPassword" placeholder="••••••••" required autocomplete="new-password" />
+        </div>
+
+        <button type="submit" class="btn btn--primary btn--full" id="submitBtn">
+          Create Account
+        </button>
+      </form>
+    </div>
+
+    <p class="auth-footer">
+      Already have an account? <a href="login.html">Sign in</a>
+    </p>
+
+  </div>
+</div>
+
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2/dist/umd/supabase.js"></script>
+<script src="../js/supabase-config.js"></script>
+<script src="../js/auth.js"></script>
+<script>
+(async () => {
+  const form = document.getElementById('signupForm');
+  const errorMsg = document.getElementById('errorMsg');
+  const successMsg = document.getElementById('successMsg');
+  const submitBtn = document.getElementById('submitBtn');
+
+  function showError(msg) {
+    errorMsg.textContent = msg;
+    errorMsg.classList.add('visible');
+    successMsg.classList.remove('visible');
+  }
+
+  function showSuccess(msg) {
+    successMsg.textContent = msg;
+    successMsg.classList.add('visible');
+    errorMsg.classList.remove('visible');
+    form.style.display = 'none';
+  }
+
+  form.addEventListener('submit', async (e) => {
+    e.preventDefault();
+    errorMsg.classList.remove('visible');
+
+    const fullName = form.fullName.value.trim();
+    const email = form.email.value.trim();
+    const phone = form.phone.value.trim();
+    const password = form.password.value;
+    const confirmPassword = form.confirmPassword.value;
+
+    if (!fullName || !email || !password) {
+      showError('Please fill in all required fields.');
+      return;
+    }
+
+    if (password.length < 8) {
+      showError('Password must be at least 8 characters.');
+      return;
+    }
+
+    if (password !== confirmPassword) {
+      showError('Passwords do not match.');
+      return;
+    }
+
+    submitBtn.disabled = true;
+    submitBtn.innerHTML = '<span class="spinner"></span>';
+
+    const { error } = await _supabase.auth.signUp({
+      email,
+      password,
+      options: {
+        data: { full_name: fullName, phone }
+      }
+    });
+
+    if (error) {
+      showError(error.message || 'Sign up failed. Please try again.');
+      submitBtn.disabled = false;
+      submitBtn.textContent = 'Create Account';
+      return;
+    }
+
+    showSuccess('Account created! Check your email to confirm your account, then sign in.');
+  });
+})();
+</script>
+
+</body>
+</html>

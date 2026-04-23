@@ -40,6 +40,8 @@
         <li><a href="#packages" class="nav__link">Packages</a></li>
         <li><a href="#booking" class="nav__link">Booking</a></li>
         <li><a href="#contact" class="nav__link">Contact</a></li>
+        <li><a href="portal/login.html" class="nav__link" id="nav-account-link">My Account</a></li>
+        <li><a href="portal/dashboard.html" class="nav__link" id="nav-dash-link" style="display:none">Dashboard</a></li>
       </ul>
 
       <a href="#booking" class="btn btn--pill btn--sm">Book Now</a>
@@ -63,6 +65,8 @@
         <li><a href="#packages" class="mobile-menu__link">Packages</a></li>
         <li><a href="#booking" class="mobile-menu__link">Booking</a></li>
         <li><a href="#contact" class="mobile-menu__link">Contact</a></li>
+        <li><a href="portal/login.html" class="mobile-menu__link" id="mobile-account-link">My Account</a></li>
+        <li><a href="portal/dashboard.html" class="mobile-menu__link" id="mobile-dash-link" style="display:none">Dashboard</a></li>
       </ul>
     </nav>
     <a href="#booking" class="btn btn--pill mobile-menu__cta">Book Now</a>
@@ -988,6 +992,14 @@
   <!-- Scripts -->
   <script src="js/main.js" defer></script>
   <script src="js/booking.js" defer></script>
+
+  <!-- Auth: show/hide nav account link -->
+  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2/dist/umd/supabase.js"></script>
+  <script src="js/supabase-config.js"></script>
+  <script src="js/auth.js"></script>
+  <script>
+    document.addEventListener('DOMContentLoaded', updateNavAuthState);
+  </script>
 
 </body>
 </html>

@@ -1,0 +1,300 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Dashboard — Diamond Touch Detailing</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300;0,400;0,500;0,600;1,300;1,400&family=DM+Sans:ital,opsz,wght@0,9..40,300;0,9..40,400;0,9..40,500;0,9..40,600;1,9..40,300&display=swap" rel="stylesheet" />
+  <link rel="stylesheet" href="../css/portal.css" />
+</head>
+<body>
+
+<div class="portal-layout">
+
+  <!-- ========== SIDEBAR ========== -->
+  <aside class="sidebar">
+    <div class="sidebar__logo">
+      <a href="/">
+        <img src="../assets/logo-horizontal.png" alt="Diamond Touch Detailing" />
+      </a>
+    </div>
+
+    <nav class="sidebar__nav" aria-label="Portal navigation">
+      <a href="dashboard.html" class="sidebar__link active">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><rect x="3" y="3" width="7" height="7" rx="1"/><rect x="14" y="3" width="7" height="7" rx="1"/><rect x="3" y="14" width="7" height="7" rx="1"/><rect x="14" y="14" width="7" height="7" rx="1"/></svg>
+        Dashboard
+      </a>
+      <a href="bookings.html" class="sidebar__link">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><rect x="3" y="4" width="18" height="18" rx="2"/><path d="M16 2v4M8 2v4M3 10h18"/></svg>
+        My Bookings
+      </a>
+      <a href="vehicles.html" class="sidebar__link">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M5 17H3a2 2 0 01-2-2V9a2 2 0 012-2h1l2-3h10l2 3h1a2 2 0 012 2v6a2 2 0 01-2 2h-2"/><circle cx="7" cy="17" r="2"/><circle cx="17" cy="17" r="2"/></svg>
+        My Vehicles
+      </a>
+      <a href="membership.html" class="sidebar__link">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z"/></svg>
+        Membership
+      </a>
+      <a href="account.html" class="sidebar__link">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><circle cx="12" cy="8" r="4"/><path d="M4 20c0-4 3.6-7 8-7s8 3 8 7"/></svg>
+        Account
+      </a>
+    </nav>
+
+    <div class="sidebar__footer">
+      <div class="sidebar__user">
+        <div class="sidebar__avatar" id="userAvatar">—</div>
+        <div class="sidebar__user-info">
+          <div class="sidebar__user-name" id="userName">Loading...</div>
+          <div class="sidebar__user-email" id="userEmail"></div>
+        </div>
+      </div>
+      <button class="btn-signout" onclick="signOut()">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M17 16l4-4m0 0l-4-4m4 4H7m6 4v1a2 2 0 01-2 2H5a2 2 0 01-2-2V7a2 2 0 012-2h6a2 2 0 012 2v1"/></svg>
+        Sign out
+      </button>
+    </div>
+  </aside>
+
+  <!-- ========== MAIN ========== -->
+  <main class="portal-main">
+    <div class="portal-main__inner">
+
+      <div class="page-header">
+        <p class="page-header__eyebrow">Client Portal</p>
+        <h1 class="page-header__title" id="welcomeHeading">Welcome back</h1>
+        <p class="page-header__sub">Here's a summary of your account.</p>
+      </div>
+
+      <!-- Stat row -->
+      <div class="stat-grid">
+        <div class="stat-card">
+          <div class="stat-card__label">Total Bookings</div>
+          <div class="stat-card__value" id="statBookings">0</div>
+          <div class="stat-card__sub">All time</div>
+        </div>
+        <div class="stat-card">
+          <div class="stat-card__label">Completed Details</div>
+          <div class="stat-card__value" id="statCompleted">0</div>
+          <div class="stat-card__sub">Services finished</div>
+        </div>
+        <div class="stat-card">
+          <div class="stat-card__label">Membership</div>
+          <div class="stat-card__value" id="statMembership" style="font-size:1.25rem;line-height:1.4;padding-top:0.25rem;">—</div>
+          <div class="stat-card__sub" id="statMembershipSub"></div>
+        </div>
+      </div>
+
+      <!-- Dashboard cards -->
+      <div class="dash-grid">
+
+        <!-- Next Appointment -->
+        <div class="card">
+          <div class="card__label">Next Appointment</div>
+          <div id="nextApptContent">
+            <div class="empty-state" style="padding:1rem 0">
+              <div class="empty-state__icon">
+                <svg width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.2"><rect x="3" y="4" width="18" height="18" rx="2"/><path d="M16 2v4M8 2v4M3 10h18"/></svg>
+              </div>
+              <div class="empty-state__title">No upcoming appointments</div>
+              <div class="empty-state__sub">Book a detail to get started</div>
+            </div>
+          </div>
+          <a href="/" class="btn btn--primary btn--full" style="margin-top:1rem">
+            Book a Detail
+          </a>
+        </div>
+
+        <!-- Membership Status -->
+        <div class="card">
+          <div class="card__label">Membership Status</div>
+          <div id="membershipContent">
+            <div style="margin-bottom:1rem">
+              <div class="card__title" style="font-size:1.125rem;font-family:var(--font-body);font-weight:400;color:var(--clr-muted)">Not a member</div>
+              <p class="card__sub" style="margin-top:0.5rem">Get monthly details at a discounted rate.</p>
+            </div>
+          </div>
+          <a href="membership.html" class="btn btn--ghost btn--full btn--sm">
+            View Membership Plans
+          </a>
+        </div>
+
+        <!-- My Vehicles -->
+        <div class="card">
+          <div class="card__label">My Vehicles</div>
+          <div id="vehiclesContent">
+            <div class="empty-state" style="padding:1rem 0">
+              <div class="empty-state__icon">
+                <svg width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.2"><path d="M5 17H3a2 2 0 01-2-2V9a2 2 0 012-2h1l2-3h10l2 3h1a2 2 0 012 2v6a2 2 0 01-2 2h-2"/><circle cx="7" cy="17" r="2"/><circle cx="17" cy="17" r="2"/></svg>
+              </div>
+              <div class="empty-state__title">No vehicles saved</div>
+              <div class="empty-state__sub">Add your vehicle to speed up booking</div>
+            </div>
+          </div>
+          <a href="vehicles.html" class="btn btn--ghost btn--full btn--sm" style="margin-top:1rem">
+            Manage Vehicles
+          </a>
+        </div>
+
+      </div>
+
+      <!-- Recent bookings table -->
+      <h2 style="font-family:var(--font-display);font-size:1.5rem;font-weight:400;margin-bottom:1rem">Recent Bookings</h2>
+      <div id="bookingsTable">
+        <div class="empty-state" style="border:1px solid var(--clr-border);border-radius:var(--radius-lg);padding:2.5rem">
+          <div class="empty-state__title">No bookings yet</div>
+          <div class="empty-state__sub">Your service history will appear here</div>
+        </div>
+      </div>
+
+    </div>
+  </main>
+
+</div>
+
+<!-- ========== MOBILE TAB BAR ========== -->
+<nav class="tab-bar" aria-label="Mobile navigation">
+  <div class="tab-bar__inner">
+    <a href="dashboard.html" class="tab-bar__item active">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><rect x="3" y="3" width="7" height="7" rx="1"/><rect x="14" y="3" width="7" height="7" rx="1"/><rect x="3" y="14" width="7" height="7" rx="1"/><rect x="14" y="14" width="7" height="7" rx="1"/></svg>
+      Home
+    </a>
+    <a href="bookings.html" class="tab-bar__item">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><rect x="3" y="4" width="18" height="18" rx="2"/><path d="M16 2v4M8 2v4M3 10h18"/></svg>
+      Bookings
+    </a>
+    <a href="vehicles.html" class="tab-bar__item">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M5 17H3a2 2 0 01-2-2V9a2 2 0 012-2h1l2-3h10l2 3h1a2 2 0 012 2v6a2 2 0 01-2 2h-2"/><circle cx="7" cy="17" r="2"/><circle cx="17" cy="17" r="2"/></svg>
+      Vehicles
+    </a>
+    <a href="membership.html" class="tab-bar__item">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z"/></svg>
+      Member
+    </a>
+    <a href="account.html" class="tab-bar__item">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><circle cx="12" cy="8" r="4"/><path d="M4 20c0-4 3.6-7 8-7s8 3 8 7"/></svg>
+      Account
+    </a>
+  </div>
+</nav>
+
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2/dist/umd/supabase.js"></script>
+<script src="../js/supabase-config.js"></script>
+<script src="../js/auth.js"></script>
+<script>
+(async () => {
+  const session = await requireAuth('../portal/login.html');
+  if (!session) return;
+
+  const profile = await getUserProfile();
+  if (!profile) return;
+
+  // Populate user info
+  const firstName = (profile.full_name || '').split(' ')[0] || 'there';
+  document.getElementById('welcomeHeading').textContent = `Welcome back, ${firstName}`;
+  document.getElementById('userName').textContent = profile.full_name || 'Client';
+  document.getElementById('userEmail').textContent = profile.email || '';
+  document.getElementById('userAvatar').textContent = (profile.full_name || 'C').charAt(0).toUpperCase();
+
+  // Load bookings count
+  const { data: bookings } = await _supabase
+    .from('bookings')
+    .select('id, status, service_name, preferred_date, preferred_time')
+    .eq('user_id', profile.id)
+    .order('preferred_date', { ascending: false });
+
+  if (bookings) {
+    document.getElementById('statBookings').textContent = bookings.length;
+    const completed = bookings.filter(b => b.status === 'completed').length;
+    document.getElementById('statCompleted').textContent = completed;
+
+    // Next upcoming appointment
+    const upcoming = bookings.find(b =>
+      b.status === 'confirmed' && b.preferred_date >= new Date().toISOString().split('T')[0]
+    );
+    if (upcoming) {
+      document.getElementById('nextApptContent').innerHTML = `
+        <div style="margin-bottom:0.5rem">
+          <div style="font-family:var(--font-display);font-size:1.375rem">${upcoming.service_name || 'Detail Service'}</div>
+          <div style="color:var(--clr-muted);font-size:0.9rem;margin-top:0.25rem">${formatDate(upcoming.preferred_date)}</div>
+          <span class="badge badge--confirmed" style="margin-top:0.5rem">Confirmed</span>
+        </div>
+      `;
+    }
+
+    // Recent bookings table
+    if (bookings.length > 0) {
+      const rows = bookings.slice(0, 5).map(b => `
+        <tr>
+          <td>${b.service_name || '—'}</td>
+          <td>${formatDate(b.preferred_date)}</td>
+          <td><span class="badge badge--${b.status}">${b.status}</span></td>
+        </tr>
+      `).join('');
+
+      document.getElementById('bookingsTable').innerHTML = `
+        <div class="table-wrap">
+          <table>
+            <thead>
+              <tr>
+                <th>Service</th>
+                <th>Date</th>
+                <th>Status</th>
+              </tr>
+            </thead>
+            <tbody>${rows}</tbody>
+          </table>
+        </div>
+      `;
+    }
+  }
+
+  // Load membership
+  const { data: membership } = await _supabase
+    .from('memberships')
+    .select('*')
+    .eq('user_id', profile.id)
+    .single();
+
+  if (membership && membership.status === 'active') {
+    document.getElementById('statMembership').innerHTML = `<span class="badge badge--member">${membership.plan?.toUpperCase()}</span>`;
+    document.getElementById('statMembershipSub').textContent = `Active · renews ${formatDate(membership.next_billing_date)}`;
+    document.getElementById('membershipContent').innerHTML = `
+      <div style="margin-bottom:1rem">
+        <div style="font-family:var(--font-display);font-size:1.375rem">${membership.plan?.charAt(0).toUpperCase() + membership.plan?.slice(1)} Plan</div>
+        <span class="badge badge--active" style="margin-top:0.5rem">Active</span>
+        <p class="card__sub" style="margin-top:0.75rem">Next billing: ${formatDate(membership.next_billing_date)}</p>
+      </div>
+    `;
+  } else {
+    document.getElementById('statMembership').textContent = 'None';
+  }
+
+  // Load vehicles
+  const { data: vehicles } = await _supabase
+    .from('vehicles')
+    .select('*')
+    .eq('user_id', profile.id);
+
+  if (vehicles && vehicles.length > 0) {
+    const vList = vehicles.map(v => `
+      <div style="display:flex;align-items:center;gap:0.75rem;padding:0.625rem 0;border-bottom:1px solid var(--clr-border-2)">
+        <div style="width:36px;height:36px;border-radius:50%;background:var(--clr-pink-dim);border:1px solid rgba(233,30,140,0.2);display:flex;align-items:center;justify-content:center">
+          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M5 17H3a2 2 0 01-2-2V9a2 2 0 012-2h1l2-3h10l2 3h1a2 2 0 012 2v6a2 2 0 01-2 2h-2"/><circle cx="7" cy="17" r="2"/><circle cx="17" cy="17" r="2"/></svg>
+        </div>
+        <div>
+          <div style="font-size:0.9rem;font-weight:500">${[v.year, v.make, v.model].filter(Boolean).join(' ') || 'Vehicle'}</div>
+          <div style="font-size:0.8rem;color:var(--clr-muted-2)">${v.color || ''} ${v.type || ''}</div>
+        </div>
+      </div>
+    `).join('');
+    document.getElementById('vehiclesContent').innerHTML = vList;
+  }
+})();
+</script>
+
+</body>
+</html>
