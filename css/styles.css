@@ -876,7 +876,7 @@ input, select, textarea { font: inherit; }
   display: grid;
   grid-template-columns: repeat(4, 1fr);
   gap: 1.5rem;
-  align-items: start;
+  align-items: stretch;
 }
 
 @media (max-width: 1100px) {
@@ -1000,6 +1000,7 @@ input, select, textarea { font: inherit; }
   flex-direction: column;
   gap: 0.625rem;
   flex: 1;
+  margin-bottom: auto;
 }
 
 .pkg-col__features li {
