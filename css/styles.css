@@ -2721,3 +2721,17 @@ input[type="date"]::-webkit-calendar-picker-indicator {
   height: 22px;
   flex-shrink: 0;
 }
+
+.yelp-logo-text {
+  font-family: 'Georgia', serif;
+  font-size: 1.25rem;
+  font-weight: 900;
+  font-style: italic;
+  color: #FF1A1A;
+  letter-spacing: -0.02em;
+}
+
+.review-platform-btn--yelp:hover {
+  border-color: #FF1A1A !important;
+  background: rgba(255,26,26,0.06) !important;
+}
