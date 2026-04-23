@@ -50,6 +50,7 @@
 
   /* Nav */
   --nav-h:          80px;
+  --topbar-h:       36px;
 }
 
 /* ─── Reset ─────────────────────────────────────────────── */
@@ -218,7 +219,7 @@ input, select, textarea { font: inherit; }
 /* ─── NAV ────────────────────────────────────────────────── */
 .nav {
   position: fixed;
-  top: 0;
+  top: var(--topbar-h);
   left: 0;
   right: 0;
   z-index: 1000;
@@ -353,7 +354,10 @@ input, select, textarea { font: inherit; }
 /* ─── Mobile Menu ─────────────────────────────────────────── */
 .mobile-menu {
   position: fixed;
-  inset: 0;
+  top: var(--topbar-h);
+  left: 0;
+  right: 0;
+  bottom: 0;
   z-index: 999;
   background: var(--clr-base);
   display: flex;
@@ -502,7 +506,7 @@ input, select, textarea { font: inherit; }
   text-align: center;
   padding-inline: clamp(1.25rem, 5vw, 2.5rem);
   max-width: 900px;
-  padding-top: var(--nav-h);
+  padding-top: calc(var(--nav-h) + var(--topbar-h));
 }
 
 .hero__eyebrow {
@@ -2452,4 +2456,69 @@ input[type="date"]::-webkit-calendar-picker-indicator {
   font-size: 2rem;
   font-weight: 300;
   margin-bottom: 0.75rem;
+}
+
+/* ─── TOP BAR ─────────────────────────────────────────────── */
+.top-bar {
+  background: #050505;
+  border-bottom: 1px solid #1a1a1a;
+  height: 36px;
+  display: flex;
+  align-items: center;
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  z-index: 1001;
+}
+
+.top-bar__inner {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  width: 100%;
+  max-width: var(--container);
+  margin: 0 auto;
+  padding-inline: clamp(1.25rem, 5vw, 2.5rem);
+}
+
+.top-bar__left {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  font-size: 0.8125rem;
+  color: #888;
+}
+
+.top-bar__left a {
+  color: var(--clr-pink);
+  text-decoration: none;
+  font-weight: 500;
+}
+
+.top-bar__left a:hover { text-decoration: underline; }
+
+.top-bar__right {
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+  font-size: 0.8125rem;
+}
+
+.top-bar__link {
+  color: #aaa;
+  text-decoration: none;
+  transition: color 0.2s;
+  white-space: nowrap;
+}
+
+.top-bar__link:hover { color: var(--clr-pink); }
+
+.top-bar__divider {
+  color: #333;
+  font-size: 0.75rem;
+}
+
+@media (max-width: 640px) {
+  .top-bar__left { display: none; }
 }
