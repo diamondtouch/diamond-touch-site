@@ -410,6 +410,32 @@
 
 </div><!-- /.portal-layout -->
 
+<!-- ========== MOBILE TAB BAR ========== -->
+<nav class="tab-bar" aria-label="Admin mobile navigation">
+  <div class="tab-bar__inner">
+    <a href="dashboard.html" class="tab-bar__item">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><rect x="3" y="3" width="7" height="7" rx="1"/><rect x="14" y="3" width="7" height="7" rx="1"/><rect x="3" y="14" width="7" height="7" rx="1"/><rect x="14" y="14" width="7" height="7" rx="1"/></svg>
+      Home
+    </a>
+    <a href="calendar.html" class="tab-bar__item">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><rect x="3" y="4" width="18" height="18" rx="2"/><path d="M16 2v4M8 2v4M3 10h18"/></svg>
+      Calendar
+    </a>
+    <a href="bookings.html" class="tab-bar__item">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2"/></svg>
+      Bookings
+    </a>
+    <a href="clients.html" class="tab-bar__item">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><circle cx="9" cy="7" r="4"/><path d="M3 21v-2a4 4 0 014-4h4a4 4 0 014 4v2"/></svg>
+      Clients
+    </a>
+    <a href="revenue.html" class="tab-bar__item">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M12 2v20M17 5H9.5a3.5 3.5 0 000 7h5a3.5 3.5 0 010 7H6"/></svg>
+      Revenue
+    </a>
+  </div>
+</nav>
+
 <!-- Scripts -->
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2/dist/umd/supabase.js"></script>
 <script src="../js/supabase-config.js"></script>
@@ -418,26 +444,12 @@
 (async function () {
 
   // ── Auth ──────────────────────────────────────────────────
-  let currentUser = null;
-  try {
-    currentUser = await requireAuth('../portal/login.html');
-  } catch (e) {
-    window.location.href = '../portal/login.html';
-    return;
-  }
-  if (!currentUser) return;
+  const profile = await requireAdmin();
+  if (!profile) return;
 
-  // Populate sidebar user info
-  try {
-    const profile = await getUserProfile(currentUser.id);
-    const name = profile?.full_name || currentUser.email?.split('@')[0] || 'Admin';
-    const email = profile?.email || currentUser.email || '';
-    document.getElementById('userName').textContent = name;
-    document.getElementById('userEmail').textContent = email;
-    document.getElementById('userAvatar').textContent = name.charAt(0).toUpperCase();
-  } catch (e) {
-    // non-critical
-  }
+  document.getElementById('userName').textContent  = profile.full_name || 'Admin';
+  document.getElementById('userEmail').textContent = profile.email || '';
+  document.getElementById('userAvatar').textContent = (profile.full_name || 'A').charAt(0).toUpperCase();
 
   // ── State ─────────────────────────────────────────────────
   let allMembers = [];
@@ -710,12 +722,6 @@
     searchTerm = this.value.trim();
     renderTable();
   });
-
-  // ── Sign out ──────────────────────────────────────────────
-  window.signOut = async function () {
-    await _supabase.auth.signOut();
-    window.location.href = '../portal/login.html';
-  };
 
   // ── Init ──────────────────────────────────────────────────
   await loadData();

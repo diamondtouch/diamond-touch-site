@@ -1,0 +1,1086 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Clients — Diamond Touch Admin</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300;0,400;0,500;0,600;1,300;1,400&family=DM+Sans:ital,opsz,wght@0,9..40,300;0,9..40,400;0,9..40,500;0,9..40,600;1,9..40,300&display=swap" rel="stylesheet" />
+  <link rel="stylesheet" href="../css/portal.css" />
+  <style>
+    /* ── Client cards grid ── */
+    .clients-grid {
+      display: grid;
+      grid-template-columns: repeat(2, 1fr);
+      gap: 1rem;
+    }
+    @media (max-width: 900px) { .clients-grid { grid-template-columns: 1fr; } }
+
+    .client-card {
+      background: var(--clr-surface);
+      border: 1px solid var(--clr-border);
+      border-radius: var(--radius-lg);
+      padding: 1.25rem 1.5rem;
+      display: flex;
+      flex-direction: column;
+      gap: 0.875rem;
+      transition: border-color 180ms;
+    }
+    .client-card:hover { border-color: var(--clr-muted-2); }
+    .client-card--vip { border-color: rgba(233,30,140,0.35); }
+
+    .client-card__top {
+      display: flex;
+      align-items: center;
+      gap: 1rem;
+    }
+
+    .client-avatar {
+      width: 48px;
+      height: 48px;
+      border-radius: 50%;
+      background: var(--clr-pink-dim);
+      border: 1px solid rgba(233,30,140,0.35);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 1.125rem;
+      font-weight: 700;
+      color: var(--clr-pink);
+      flex-shrink: 0;
+      font-family: var(--font-display);
+    }
+
+    .client-card__info { flex: 1; min-width: 0; }
+    .client-card__name {
+      font-size: 0.9375rem;
+      font-weight: 600;
+      white-space: nowrap;
+      overflow: hidden;
+      text-overflow: ellipsis;
+      margin-bottom: 0.125rem;
+    }
+    .client-card__contact {
+      font-size: 0.8125rem;
+      color: var(--clr-muted);
+      white-space: nowrap;
+      overflow: hidden;
+      text-overflow: ellipsis;
+    }
+
+    .client-card__badges {
+      display: flex;
+      align-items: center;
+      gap: 0.375rem;
+      flex-wrap: wrap;
+    }
+
+    .client-card__meta {
+      display: flex;
+      justify-content: space-between;
+      align-items: flex-end;
+      gap: 0.75rem;
+      font-size: 0.8125rem;
+      color: var(--clr-muted);
+    }
+    .client-card__last-service { }
+    .client-card__visits {
+      font-size: 0.75rem;
+      color: var(--clr-muted-2);
+      white-space: nowrap;
+      flex-shrink: 0;
+    }
+
+    /* ── Toolbar ── */
+    .toolbar {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 0.75rem;
+      margin-bottom: 1rem;
+      flex-wrap: wrap;
+    }
+    .toolbar__left { display: flex; align-items: center; gap: 0.5rem; flex-wrap: wrap; }
+    .toolbar__right { display: flex; align-items: center; gap: 0.75rem; flex-wrap: wrap; }
+
+    .sort-select {
+      background: var(--clr-surface);
+      border: 1px solid var(--clr-border);
+      border-radius: var(--radius);
+      padding: 0.4375rem 0.875rem;
+      color: var(--clr-muted);
+      font-size: 0.8125rem;
+      font-family: var(--font-body);
+      cursor: pointer;
+      appearance: none;
+      -webkit-appearance: none;
+      transition: border-color 180ms;
+    }
+    .sort-select:focus { outline: none; border-color: var(--clr-pink); color: var(--clr-text); }
+
+    /* ── Profile view ── */
+    #profileView { display: none; }
+
+    .profile-header {
+      display: flex;
+      align-items: flex-start;
+      gap: 1.5rem;
+      margin-bottom: 2rem;
+      flex-wrap: wrap;
+    }
+
+    .profile-avatar-lg {
+      width: 72px;
+      height: 72px;
+      border-radius: 50%;
+      background: var(--clr-pink-dim);
+      border: 2px solid rgba(233,30,140,0.4);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 2rem;
+      font-weight: 300;
+      color: var(--clr-pink);
+      font-family: var(--font-display);
+      flex-shrink: 0;
+    }
+
+    .profile-header__info { flex: 1; min-width: 200px; }
+    .profile-header__name {
+      font-family: var(--font-display);
+      font-size: 2rem;
+      font-weight: 400;
+      line-height: 1.2;
+      margin-bottom: 0.25rem;
+    }
+    .profile-header__contact {
+      font-size: 0.875rem;
+      color: var(--clr-muted);
+      margin-bottom: 0.5rem;
+    }
+    .profile-header__actions {
+      display: flex;
+      gap: 0.5rem;
+      flex-wrap: wrap;
+      margin-top: 1rem;
+    }
+
+    /* ── Tabs ── */
+    .tab-nav {
+      display: flex;
+      border-bottom: 1px solid var(--clr-border);
+      margin-bottom: 1.5rem;
+      gap: 0;
+      overflow-x: auto;
+    }
+    .tab-nav__item {
+      padding: 0.75rem 1.25rem;
+      font-size: 0.875rem;
+      font-weight: 500;
+      color: var(--clr-muted);
+      cursor: pointer;
+      border-bottom: 2px solid transparent;
+      white-space: nowrap;
+      transition: color 150ms, border-color 150ms;
+    }
+    .tab-nav__item:hover { color: var(--clr-text); }
+    .tab-nav__item.active { color: var(--clr-pink); border-bottom-color: var(--clr-pink); }
+
+    .tab-panel { display: none; }
+    .tab-panel.active { display: block; }
+
+    /* ── Overview stats ── */
+    .overview-stats {
+      display: grid;
+      grid-template-columns: repeat(4, 1fr);
+      gap: 0.875rem;
+      margin-bottom: 1.5rem;
+    }
+    @media (max-width: 768px) { .overview-stats { grid-template-columns: repeat(2, 1fr); } }
+
+    .overview-stat {
+      background: var(--clr-surface);
+      border: 1px solid var(--clr-border);
+      border-radius: var(--radius-lg);
+      padding: 1.125rem 1.25rem;
+    }
+    .overview-stat__label {
+      font-size: 0.7rem;
+      font-weight: 600;
+      letter-spacing: 0.1em;
+      text-transform: uppercase;
+      color: var(--clr-muted-2);
+      margin-bottom: 0.375rem;
+    }
+    .overview-stat__value {
+      font-family: var(--font-display);
+      font-size: 1.75rem;
+      font-weight: 300;
+      color: var(--clr-text);
+      line-height: 1;
+    }
+
+    /* ── Quick actions row ── */
+    .quick-row {
+      display: flex;
+      gap: 0.5rem;
+      flex-wrap: wrap;
+      margin-bottom: 1.5rem;
+    }
+
+    /* ── Notes ── */
+    .note-item {
+      background: var(--clr-surface);
+      border: 1px solid var(--clr-border);
+      border-radius: var(--radius);
+      padding: 0.875rem 1rem;
+      margin-bottom: 0.625rem;
+    }
+    .note-item__time {
+      font-size: 0.75rem;
+      color: var(--clr-muted-2);
+      margin-bottom: 0.35rem;
+    }
+    .note-item__text { font-size: 0.875rem; color: var(--clr-text); }
+
+    /* ── Inline status select ── */
+    .status-select {
+      background: transparent;
+      border: 1px solid var(--clr-border);
+      border-radius: var(--radius);
+      color: var(--clr-text);
+      font-size: 0.8125rem;
+      padding: 0.25rem 0.5rem;
+      cursor: pointer;
+      font-family: var(--font-body);
+    }
+    .status-select:focus { outline: none; border-color: var(--clr-pink); }
+
+    /* ── Count badge in header ── */
+    .count-badge {
+      display: inline-block;
+      background: var(--clr-surface);
+      border: 1px solid var(--clr-border);
+      border-radius: 999px;
+      font-size: 0.75rem;
+      font-weight: 600;
+      color: var(--clr-muted);
+      padding: 2px 10px;
+      margin-left: 0.5rem;
+      vertical-align: middle;
+      font-family: var(--font-body);
+    }
+
+    /* ── VIP toggle ── */
+    .vip-toggle-row {
+      display: flex;
+      align-items: center;
+      gap: 0.75rem;
+      margin-bottom: 1.25rem;
+    }
+    .vip-label {
+      font-size: 0.875rem;
+      font-weight: 500;
+      color: var(--clr-muted);
+    }
+
+    /* ── Back link ── */
+    .back-link {
+      display: inline-flex;
+      align-items: center;
+      gap: 0.5rem;
+      font-size: 0.875rem;
+      color: var(--clr-muted);
+      margin-bottom: 1.5rem;
+      cursor: pointer;
+      transition: color 150ms;
+    }
+    .back-link:hover { color: var(--clr-pink); }
+    .back-link svg { width: 14px; height: 14px; }
+
+    /* ── Manual booking modal ── */
+    .manual-booking-form {
+      display: none;
+      background: var(--clr-surface);
+      border: 1px solid var(--clr-border);
+      border-radius: var(--radius-lg);
+      padding: 1.5rem;
+      margin-top: 1rem;
+    }
+    .manual-booking-form.open { display: block; }
+  </style>
+</head>
+<body>
+
+<div class="portal-layout">
+
+  <!-- ========== SIDEBAR ========== -->
+  <aside class="sidebar">
+    <div class="sidebar__logo">
+      <a href="/"><img src="../assets/logo-horizontal.png" alt="Diamond Touch Detailing" /></a>
+      <div class="sidebar__badge">Admin</div>
+    </div>
+    <nav class="sidebar__nav" aria-label="Admin navigation">
+      <a href="dashboard.html" class="sidebar__link">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><rect x="3" y="3" width="7" height="7" rx="1"/><rect x="14" y="3" width="7" height="7" rx="1"/><rect x="3" y="14" width="7" height="7" rx="1"/><rect x="14" y="14" width="7" height="7" rx="1"/></svg>
+        Dashboard
+      </a>
+      <a href="calendar.html" class="sidebar__link">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><rect x="3" y="4" width="18" height="18" rx="2"/><path d="M16 2v4M8 2v4M3 10h18"/></svg>
+        Calendar
+      </a>
+      <a href="bookings.html" class="sidebar__link">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2"/></svg>
+        Bookings
+      </a>
+      <a href="clients.html" class="sidebar__link active">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><circle cx="9" cy="7" r="4"/><path d="M3 21v-2a4 4 0 014-4h4a4 4 0 014 4v2"/><circle cx="19" cy="7" r="2"/><path d="M21 21v-1a2 2 0 00-2-2h-1"/></svg>
+        Clients
+      </a>
+      <a href="memberships.html" class="sidebar__link">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z"/></svg>
+        Memberships
+      </a>
+      <a href="availability.html" class="sidebar__link">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><circle cx="12" cy="12" r="10"/><path d="M12 6v6l4 2"/></svg>
+        Availability
+      </a>
+      <a href="revenue.html" class="sidebar__link">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M12 2v20M17 5H9.5a3.5 3.5 0 000 7h5a3.5 3.5 0 010 7H6"/></svg>
+        Revenue
+      </a>
+    </nav>
+    <div class="sidebar__footer">
+      <div class="sidebar__user">
+        <div class="sidebar__avatar" id="userAvatar">A</div>
+        <div class="sidebar__user-info">
+          <div class="sidebar__user-name" id="userName">Admin</div>
+          <div class="sidebar__user-email" id="userEmail"></div>
+        </div>
+      </div>
+      <button class="btn-signout" onclick="signOut()">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M17 16l4-4m0 0l-4-4m4 4H7m6 4v1a2 2 0 01-2 2H5a2 2 0 01-2-2V7a2 2 0 012-2h6a2 2 0 012 2v1"/></svg>
+        Sign out
+      </button>
+    </div>
+  </aside>
+
+  <!-- ========== MAIN ========== -->
+  <main class="portal-main">
+    <div class="portal-main__inner">
+
+      <!-- ===== LIST VIEW ===== -->
+      <div id="listView">
+        <div class="page-header">
+          <p class="page-header__eyebrow">Admin Panel</p>
+          <h1 class="page-header__title">
+            Clients
+            <span class="count-badge" id="totalCountBadge">—</span>
+          </h1>
+          <p class="page-header__sub">All registered clients and their history.</p>
+        </div>
+
+        <!-- Stats -->
+        <div class="stat-grid" style="margin-bottom:1.5rem">
+          <div class="stat-card">
+            <div class="stat-card__label">Total Clients</div>
+            <div class="stat-card__value" id="statTotal">—</div>
+            <div class="stat-card__sub">All time</div>
+          </div>
+          <div class="stat-card">
+            <div class="stat-card__label">Active Members</div>
+            <div class="stat-card__value" id="statMembers">—</div>
+            <div class="stat-card__sub">Diamond Club</div>
+          </div>
+          <div class="stat-card">
+            <div class="stat-card__label">Bookings This Month</div>
+            <div class="stat-card__value" id="statMonthBookings">—</div>
+            <div class="stat-card__sub">Current month</div>
+          </div>
+          <div class="stat-card">
+            <div class="stat-card__label">New This Month</div>
+            <div class="stat-card__value" id="statNewClients">—</div>
+            <div class="stat-card__sub">Joined ≤ 30 days</div>
+          </div>
+        </div>
+
+        <!-- Search -->
+        <div class="search-row">
+          <input type="search" class="search-input" id="searchInput" placeholder="Search by name, email, or phone…" style="max-width:400px" oninput="applyFilters()" />
+        </div>
+
+        <!-- Filter + Sort toolbar -->
+        <div class="toolbar">
+          <div class="toolbar__left">
+            <div class="filter-bar">
+              <button class="filter-pill active" data-filter="all" onclick="setFilter('all',this)">All</button>
+              <button class="filter-pill" data-filter="member" onclick="setFilter('member',this)">Diamond Club Members</button>
+              <button class="filter-pill" data-filter="new" onclick="setFilter('new',this)">New (30 days)</button>
+              <button class="filter-pill" data-filter="inactive" onclick="setFilter('inactive',this)">No Recent Booking (90d+)</button>
+            </div>
+          </div>
+          <div class="toolbar__right">
+            <select class="sort-select" id="sortSelect" onchange="applyFilters()">
+              <option value="recent">Most Recent</option>
+              <option value="visits">Most Visits</option>
+              <option value="name">Name A–Z</option>
+              <option value="joined">Joined Date</option>
+            </select>
+          </div>
+        </div>
+
+        <!-- Client grid -->
+        <div class="clients-grid" id="clientsGrid">
+          <div style="color:var(--clr-muted-2);font-size:0.875rem;grid-column:1/-1;padding:2rem 0">Loading clients…</div>
+        </div>
+      </div>
+
+      <!-- ===== PROFILE VIEW ===== -->
+      <div id="profileView">
+        <button class="back-link" onclick="showList()">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M19 12H5M12 5l-7 7 7 7"/></svg>
+          Back to Clients
+        </button>
+
+        <div class="profile-header">
+          <div class="profile-avatar-lg" id="profileAvatar">—</div>
+          <div class="profile-header__info">
+            <div class="profile-header__name" id="profileName">—</div>
+            <div class="profile-header__contact" id="profileContact">—</div>
+            <div style="display:flex;gap:0.5rem;flex-wrap:wrap;margin-top:0.375rem" id="profileBadges"></div>
+            <div class="profile-header__actions">
+              <a id="profileBookLink" href="../book.html" class="btn btn--primary btn--sm">Book for Client</a>
+              <a id="profileEmailLink" href="#" class="btn btn--ghost btn--sm">Send Email</a>
+              <a id="profileCallLink" href="#" class="btn btn--ghost btn--sm">Call</a>
+            </div>
+          </div>
+        </div>
+
+        <!-- Tabs -->
+        <div class="tab-nav">
+          <div class="tab-nav__item active" onclick="switchTab('overview',this)">Overview</div>
+          <div class="tab-nav__item" onclick="switchTab('bookings',this)">Bookings</div>
+          <div class="tab-nav__item" onclick="switchTab('vehicles',this)">Vehicles</div>
+          <div class="tab-nav__item" onclick="switchTab('notes',this)">Notes</div>
+        </div>
+
+        <!-- Overview tab -->
+        <div class="tab-panel active" id="tab-overview">
+          <div class="overview-stats">
+            <div class="overview-stat">
+              <div class="overview-stat__label">Total Visits</div>
+              <div class="overview-stat__value" id="ovVisits">—</div>
+            </div>
+            <div class="overview-stat">
+              <div class="overview-stat__label">Total Spent</div>
+              <div class="overview-stat__value" id="ovSpent">—</div>
+            </div>
+            <div class="overview-stat">
+              <div class="overview-stat__label">Member Since</div>
+              <div class="overview-stat__value" id="ovMemberSince" style="font-size:1rem;padding-top:0.25rem;line-height:1.4">—</div>
+            </div>
+            <div class="overview-stat">
+              <div class="overview-stat__label">Last Visit</div>
+              <div class="overview-stat__value" id="ovLastVisit" style="font-size:1rem;padding-top:0.25rem;line-height:1.4">—</div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Bookings tab -->
+        <div class="tab-panel" id="tab-bookings">
+          <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:1rem">
+            <h2 style="font-family:var(--font-display);font-size:1.25rem;font-weight:400">Booking History</h2>
+            <button class="btn btn--ghost btn--sm" onclick="toggleManualBooking()">+ Add Manual Booking</button>
+          </div>
+          <div class="manual-booking-form" id="manualBookingForm">
+            <h3 style="font-family:var(--font-display);font-size:1.125rem;font-weight:400;margin-bottom:1rem">Add Manual Booking</h3>
+            <div class="form-row-2">
+              <div class="form-group">
+                <label class="form-label">Date</label>
+                <input type="date" class="form-input" id="manDate" />
+              </div>
+              <div class="form-group">
+                <label class="form-label">Time</label>
+                <input type="time" class="form-input" id="manTime" />
+              </div>
+            </div>
+            <div class="form-group">
+              <label class="form-label">Service</label>
+              <input type="text" class="form-input" id="manService" placeholder="e.g. Full Detail" />
+            </div>
+            <div class="form-row-2">
+              <div class="form-group">
+                <label class="form-label">Vehicle Type</label>
+                <select class="form-input" id="manVehicleType">
+                  <option value="Sedan">Sedan</option>
+                  <option value="SUV">SUV</option>
+                  <option value="Truck">Truck</option>
+                  <option value="Van">Van</option>
+                </select>
+              </div>
+              <div class="form-group">
+                <label class="form-label">Status</label>
+                <select class="form-input" id="manStatus">
+                  <option value="confirmed">Confirmed</option>
+                  <option value="completed">Completed</option>
+                  <option value="pending">Pending</option>
+                </select>
+              </div>
+            </div>
+            <div style="display:flex;gap:0.5rem">
+              <button class="btn btn--primary btn--sm" onclick="saveManualBooking()">Save Booking</button>
+              <button class="btn btn--ghost btn--sm" onclick="toggleManualBooking()">Cancel</button>
+            </div>
+          </div>
+          <div id="profileBookingsTable">
+            <div style="color:var(--clr-muted-2);font-size:0.875rem;padding:1.5rem 0">Loading…</div>
+          </div>
+        </div>
+
+        <!-- Vehicles tab -->
+        <div class="tab-panel" id="tab-vehicles">
+          <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:1rem">
+            <h2 style="font-family:var(--font-display);font-size:1.25rem;font-weight:400">Vehicles</h2>
+            <button class="btn btn--ghost btn--sm" onclick="toggleVehicleForm()">+ Add Vehicle</button>
+          </div>
+          <div class="manual-booking-form" id="vehicleForm">
+            <h3 style="font-family:var(--font-display);font-size:1.125rem;font-weight:400;margin-bottom:1rem">Add Vehicle</h3>
+            <div class="form-row-2">
+              <div class="form-group">
+                <label class="form-label">Year</label>
+                <input type="text" class="form-input" id="vYear" placeholder="2022" />
+              </div>
+              <div class="form-group">
+                <label class="form-label">Make</label>
+                <input type="text" class="form-input" id="vMake" placeholder="Toyota" />
+              </div>
+            </div>
+            <div class="form-row-2">
+              <div class="form-group">
+                <label class="form-label">Model</label>
+                <input type="text" class="form-input" id="vModel" placeholder="Camry" />
+              </div>
+              <div class="form-group">
+                <label class="form-label">Color</label>
+                <input type="text" class="form-input" id="vColor" placeholder="Black" />
+              </div>
+            </div>
+            <div class="form-group">
+              <label class="form-label">Type</label>
+              <select class="form-input" id="vType">
+                <option value="Sedan">Sedan</option>
+                <option value="SUV">SUV</option>
+                <option value="Truck">Truck</option>
+                <option value="Van">Van</option>
+              </select>
+            </div>
+            <div style="display:flex;gap:0.5rem">
+              <button class="btn btn--primary btn--sm" onclick="saveVehicle()">Save Vehicle</button>
+              <button class="btn btn--ghost btn--sm" onclick="toggleVehicleForm()">Cancel</button>
+            </div>
+          </div>
+          <div id="profileVehiclesList">
+            <div style="color:var(--clr-muted-2);font-size:0.875rem;padding:1.5rem 0">Loading…</div>
+          </div>
+        </div>
+
+        <!-- Notes tab -->
+        <div class="tab-panel" id="tab-notes">
+          <div class="vip-toggle-row">
+            <label class="toggle-switch" id="vipToggleWrap">
+              <input type="checkbox" id="vipToggle" onchange="toggleVip()" />
+              <span class="toggle-track"></span>
+              <span class="toggle-thumb"></span>
+            </label>
+            <span class="vip-label">Mark as VIP Client</span>
+          </div>
+          <div class="form-group">
+            <label class="form-label">Add a note</label>
+            <textarea class="form-input" id="noteInput" rows="4" placeholder="Internal notes about this client…" style="resize:vertical"></textarea>
+          </div>
+          <button class="btn btn--primary btn--sm" onclick="saveNote()" style="margin-bottom:1.5rem">Save Note</button>
+          <div id="notesList">
+            <div style="color:var(--clr-muted-2);font-size:0.875rem">No notes yet.</div>
+          </div>
+        </div>
+
+      </div><!-- end profileView -->
+
+    </div>
+  </main>
+
+</div>
+
+<!-- Mobile tab bar -->
+<nav class="tab-bar" aria-label="Admin mobile navigation">
+  <div class="tab-bar__inner">
+    <a href="dashboard.html" class="tab-bar__item">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><rect x="3" y="3" width="7" height="7" rx="1"/><rect x="14" y="3" width="7" height="7" rx="1"/><rect x="3" y="14" width="7" height="7" rx="1"/><rect x="14" y="14" width="7" height="7" rx="1"/></svg>
+      Home
+    </a>
+    <a href="calendar.html" class="tab-bar__item">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><rect x="3" y="4" width="18" height="18" rx="2"/><path d="M16 2v4M8 2v4M3 10h18"/></svg>
+      Calendar
+    </a>
+    <a href="bookings.html" class="tab-bar__item">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2"/></svg>
+      Bookings
+    </a>
+    <a href="clients.html" class="tab-bar__item active">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><circle cx="9" cy="7" r="4"/><path d="M3 21v-2a4 4 0 014-4h4a4 4 0 014 4v2"/></svg>
+      Clients
+    </a>
+    <a href="revenue.html" class="tab-bar__item">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M12 2v20M17 5H9.5a3.5 3.5 0 000 7h5a3.5 3.5 0 010 7H6"/></svg>
+      Revenue
+    </a>
+  </div>
+</nav>
+
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2/dist/umd/supabase.js"></script>
+<script src="../js/supabase-config.js"></script>
+<script src="../js/auth.js"></script>
+<script>
+/* ─── State ─────────────────────────────────────────────── */
+let allClients = [];          // enriched client objects
+let currentFilter = 'all';
+let currentClientId = null;   // the profile id being viewed
+let currentClientData = {};   // cache for active profile
+
+/* ─── Init ──────────────────────────────────────────────── */
+(async () => {
+  const profile = await requireAdmin();
+  if (!profile) return;
+
+  document.getElementById('userName').textContent  = profile.full_name || 'Admin';
+  document.getElementById('userEmail').textContent = profile.email || '';
+  document.getElementById('userAvatar').textContent = (profile.full_name || 'A').charAt(0).toUpperCase();
+
+  await loadClients();
+})();
+
+/* ─── Load all clients with enriched data ───────────────── */
+async function loadClients() {
+  // All profiles that are NOT admin
+  const { data: profiles } = await _supabase
+    .from('profiles')
+    .select('*')
+    .eq('is_admin', false)
+    .order('created_at', { ascending: false });
+
+  if (!profiles) return;
+
+  // All bookings (to join)
+  const { data: bookings } = await _supabase
+    .from('bookings')
+    .select('user_id, preferred_date, service_name, deposit_amount, deposit_paid, status')
+    .order('preferred_date', { ascending: false });
+
+  // All memberships
+  const { data: memberships } = await _supabase
+    .from('memberships')
+    .select('user_id, status, plan_name');
+
+  const now   = new Date();
+  const mStart = new Date(now.getFullYear(), now.getMonth(), 1);
+  const d30    = new Date(now); d30.setDate(now.getDate() - 30);
+  const d90    = new Date(now); d90.setDate(now.getDate() - 90);
+
+  let bookingsThisMonth = 0;
+  let newThisMonth = 0;
+
+  allClients = profiles.map(p => {
+    const pBookings = (bookings || []).filter(b => b.user_id === p.id);
+    const pMembership = (memberships || []).find(m => m.user_id === p.id && m.status === 'active');
+    const totalVisits   = pBookings.filter(b => b.status === 'completed').length;
+    const totalSpent    = pBookings
+      .filter(b => b.deposit_paid)
+      .reduce((s, b) => s + (b.deposit_amount || 0), 0);
+    const lastBooking   = pBookings[0]; // already sorted desc
+    const lastVisitDate = lastBooking ? lastBooking.preferred_date : null;
+
+    // stats
+    const joined = new Date(p.created_at);
+    if (joined >= mStart) newThisMonth++;
+    bookingsThisMonth += pBookings.filter(b => {
+      const d = new Date(b.preferred_date + 'T00:00:00');
+      return d >= mStart;
+    }).length;
+
+    return {
+      ...p,
+      isMember:     !!pMembership,
+      memberPlan:   pMembership?.plan_name || null,
+      totalVisits,
+      totalSpent,
+      lastVisitDate,
+      lastServiceName: lastBooking?.service_name || null,
+      vehicleCount:  0, // we'll skip vehicle count in list for performance
+      isNew:        joined >= d30,
+      isInactive:   !lastVisitDate || new Date(lastVisitDate + 'T00:00:00') < d90,
+      isVip:        p.is_vip || false,
+    };
+  });
+
+  // Stats
+  document.getElementById('statTotal').textContent        = allClients.length;
+  document.getElementById('statMembers').textContent      = allClients.filter(c => c.isMember).length;
+  document.getElementById('statMonthBookings').textContent = bookingsThisMonth;
+  document.getElementById('statNewClients').textContent   = newThisMonth;
+  document.getElementById('totalCountBadge').textContent  = allClients.length;
+
+  applyFilters();
+}
+
+/* ─── Filter / sort / render ────────────────────────────── */
+function setFilter(f, btn) {
+  currentFilter = f;
+  document.querySelectorAll('.filter-pill').forEach(p => p.classList.remove('active'));
+  btn.classList.add('active');
+  applyFilters();
+}
+
+function applyFilters() {
+  const q    = (document.getElementById('searchInput').value || '').toLowerCase();
+  const sort = document.getElementById('sortSelect').value;
+
+  let list = allClients.filter(c => {
+    // search
+    if (q) {
+      const hay = `${c.full_name||''} ${c.email||''} ${c.phone||''}`.toLowerCase();
+      if (!hay.includes(q)) return false;
+    }
+    // filter
+    if (currentFilter === 'member')   return c.isMember;
+    if (currentFilter === 'new')      return c.isNew;
+    if (currentFilter === 'inactive') return c.isInactive;
+    return true;
+  });
+
+  // sort
+  list = [...list].sort((a, b) => {
+    if (sort === 'visits') return b.totalVisits - a.totalVisits;
+    if (sort === 'name')   return (a.full_name || '').localeCompare(b.full_name || '');
+    if (sort === 'joined') return new Date(b.created_at) - new Date(a.created_at);
+    // recent: by last visit date
+    const ad = a.lastVisitDate ? new Date(a.lastVisitDate) : new Date(a.created_at);
+    const bd = b.lastVisitDate ? new Date(b.lastVisitDate) : new Date(b.created_at);
+    return bd - ad;
+  });
+
+  renderClients(list);
+}
+
+function renderClients(list) {
+  const grid = document.getElementById('clientsGrid');
+  if (list.length === 0) {
+    grid.innerHTML = `
+      <div class="empty-state" style="grid-column:1/-1;border:1px solid var(--clr-border);border-radius:var(--radius-lg);padding:2.5rem">
+        <div class="empty-state__icon">👤</div>
+        <div class="empty-state__title">No clients found</div>
+        <div class="empty-state__sub">Try adjusting the filter or search term.</div>
+      </div>`;
+    return;
+  }
+
+  grid.innerHTML = list.map(c => {
+    const initials = getInitials(c.full_name);
+    const memberBadge = c.isMember
+      ? `<span class="badge badge--member">◆ Diamond Club</span>`
+      : '';
+    const vipBadge = c.isVip ? `<span class="badge" style="background:rgba(255,191,0,0.12);color:#fbbf24;border:1px solid rgba(255,191,0,0.25)">★ VIP</span>` : '';
+    const lastSvc = c.lastVisitDate
+      ? `Last: ${formatDate(c.lastVisitDate)}${c.lastServiceName ? ' · ' + c.lastServiceName : ''}`
+      : 'No visits yet';
+
+    return `
+      <div class="client-card${c.isVip ? ' client-card--vip' : ''}">
+        <div class="client-card__top">
+          <div class="client-avatar">${initials}</div>
+          <div class="client-card__info">
+            <div class="client-card__name">${esc(c.full_name || '—')}</div>
+            <div class="client-card__contact">${esc(c.email || '')}${c.phone ? ' · ' + esc(c.phone) : ''}</div>
+          </div>
+        </div>
+        <div class="client-card__badges">
+          ${memberBadge}${vipBadge}
+        </div>
+        <div class="client-card__meta">
+          <div class="client-card__last-service" style="color:var(--clr-muted-2);font-size:0.8125rem">${lastSvc}</div>
+          <div class="client-card__visits">${c.totalVisits} visit${c.totalVisits !== 1 ? 's' : ''}</div>
+        </div>
+        <button class="btn btn--ghost btn--sm" onclick="viewProfile('${c.id}')">View Profile</button>
+      </div>`;
+  }).join('');
+}
+
+/* ─── Profile ───────────────────────────────────────────── */
+async function viewProfile(id) {
+  currentClientId = id;
+  const client = allClients.find(c => c.id === id);
+  if (!client) return;
+  currentClientData = { ...client };
+
+  // Show profile view
+  document.getElementById('listView').style.display    = 'none';
+  document.getElementById('profileView').style.display = 'block';
+
+  // Header
+  document.getElementById('profileAvatar').textContent = getInitials(client.full_name);
+  document.getElementById('profileName').textContent   = client.full_name || '—';
+  document.getElementById('profileContact').textContent =
+    [client.email, client.phone].filter(Boolean).join(' · ') || '—';
+
+  const badgesEl = document.getElementById('profileBadges');
+  badgesEl.innerHTML = (client.isMember ? `<span class="badge badge--member">◆ Diamond Club</span>` : '') +
+    (client.isVip ? `<span class="badge" style="background:rgba(255,191,0,0.12);color:#fbbf24;border:1px solid rgba(255,191,0,0.25)">★ VIP</span>` : '');
+
+  document.getElementById('profileEmailLink').href = `mailto:${client.email || ''}`;
+  document.getElementById('profileCallLink').href  = `tel:${client.phone || ''}`;
+
+  // Reset to overview tab
+  switchTab('overview', document.querySelector('.tab-nav__item'));
+
+  // Overview
+  document.getElementById('ovVisits').textContent = client.totalVisits;
+  document.getElementById('ovSpent').textContent  = formatPrice(client.totalSpent);
+  document.getElementById('ovMemberSince').textContent = formatDate(client.created_at?.split('T')[0] || '');
+  document.getElementById('ovLastVisit').textContent   = client.lastVisitDate ? formatDate(client.lastVisitDate) : 'Never';
+
+  // VIP toggle
+  document.getElementById('vipToggle').checked = !!client.isVip;
+
+  // Load bookings tab data
+  await loadProfileBookings(id);
+  // Load vehicles tab data
+  await loadProfileVehicles(id);
+  // Load notes
+  renderNotes(client.notes || '');
+}
+
+function showList() {
+  document.getElementById('profileView').style.display = 'none';
+  document.getElementById('listView').style.display    = 'block';
+}
+
+function switchTab(name, el) {
+  document.querySelectorAll('.tab-nav__item').forEach(t => t.classList.remove('active'));
+  document.querySelectorAll('.tab-panel').forEach(p => p.classList.remove('active'));
+  if (el) el.classList.add('active');
+  else {
+    const items = document.querySelectorAll('.tab-nav__item');
+    const map = { overview: 0, bookings: 1, vehicles: 2, notes: 3 };
+    if (items[map[name]]) items[map[name]].classList.add('active');
+  }
+  const panel = document.getElementById('tab-' + name);
+  if (panel) panel.classList.add('active');
+}
+
+/* ─── Profile: Bookings tab ─────────────────────────────── */
+async function loadProfileBookings(userId) {
+  const el = document.getElementById('profileBookingsTable');
+  el.innerHTML = '<div style="color:var(--clr-muted-2);font-size:0.875rem">Loading…</div>';
+
+  const { data: bookings } = await _supabase
+    .from('bookings')
+    .select('*')
+    .eq('user_id', userId)
+    .order('preferred_date', { ascending: false });
+
+  if (!bookings || bookings.length === 0) {
+    el.innerHTML = `<div class="empty-state" style="border:1px solid var(--clr-border);border-radius:var(--radius-lg);padding:2rem"><div class="empty-state__title">No bookings yet</div></div>`;
+    return;
+  }
+
+  const rows = bookings.map(b => `
+    <tr>
+      <td>${formatDate(b.preferred_date)}</td>
+      <td>${esc(b.service_name || '—')}</td>
+      <td>${esc(b.vehicle_type || '—')}</td>
+      <td>
+        <select class="status-select" onchange="updateBookingStatus('${b.id}', this.value)">
+          ${['pending','confirmed','completed','cancelled'].map(s =>
+            `<option value="${s}"${b.status===s?' selected':''}>${s}</option>`
+          ).join('')}
+        </select>
+      </td>
+      <td>${b.deposit_paid ? '<span class="badge badge--deposit-paid">Paid</span>' : '<span class="badge badge--deposit-unpaid">Unpaid</span>'}</td>
+      <td>${b.deposit_amount ? formatPrice(b.deposit_amount) : '—'}</td>
+    </tr>`).join('');
+
+  el.innerHTML = `
+    <div class="table-wrap">
+      <table>
+        <thead>
+          <tr>
+            <th>Date</th><th>Service</th><th>Vehicle</th><th>Status</th><th>Deposit</th><th>Amount</th>
+          </tr>
+        </thead>
+        <tbody>${rows}</tbody>
+      </table>
+    </div>`;
+}
+
+async function updateBookingStatus(bookingId, newStatus) {
+  await _supabase.from('bookings').update({ status: newStatus }).eq('id', bookingId);
+}
+
+/* ─── Profile: Vehicles tab ─────────────────────────────── */
+async function loadProfileVehicles(userId) {
+  const el = document.getElementById('profileVehiclesList');
+  el.innerHTML = '<div style="color:var(--clr-muted-2);font-size:0.875rem">Loading…</div>';
+
+  const { data: vehicles } = await _supabase
+    .from('vehicles')
+    .select('*')
+    .eq('user_id', userId)
+    .order('created_at', { ascending: false });
+
+  if (!vehicles || vehicles.length === 0) {
+    el.innerHTML = `<div class="empty-state" style="border:1px solid var(--clr-border);border-radius:var(--radius-lg);padding:2rem"><div class="empty-state__title">No vehicles on file</div></div>`;
+    return;
+  }
+
+  el.innerHTML = vehicles.map(v => `
+    <div class="vehicle-card" style="margin-bottom:0.75rem">
+      <div class="vehicle-card__icon">
+        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M5 17H3a2 2 0 01-2-2V9a2 2 0 012-2h1l2-3h10l2 3h1a2 2 0 012 2v6a2 2 0 01-2 2h-2"/><circle cx="7" cy="17" r="2"/><circle cx="17" cy="17" r="2"/></svg>
+      </div>
+      <div class="vehicle-card__info">
+        <div class="vehicle-card__name">${esc([v.year, v.make, v.model].filter(Boolean).join(' ') || '—')}</div>
+        <div class="vehicle-card__meta">
+          ${v.color ? `<span>${esc(v.color)}</span>` : ''}
+          <span class="badge badge--vehicle-type">${esc(v.vehicle_type || '—')}</span>
+        </div>
+      </div>
+      <div class="vehicle-card__actions">
+        <button class="btn btn--danger btn--sm" onclick="deleteVehicle('${v.id}', '${userId}')">Delete</button>
+      </div>
+    </div>`).join('');
+}
+
+async function deleteVehicle(vehicleId, userId) {
+  if (!confirm('Delete this vehicle?')) return;
+  await _supabase.from('vehicles').delete().eq('id', vehicleId);
+  await loadProfileVehicles(userId);
+}
+
+function toggleVehicleForm() {
+  document.getElementById('vehicleForm').classList.toggle('open');
+}
+
+async function saveVehicle() {
+  const year  = document.getElementById('vYear').value.trim();
+  const make  = document.getElementById('vMake').value.trim();
+  const model = document.getElementById('vModel').value.trim();
+  const color = document.getElementById('vColor').value.trim();
+  const type  = document.getElementById('vType').value;
+  if (!make || !model) { alert('Make and model are required.'); return; }
+
+  await _supabase.from('vehicles').insert({
+    user_id: currentClientId,
+    year: year || null,
+    make, model, color: color || null,
+    vehicle_type: type,
+  });
+
+  document.getElementById('vehicleForm').classList.remove('open');
+  await loadProfileVehicles(currentClientId);
+}
+
+/* ─── Profile: Manual Booking ───────────────────────────── */
+function toggleManualBooking() {
+  document.getElementById('manualBookingForm').classList.toggle('open');
+}
+
+async function saveManualBooking() {
+  const date    = document.getElementById('manDate').value;
+  const time    = document.getElementById('manTime').value;
+  const service = document.getElementById('manService').value.trim();
+  const vtype   = document.getElementById('manVehicleType').value;
+  const status  = document.getElementById('manStatus').value;
+  if (!date || !service) { alert('Date and service are required.'); return; }
+
+  await _supabase.from('bookings').insert({
+    user_id: currentClientId,
+    preferred_date: date,
+    preferred_time: time || null,
+    service_name: service,
+    vehicle_type: vtype,
+    status,
+    deposit_paid: false,
+  });
+
+  document.getElementById('manualBookingForm').classList.remove('open');
+  await loadProfileBookings(currentClientId);
+}
+
+/* ─── Profile: Notes ────────────────────────────────────── */
+function renderNotes(notesStr) {
+  const el = document.getElementById('notesList');
+  if (!notesStr || notesStr.trim() === '') {
+    el.innerHTML = '<div style="color:var(--clr-muted-2);font-size:0.875rem">No notes yet.</div>';
+    return;
+  }
+  // Notes stored as: [TIMESTAMP] text\n---\n[TIMESTAMP] text
+  const entries = notesStr.split('\n---\n').filter(Boolean).reverse();
+  el.innerHTML = entries.map(e => {
+    const match = e.match(/^\[(.+?)\] (.+)$/s);
+    if (match) {
+      return `<div class="note-item">
+        <div class="note-item__time">${match[1]}</div>
+        <div class="note-item__text">${esc(match[2])}</div>
+      </div>`;
+    }
+    return `<div class="note-item"><div class="note-item__text">${esc(e)}</div></div>`;
+  }).join('');
+}
+
+async function saveNote() {
+  const text = document.getElementById('noteInput').value.trim();
+  if (!text) return;
+
+  const timestamp = new Date().toLocaleString('en-US', { dateStyle: 'medium', timeStyle: 'short' });
+  const entry = `[${timestamp}] ${text}`;
+
+  const existing = currentClientData.notes || '';
+  const updated  = existing ? existing + '\n---\n' + entry : entry;
+
+  await _supabase.from('profiles').update({ notes: updated }).eq('id', currentClientId);
+  currentClientData.notes = updated;
+  document.getElementById('noteInput').value = '';
+  renderNotes(updated);
+
+  // Update local cache
+  const idx = allClients.findIndex(c => c.id === currentClientId);
+  if (idx !== -1) allClients[idx].notes = updated;
+}
+
+async function toggleVip() {
+  const isVip = document.getElementById('vipToggle').checked;
+  await _supabase.from('profiles').update({ is_vip: isVip }).eq('id', currentClientId);
+  currentClientData.isVip = isVip;
+  const idx = allClients.findIndex(c => c.id === currentClientId);
+  if (idx !== -1) allClients[idx].isVip = isVip;
+}
+
+/* ─── Helpers ───────────────────────────────────────────── */
+function getInitials(name) {
+  if (!name) return '?';
+  const parts = name.trim().split(/\s+/);
+  if (parts.length >= 2) return (parts[0][0] + parts[parts.length-1][0]).toUpperCase();
+  return parts[0].slice(0, 2).toUpperCase();
+}
+
+function esc(str) {
+  return String(str)
+    .replace(/&/g,'&amp;')
+    .replace(/</g,'&lt;')
+    .replace(/>/g,'&gt;')
+    .replace(/"/g,'&quot;');
+}
+</script>
+
+</body>
+</html>
