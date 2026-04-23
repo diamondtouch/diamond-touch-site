@@ -464,15 +464,7 @@
       </div>`;
 
     // Populate plan cards now that DOM exists
-    try {
-      renderPlanCards();
-      const cardCount = document.getElementById('planCards')?.children?.length;
-      if (!cardCount) {
-        document.getElementById('planCards').innerHTML = '<p style="color:#e91e8c;padding:1rem">Debug: renderPlanCards ran but produced 0 cards. activeBilling=' + activeBilling + ' PLANS keys=' + Object.keys(PLANS).join(',') + '</p>';
-      }
-    } catch(err) {
-      document.getElementById('planCards').innerHTML = '<p style="color:#e91e8c;padding:1rem">JS Error in renderPlanCards: ' + err.message + '</p>';
-    }
+    renderPlanCards();
 
     // Billing tab switching
     document.getElementById('billingTabs').querySelectorAll('.billing-tab').forEach(tab => {
