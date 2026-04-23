@@ -12,23 +12,6 @@
   <link rel="icon" type="image/png" sizes="32x32" href="/favicon-32x32.png">
   <link rel="icon" type="image/png" sizes="16x16" href="/favicon-16x16.png">
   <link rel="shortcut icon" href="/favicon.ico">
-<style>
-.row-detail { display: none; }
-.row-detail.open { display: table-row; }
-.row-detail td { padding: 0 !important; }
-.row-detail-inner { padding: 1.25rem 1.5rem; background: #111; border-bottom: 1px solid #222; display: grid; grid-template-columns: 1fr 1fr; gap: 1.5rem; }
-.edit-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 0.875rem; }
-.edit-field { display: flex; flex-direction: column; gap: 0.35rem; }
-.edit-field label { font-size: 0.75rem; color: var(--clr-muted); text-transform: uppercase; letter-spacing: 0.05em; }
-.edit-field input, .edit-field select, .edit-field textarea { background: #1a1a1a; border: 1px solid #2a2a2a; border-radius: 6px; color: #f5f5f5; padding: 0.5rem 0.75rem; font-size: 0.875rem; font-family: inherit; width: 100%; }
-.edit-field textarea { resize: vertical; min-height: 70px; }
-.edit-field input:focus, .edit-field select:focus, .edit-field textarea:focus { outline: none; border-color: #e91e8c; }
-.edit-actions { display: flex; gap: 0.5rem; margin-top: 1rem; align-items: center; }
-.edit-save-msg { font-size: 0.8rem; color: #4ade80; }
-.client-info-box { background: #0d0d0d; border: 1px solid #222; border-radius: 8px; padding: 1rem; font-size: 0.875rem; display: flex; flex-direction: column; gap: 0.5rem; }
-.client-info-box strong { color: #f5f5f5; }
-.client-info-box span { color: var(--clr-muted); }
-</style>
 </head>
 <body>
 
@@ -260,8 +243,8 @@ function renderTable() {
       <tr class="expandable-row" onclick="toggleDetail('${b.id}')">
         <td>${formatDate(b.preferred_date)}</td>
         <td>${formatTime(b.preferred_time)}</td>
-        <td style="font-weight:500">${clientName(b)}</td>
-        <td>${clientPhone(b)}</td>
+        <td style="font-weight:500">${b.profiles?.full_name || '—'}</td>
+        <td>${b.profiles?.phone || '—'}</td>
         <td>${b.service_name || '—'}</td>
         <td>${b.vehicle_type || '—'}</td>
         <td><span class="badge badge--${b.status}">${b.status}</span></td>
@@ -272,73 +255,27 @@ function renderTable() {
           </div>
         </td>
       </tr>
-      <!-- Expanded detail / edit row -->
+      <!-- Expanded detail row -->
       <tr class="row-detail" id="detail-${b.id}">
         <td colspan="9">
           <div class="row-detail-inner">
-            <!-- LEFT: Edit form -->
             <div>
-              <div style="font-size:0.8rem;color:var(--clr-muted);text-transform:uppercase;letter-spacing:.05em;margin-bottom:.875rem">Edit Booking</div>
-              <div class="edit-grid">
-                <div class="edit-field">
-                  <label>Service</label>
-                  <input id="ef-service-${b.id}" value="${(b.service_name||'').replace(/"/g,'&quot;')}" onclick="event.stopPropagation()" />
-                </div>
-                <div class="edit-field">
-                  <label>Vehicle Type</label>
-                  <select id="ef-vtype-${b.id}" onclick="event.stopPropagation()">
-                    <option value="sedan" ${b.vehicle_type==='sedan'?'selected':''}>Sedan</option>
-                    <option value="suv" ${b.vehicle_type==='suv'?'selected':''}>SUV</option>
-                    <option value="truck" ${b.vehicle_type==='truck'?'selected':''}>Truck</option>
-                  </select>
-                </div>
-                <div class="edit-field">
-                  <label>Date</label>
-                  <input type="date" id="ef-date-${b.id}" value="${b.preferred_date||''}" onclick="event.stopPropagation()" />
-                </div>
-                <div class="edit-field">
-                  <label>Time</label>
-                  <input type="time" id="ef-time-${b.id}" value="${b.preferred_time||''}" onclick="event.stopPropagation()" />
-                </div>
-                <div class="edit-field">
-                  <label>Status</label>
-                  <select id="ef-status-${b.id}" onclick="event.stopPropagation()">
-                    <option value="pending" ${b.status==='pending'?'selected':''}>Pending</option>
-                    <option value="confirmed" ${b.status==='confirmed'?'selected':''}>Confirmed</option>
-                    <option value="completed" ${b.status==='completed'?'selected':''}>Completed</option>
-                    <option value="cancelled" ${b.status==='cancelled'?'selected':''}>Cancelled</option>
-                  </select>
-                </div>
-                <div class="edit-field">
-                  <label>Total ($)</label>
-                  <input type="number" id="ef-total-${b.id}" value="${b.total_amount ? (b.total_amount/100).toFixed(0) : ''}" onclick="event.stopPropagation()" />
-                </div>
-                <div class="edit-field" style="grid-column:span 2">
-                  <label>Client Notes</label>
-                  <textarea id="ef-notes-${b.id}" onclick="event.stopPropagation()">${b.notes||''}</textarea>
-                </div>
-                <div class="edit-field" style="grid-column:span 2">
-                  <label>Admin Notes</label>
-                  <textarea id="ef-adminnotes-${b.id}" onclick="event.stopPropagation()">${b.admin_notes||''}</textarea>
-                </div>
+              <div class="row-detail-field">
+                <label>Client Notes</label>
+                <p style="font-size:0.875rem;color:var(--clr-muted)">${b.notes || 'No notes from client'}</p>
               </div>
-              <div class="edit-actions">
-                <button class="btn btn--primary btn--sm" onclick="saveEdit('${b.id}');event.stopPropagation()">Save Changes</button>
-                <button class="btn btn--ghost btn--sm" onclick="toggleDetail('${b.id}');event.stopPropagation()">Close</button>
-                <span class="edit-save-msg" id="ef-msg-${b.id}"></span>
+              <div class="row-detail-field" style="margin-top:0.875rem">
+                <label>Admin Notes</label>
+                <textarea id="admin-note-${b.id}" rows="3" onclick="event.stopPropagation()">${b.admin_notes || ''}</textarea>
               </div>
+              <button class="btn btn--ghost btn--sm" style="margin-top:0.5rem"
+                onclick="saveNote('${b.id}');event.stopPropagation()">Save Note</button>
             </div>
-            <!-- RIGHT: Client info -->
-            <div>
-              <div style="font-size:0.8rem;color:var(--clr-muted);text-transform:uppercase;letter-spacing:.05em;margin-bottom:.875rem">Client Info</div>
-              <div class="client-info-box">
-                <div><span>Name &nbsp;</span><strong>${clientName(b)}</strong></div>
-                <div><span>Email &nbsp;</span><strong>${clientEmail(b)}</strong></div>
-                <div><span>Phone &nbsp;</span><strong>${clientPhone(b)}</strong></div>
-                <div><span>Booked &nbsp;</span><strong>${formatDate(b.created_at?.split('T')[0])}</strong></div>
-                <div><span>Deposit &nbsp;</span><strong>${b.deposit_paid ? `Paid — $${((b.deposit_amount||0)/100).toFixed(0)}` : 'Not paid'}</strong></div>
-                ${b.square_payment_id ? `<div><span>Square ID &nbsp;</span><strong style="font-size:0.78rem">${b.square_payment_id}</strong></div>` : ''}
-              </div>
+            <div style="font-size:0.875rem;color:var(--clr-muted);display:flex;flex-direction:column;gap:0.5rem">
+              <div><strong style="color:var(--clr-text)">Booked on:</strong> ${formatDate(b.created_at?.split('T')[0])}</div>
+              <div><strong style="color:var(--clr-text)">Email:</strong> ${b.profiles?.email || '—'}</div>
+              <div><strong style="color:var(--clr-text)">Deposit:</strong> ${b.deposit_paid ? `Paid — $${((b.deposit_amount || 0) / 100).toFixed(0)}` : 'Not paid'}</div>
+              ${b.square_payment_id ? `<div><strong style="color:var(--clr-text)">Square ID:</strong><br><code style="font-size:0.75rem">${b.square_payment_id}</code></div>` : ''}
             </div>
           </div>
         </td>
@@ -396,44 +333,6 @@ async function saveNote(id) {
     const orig = btn.textContent;
     btn.textContent = error ? 'Error!' : 'Saved!';
     setTimeout(() => { btn.textContent = orig; }, 1500);
-  }
-}
-
-/* ── Client info helpers (parse from notes) ─────────────────── */
-function parseNotesField(notes, key) {
-  if (!notes) return '—';
-  const parts = notes.split('|').map(p => p.trim());
-  const match = parts.find(p => p.startsWith(key + ':'));
-  return match ? match.replace(key + ':', '').trim() : '—';
-}
-function clientName(b)  { return b.profiles?.full_name  || parseNotesField(b.notes, 'Customer') || '—'; }
-function clientEmail(b) { return b.profiles?.email       || parseNotesField(b.notes, 'Email')    || '—'; }
-function clientPhone(b) { return b.profiles?.phone       || parseNotesField(b.notes, 'Phone')    || '—'; }
-
-/* ── Save full edit ─────────────────────────────────────────── */
-async function saveEdit(id) {
-  const get = field => document.getElementById(`ef-${field}-${id}`)?.value;
-  const totalDollars = parseFloat(get('total'));
-  const updates = {
-    service_name:   get('service'),
-    vehicle_type:   get('vtype'),
-    preferred_date: get('date') || null,
-    preferred_time: get('time') || null,
-    status:         get('status'),
-    notes:          get('notes'),
-    admin_notes:    get('adminnotes'),
-    total_amount:   isNaN(totalDollars) ? null : Math.round(totalDollars * 100),
-  };
-  const msgEl = document.getElementById(`ef-msg-${id}`);
-  const { error } = await _supabase.from('bookings').update(updates).eq('id', id);
-  if (error) {
-    msgEl.textContent = 'Error saving!';
-    msgEl.style.color = '#e91e8c';
-  } else {
-    msgEl.textContent = 'Saved ✓';
-    msgEl.style.color = '#4ade80';
-    setTimeout(() => { msgEl.textContent = ''; }, 2000);
-    await loadBookings();
   }
 }
 
