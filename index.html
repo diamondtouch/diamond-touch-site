@@ -33,7 +33,7 @@
     <div class="top-bar__inner">
       <div class="top-bar__left">
         <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" width="14" height="14"><path d="M22 16.92v3a2 2 0 01-2.18 2 19.79 19.79 0 01-8.63-3.07A19.5 19.5 0 013.07 9.81a19.79 19.79 0 01-3.07-8.63A2 2 0 012 1h3a2 2 0 012 1.72c.127.96.361 1.903.7 2.81a2 2 0 01-.45 2.11L6.09 8.91a16 16 0 006 6l1.27-1.27a2 2 0 012.11-.45c.907.339 1.85.573 2.81.7A2 2 0 0122 16.92z"/></svg>
-        <span>Call or Text: <a href="tel:+19513000000">(951) 300-0000</a></span>
+        <span>Call or Text: <a href="tel:+19512930214">(951) 293-0214</a></span>
       </div>
       <div class="top-bar__right">
         <a href="portal/login.html" class="top-bar__link" id="topbar-signin">Sign In</a>
@@ -638,15 +638,8 @@
           </div>
           <div class="embed-timeslots" id="embed-timeslots" style="display:none">
             <h4 class="embed-timeslots__label">Select a time</h4>
-            <div class="embed-timeslots__grid">
-              <button class="embed-time-btn" data-time="8:00 AM">8:00 AM</button>
-              <button class="embed-time-btn" data-time="9:00 AM">9:00 AM</button>
-              <button class="embed-time-btn" data-time="10:00 AM">10:00 AM</button>
-              <button class="embed-time-btn" data-time="11:00 AM">11:00 AM</button>
-              <button class="embed-time-btn" data-time="12:00 PM">12:00 PM</button>
-              <button class="embed-time-btn" data-time="1:00 PM">1:00 PM</button>
-              <button class="embed-time-btn" data-time="2:00 PM">2:00 PM</button>
-              <button class="embed-time-btn" data-time="3:00 PM">3:00 PM</button>
+            <div class="embed-timeslots__grid" id="embed-timeslots-grid">
+              <!-- Populated dynamically based on selected day -->
             </div>
           </div>
           <div class="embed-actions">
@@ -1013,14 +1006,41 @@
         if (state.date && thisDate.toDateString() === state.date.toDateString()) el.classList.add("selected");
         el.addEventListener("click", () => {
           state.date = thisDate;
+          state.time = null;
           document.querySelectorAll(".embed-cal-day").forEach(d => d.classList.remove("selected"));
           el.classList.add("selected");
+          document.getElementById("embed-step3-next").disabled = true;
+          renderTimeSlots(thisDate.getDay());
           document.getElementById("embed-timeslots").style.display = "block";
-          document.getElementById("embed-step3-next").disabled = !state.time;
         });
       }
       daysEl.appendChild(el);
     }
+  }
+
+  // Time slots by day: 0=Sun,1=Mon,2=Tue,3=Wed,4=Thu,5=Fri,6=Sat
+  const SLOTS = {
+    0: ["6:00 PM", "6:30 PM", "7:00 PM", "7:30 PM", "8:00 PM"],
+    1: ["6:00 PM", "6:30 PM", "7:00 PM", "7:30 PM", "8:00 PM"],
+    2: ["7:30 AM", "8:00 AM", "9:00 AM", "10:00 AM", "11:00 AM", "12:00 PM", "1:00 PM", "2:00 PM", "3:00 PM", "4:00 PM", "5:00 PM", "6:00 PM", "7:00 PM"],
+    3: ["6:00 PM", "6:30 PM", "7:00 PM", "7:30 PM", "8:00 PM"],
+    4: ["7:30 AM", "8:00 AM", "9:00 AM", "10:00 AM", "11:00 AM", "12:00 PM", "1:00 PM", "2:00 PM", "3:00 PM", "4:00 PM", "5:00 PM", "6:00 PM", "7:00 PM"],
+    5: ["6:00 PM", "6:30 PM", "7:00 PM", "7:30 PM", "8:00 PM"],
+    6: ["6:00 PM", "6:30 PM", "7:00 PM", "7:30 PM", "8:00 PM"]
+  };
+
+  function renderTimeSlots(dayOfWeek) {
+    const grid = document.getElementById("embed-timeslots-grid");
+    const slots = SLOTS[dayOfWeek] || [];
+    grid.innerHTML = slots.map(t => `<button class="embed-time-btn" data-time="${t}">${t}</button>`).join("");
+    grid.querySelectorAll(".embed-time-btn").forEach(btn => {
+      btn.addEventListener("click", () => {
+        grid.querySelectorAll(".embed-time-btn").forEach(b => b.classList.remove("selected"));
+        btn.classList.add("selected");
+        state.time = btn.dataset.time;
+        document.getElementById("embed-step3-next").disabled = !state.date;
+      });
+    });
   }
 
   document.getElementById("embed-cal-prev").addEventListener("click", () => { calDate.setMonth(calDate.getMonth() - 1); renderCal(); });
