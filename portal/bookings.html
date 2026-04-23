@@ -1,0 +1,326 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>My Bookings — Diamond Touch Detailing</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300;0,400;0,500;0,600;1,300;1,400&family=DM+Sans:ital,opsz,wght@0,9..40,300;0,9..40,400;0,9..40,500;0,9..40,600;1,9..40,300&display=swap" rel="stylesheet" />
+  <link rel="stylesheet" href="../css/portal.css" />
+</head>
+<body>
+
+<div class="portal-layout">
+
+  <!-- ========== SIDEBAR ========== -->
+  <aside class="sidebar">
+    <div class="sidebar__logo">
+      <a href="/"><img src="../assets/logo-horizontal.png" alt="Diamond Touch Detailing" /></a>
+    </div>
+    <nav class="sidebar__nav" aria-label="Portal navigation">
+      <a href="dashboard.html" class="sidebar__link">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><rect x="3" y="3" width="7" height="7" rx="1"/><rect x="14" y="3" width="7" height="7" rx="1"/><rect x="3" y="14" width="7" height="7" rx="1"/><rect x="14" y="14" width="7" height="7" rx="1"/></svg>
+        Dashboard
+      </a>
+      <a href="bookings.html" class="sidebar__link active">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><rect x="3" y="4" width="18" height="18" rx="2"/><path d="M16 2v4M8 2v4M3 10h18"/></svg>
+        My Bookings
+      </a>
+      <a href="vehicles.html" class="sidebar__link">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M5 17H3a2 2 0 01-2-2V9a2 2 0 012-2h1l2-3h10l2 3h1a2 2 0 012 2v6a2 2 0 01-2 2h-2"/><circle cx="7" cy="17" r="2"/><circle cx="17" cy="17" r="2"/></svg>
+        My Vehicles
+      </a>
+      <a href="membership.html" class="sidebar__link">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z"/></svg>
+        Membership
+      </a>
+      <a href="account.html" class="sidebar__link">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><circle cx="12" cy="8" r="4"/><path d="M4 20c0-4 3.6-7 8-7s8 3 8 7"/></svg>
+        Account
+      </a>
+    </nav>
+    <div class="sidebar__footer">
+      <div class="sidebar__user">
+        <div class="sidebar__avatar" id="userAvatar">—</div>
+        <div class="sidebar__user-info">
+          <div class="sidebar__user-name" id="userName">Loading...</div>
+          <div class="sidebar__user-email" id="userEmail"></div>
+        </div>
+      </div>
+      <button class="btn-signout" onclick="signOut()">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M17 16l4-4m0 0l-4-4m4 4H7m6 4v1a2 2 0 01-2 2H5a2 2 0 01-2-2V7a2 2 0 012-2h6a2 2 0 012 2v1"/></svg>
+        Sign out
+      </button>
+    </div>
+  </aside>
+
+  <!-- ========== MAIN ========== -->
+  <main class="portal-main">
+    <div class="portal-main__inner">
+
+      <div class="page-header">
+        <p class="page-header__eyebrow">Client Portal</p>
+        <h1 class="page-header__title">My Bookings</h1>
+        <p class="page-header__sub">View and manage your upcoming and past appointments.</p>
+      </div>
+
+      <!-- UPCOMING BOOKINGS -->
+      <h2 class="section-heading">Upcoming Bookings</h2>
+      <div id="upcomingList">
+        <div class="loading-row">Loading...</div>
+      </div>
+
+      <!-- PAST BOOKINGS -->
+      <h2 class="section-heading" style="margin-top:2.5rem">Past Bookings</h2>
+      <div id="pastList">
+        <div class="loading-row">Loading...</div>
+      </div>
+
+    </div>
+  </main>
+
+</div>
+
+<!-- ========== MOBILE TAB BAR ========== -->
+<nav class="tab-bar" aria-label="Mobile navigation">
+  <div class="tab-bar__inner">
+    <a href="dashboard.html" class="tab-bar__item">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><rect x="3" y="3" width="7" height="7" rx="1"/><rect x="14" y="3" width="7" height="7" rx="1"/><rect x="3" y="14" width="7" height="7" rx="1"/><rect x="14" y="14" width="7" height="7" rx="1"/></svg>
+      Home
+    </a>
+    <a href="bookings.html" class="tab-bar__item active">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><rect x="3" y="4" width="18" height="18" rx="2"/><path d="M16 2v4M8 2v4M3 10h18"/></svg>
+      Bookings
+    </a>
+    <a href="vehicles.html" class="tab-bar__item">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M5 17H3a2 2 0 01-2-2V9a2 2 0 012-2h1l2-3h10l2 3h1a2 2 0 012 2v6a2 2 0 01-2 2h-2"/><circle cx="7" cy="17" r="2"/><circle cx="17" cy="17" r="2"/></svg>
+      Vehicles
+    </a>
+    <a href="membership.html" class="tab-bar__item">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z"/></svg>
+      Member
+    </a>
+    <a href="account.html" class="tab-bar__item">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><circle cx="12" cy="8" r="4"/><path d="M4 20c0-4 3.6-7 8-7s8 3 8 7"/></svg>
+      Account
+    </a>
+  </div>
+</nav>
+
+<!-- ========== CANCEL CONFIRM DIALOG ========== -->
+<div class="modal-overlay" id="cancelOverlay" role="dialog" aria-modal="true" aria-labelledby="cancelDialogTitle">
+  <div class="modal">
+    <div class="modal__head">
+      <h2 class="modal__title" id="cancelDialogTitle">Cancel Booking</h2>
+      <button class="modal__close" id="cancelDialogClose" aria-label="Close">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M18 6 6 18M6 6l12 12"/></svg>
+      </button>
+    </div>
+    <div class="modal__body">
+      <p style="font-size:0.9375rem;color:var(--clr-muted);line-height:1.6">Are you sure you want to cancel this appointment? This action cannot be undone.</p>
+      <div id="cancelBookingDetails" style="margin-top:1rem;padding:1rem;background:var(--clr-base);border:1px solid var(--clr-border);border-radius:var(--radius)"></div>
+    </div>
+    <div class="modal__actions">
+      <button class="btn btn--ghost btn--sm" id="cancelDialogNo">Keep Booking</button>
+      <button class="btn btn--danger btn--sm" id="cancelDialogYes">
+        <span id="cancelBtnText">Yes, Cancel</span>
+        <span class="spinner" id="cancelSpinner" style="display:none"></span>
+      </button>
+    </div>
+  </div>
+</div>
+
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2/dist/umd/supabase.js"></script>
+<script src="../js/supabase-config.js"></script>
+<script src="../js/auth.js"></script>
+<script>
+(async () => {
+  const session = await requireAuth('../portal/login.html');
+  if (!session) return;
+
+  const profile = await getUserProfile();
+  if (!profile) return;
+
+  // Populate sidebar
+  document.getElementById('userName').textContent = profile.full_name || 'Client';
+  document.getElementById('userEmail').textContent = session.user.email || '';
+  document.getElementById('userAvatar').textContent = (profile.full_name || 'C').charAt(0).toUpperCase();
+
+  // ── Helpers ────────────────────────────────────────────────
+  const today = new Date().toISOString().split('T')[0];
+
+  function canCancel(dateStr, timeStr) {
+    const t = timeStr || '09:00';
+    const bookingDt = new Date(dateStr + 'T' + t);
+    return (bookingDt - Date.now()) > 24 * 60 * 60 * 1000;
+  }
+
+  function bookingCardHTML(b, isPast) {
+    const vehicleStr = [b.vehicle_year, b.vehicle_make, b.vehicle_model].filter(Boolean).join(' ') || '';
+    const colorStr = [b.vehicle_color, b.vehicle_type].filter(Boolean).join(' · ');
+    const vehicleDisplay = [vehicleStr, colorStr].filter(Boolean).join(' — ');
+    const statusBadge = `<span class="badge badge--${b.status}">${capitalize(b.status)}</span>`;
+    const timeDisplay = b.preferred_time ? formatTime(b.preferred_time) : '';
+
+    if (isPast) {
+      const bookAgainUrl = `../book.html${b.service_name ? '?service=' + encodeURIComponent(b.service_name) : ''}`;
+      return `
+        <div class="booking-card booking-card--past">
+          <div class="booking-card__header">
+            <div class="booking-card__service">${b.service_name || 'Detail Service'}</div>
+            ${statusBadge}
+          </div>
+          <div class="booking-card__meta">
+            <span>${formatDate(b.preferred_date)}</span>
+            ${timeDisplay ? `<span>·</span><span>${timeDisplay}</span>` : ''}
+          </div>
+          ${vehicleDisplay ? `<div class="booking-card__vehicle">${vehicleDisplay}</div>` : ''}
+          ${b.status === 'completed' ? `
+          <div class="booking-card__actions">
+            <a href="${bookAgainUrl}" class="btn btn--ghost btn--sm">Book Again</a>
+          </div>` : ''}
+        </div>`;
+    }
+
+    const showCancel = canCancel(b.preferred_date, b.preferred_time);
+    return `
+      <div class="booking-card" data-id="${b.id}">
+        <div class="booking-card__header">
+          <div class="booking-card__service">${b.service_name || 'Detail Service'}</div>
+          ${statusBadge}
+        </div>
+        <div class="booking-card__meta">
+          <span>${formatDate(b.preferred_date)}</span>
+          ${timeDisplay ? `<span>·</span><span>${timeDisplay}</span>` : ''}
+        </div>
+        ${vehicleDisplay ? `<div class="booking-card__vehicle">${vehicleDisplay}</div>` : ''}
+        ${showCancel ? `
+        <div class="booking-card__actions">
+          <button class="btn btn--ghost btn--sm cancel-btn" data-id="${b.id}" data-service="${b.service_name || 'Detail Service'}" data-date="${b.preferred_date}">
+            Cancel
+          </button>
+        </div>` : ''}
+      </div>`;
+  }
+
+  function capitalize(str) {
+    return str ? str.charAt(0).toUpperCase() + str.slice(1) : '';
+  }
+
+  function formatTime(t) {
+    if (!t) return '';
+    const [h, m] = t.split(':');
+    const hr = parseInt(h);
+    const ampm = hr >= 12 ? 'PM' : 'AM';
+    const hr12 = hr % 12 || 12;
+    return `${hr12}:${m} ${ampm}`;
+  }
+
+  // ── Load bookings ──────────────────────────────────────────
+  const { data: bookings, error } = await _supabase
+    .from('bookings')
+    .select('*')
+    .eq('user_id', profile.id)
+    .order('preferred_date', { ascending: true });
+
+  if (error) {
+    document.getElementById('upcomingList').innerHTML = `<p style="color:var(--clr-muted)">Failed to load bookings.</p>`;
+    document.getElementById('pastList').innerHTML = '';
+    return;
+  }
+
+  const upcoming = (bookings || []).filter(b =>
+    ['pending','confirmed'].includes(b.status) && b.preferred_date >= today
+  );
+  const past = (bookings || []).filter(b =>
+    b.status === 'completed' || b.status === 'cancelled' ||
+    (b.preferred_date < today && !['pending','confirmed'].includes(b.status)) ||
+    (b.preferred_date < today)
+  ).sort((a, b) => b.preferred_date.localeCompare(a.preferred_date));
+
+  // Render upcoming
+  const upcomingEl = document.getElementById('upcomingList');
+  if (upcoming.length === 0) {
+    upcomingEl.innerHTML = `
+      <div class="booking-empty-state">
+        <div class="empty-state__icon">
+          <svg width="40" height="40" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.2"><rect x="3" y="4" width="18" height="18" rx="2"/><path d="M16 2v4M8 2v4M3 10h18"/></svg>
+        </div>
+        <div class="empty-state__title">No upcoming bookings</div>
+        <div class="empty-state__sub">Ready for your next detail?</div>
+        <a href="../book.html" class="btn btn--primary btn--sm" style="margin-top:1.25rem">Book Now</a>
+      </div>`;
+  } else {
+    upcomingEl.innerHTML = `<div class="booking-list">${upcoming.map(b => bookingCardHTML(b, false)).join('')}</div>`;
+  }
+
+  // Render past
+  const pastEl = document.getElementById('pastList');
+  if (past.length === 0) {
+    pastEl.innerHTML = `
+      <div class="booking-empty-state">
+        <div class="empty-state__title" style="font-size:1rem">No past bookings yet</div>
+        <div class="empty-state__sub">Your service history will appear here</div>
+      </div>`;
+  } else {
+    pastEl.innerHTML = `<div class="booking-list">${past.map(b => bookingCardHTML(b, true)).join('')}</div>`;
+  }
+
+  // ── Cancel dialog ──────────────────────────────────────────
+  let cancelTargetId = null;
+
+  function openCancelDialog(id, serviceName, dateStr) {
+    cancelTargetId = id;
+    document.getElementById('cancelBookingDetails').innerHTML = `
+      <div style="font-weight:600;font-size:0.9375rem">${serviceName}</div>
+      <div style="color:var(--clr-muted);font-size:0.875rem;margin-top:0.25rem">${formatDate(dateStr)}</div>`;
+    document.getElementById('cancelOverlay').classList.add('open');
+  }
+
+  function closeCancelDialog() {
+    document.getElementById('cancelOverlay').classList.remove('open');
+    cancelTargetId = null;
+  }
+
+  document.getElementById('cancelDialogClose').addEventListener('click', closeCancelDialog);
+  document.getElementById('cancelDialogNo').addEventListener('click', closeCancelDialog);
+  document.getElementById('cancelOverlay').addEventListener('click', (e) => {
+    if (e.target === document.getElementById('cancelOverlay')) closeCancelDialog();
+  });
+
+  document.getElementById('cancelDialogYes').addEventListener('click', async () => {
+    if (!cancelTargetId) return;
+    document.getElementById('cancelBtnText').style.display = 'none';
+    document.getElementById('cancelSpinner').style.display = 'inline-block';
+    document.getElementById('cancelDialogYes').disabled = true;
+
+    const { error: updateError } = await _supabase
+      .from('bookings')
+      .update({ status: 'cancelled' })
+      .eq('id', cancelTargetId)
+      .eq('user_id', profile.id);
+
+    document.getElementById('cancelBtnText').style.display = '';
+    document.getElementById('cancelSpinner').style.display = 'none';
+    document.getElementById('cancelDialogYes').disabled = false;
+    closeCancelDialog();
+
+    if (!updateError) {
+      // Reload page to reflect change
+      window.location.reload();
+    }
+  });
+
+  // Delegate cancel button clicks
+  document.addEventListener('click', (e) => {
+    const btn = e.target.closest('.cancel-btn');
+    if (btn) {
+      openCancelDialog(btn.dataset.id, btn.dataset.service, btn.dataset.date);
+    }
+  });
+})();
+</script>
+
+</body>
+</html>

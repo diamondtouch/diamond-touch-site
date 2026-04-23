@@ -1,0 +1,378 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Membership — Diamond Touch Detailing</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300;0,400;0,500;0,600;1,300;1,400&family=DM+Sans:ital,opsz,wght@0,9..40,300;0,9..40,400;0,9..40,500;0,9..40,600;1,9..40,300&display=swap" rel="stylesheet" />
+  <link rel="stylesheet" href="../css/portal.css" />
+</head>
+<body>
+
+<div class="portal-layout">
+
+  <!-- ========== SIDEBAR ========== -->
+  <aside class="sidebar">
+    <div class="sidebar__logo">
+      <a href="/"><img src="../assets/logo-horizontal.png" alt="Diamond Touch Detailing" /></a>
+    </div>
+    <nav class="sidebar__nav" aria-label="Portal navigation">
+      <a href="dashboard.html" class="sidebar__link">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><rect x="3" y="3" width="7" height="7" rx="1"/><rect x="14" y="3" width="7" height="7" rx="1"/><rect x="3" y="14" width="7" height="7" rx="1"/><rect x="14" y="14" width="7" height="7" rx="1"/></svg>
+        Dashboard
+      </a>
+      <a href="bookings.html" class="sidebar__link">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><rect x="3" y="4" width="18" height="18" rx="2"/><path d="M16 2v4M8 2v4M3 10h18"/></svg>
+        My Bookings
+      </a>
+      <a href="vehicles.html" class="sidebar__link">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M5 17H3a2 2 0 01-2-2V9a2 2 0 012-2h1l2-3h10l2 3h1a2 2 0 012 2v6a2 2 0 01-2 2h-2"/><circle cx="7" cy="17" r="2"/><circle cx="17" cy="17" r="2"/></svg>
+        My Vehicles
+      </a>
+      <a href="membership.html" class="sidebar__link active">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z"/></svg>
+        Membership
+      </a>
+      <a href="account.html" class="sidebar__link">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><circle cx="12" cy="8" r="4"/><path d="M4 20c0-4 3.6-7 8-7s8 3 8 7"/></svg>
+        Account
+      </a>
+    </nav>
+    <div class="sidebar__footer">
+      <div class="sidebar__user">
+        <div class="sidebar__avatar" id="userAvatar">—</div>
+        <div class="sidebar__user-info">
+          <div class="sidebar__user-name" id="userName">Loading...</div>
+          <div class="sidebar__user-email" id="userEmail"></div>
+        </div>
+      </div>
+      <button class="btn-signout" onclick="signOut()">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M17 16l4-4m0 0l-4-4m4 4H7m6 4v1a2 2 0 01-2 2H5a2 2 0 01-2-2V7a2 2 0 012-2h6a2 2 0 012 2v1"/></svg>
+        Sign out
+      </button>
+    </div>
+  </aside>
+
+  <!-- ========== MAIN ========== -->
+  <main class="portal-main">
+    <div class="portal-main__inner">
+
+      <div class="page-header">
+        <p class="page-header__eyebrow">Client Portal</p>
+        <h1 class="page-header__title">Membership</h1>
+        <p class="page-header__sub">The Diamond Club — monthly luxury detailing at a preferred rate.</p>
+      </div>
+
+      <!-- Content rendered by JS -->
+      <div id="membershipContent">
+        <div class="loading-row">Loading membership status...</div>
+      </div>
+
+    </div>
+  </main>
+
+</div>
+
+<!-- ========== MOBILE TAB BAR ========== -->
+<nav class="tab-bar" aria-label="Mobile navigation">
+  <div class="tab-bar__inner">
+    <a href="dashboard.html" class="tab-bar__item">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><rect x="3" y="3" width="7" height="7" rx="1"/><rect x="14" y="3" width="7" height="7" rx="1"/><rect x="3" y="14" width="7" height="7" rx="1"/><rect x="14" y="14" width="7" height="7" rx="1"/></svg>
+      Home
+    </a>
+    <a href="bookings.html" class="tab-bar__item">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><rect x="3" y="4" width="18" height="18" rx="2"/><path d="M16 2v4M8 2v4M3 10h18"/></svg>
+      Bookings
+    </a>
+    <a href="vehicles.html" class="tab-bar__item">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M5 17H3a2 2 0 01-2-2V9a2 2 0 012-2h1l2-3h10l2 3h1a2 2 0 012 2v6a2 2 0 01-2 2h-2"/><circle cx="7" cy="17" r="2"/><circle cx="17" cy="17" r="2"/></svg>
+      Vehicles
+    </a>
+    <a href="membership.html" class="tab-bar__item active">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z"/></svg>
+      Member
+    </a>
+    <a href="account.html" class="tab-bar__item">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><circle cx="12" cy="8" r="4"/><path d="M4 20c0-4 3.6-7 8-7s8 3 8 7"/></svg>
+      Account
+    </a>
+  </div>
+</nav>
+
+<!-- ========== CANCEL MEMBERSHIP DIALOG ========== -->
+<div class="modal-overlay" id="cancelMemberOverlay" role="dialog" aria-modal="true">
+  <div class="modal">
+    <div class="modal__head">
+      <h2 class="modal__title">Cancel Membership</h2>
+      <button class="modal__close" id="cancelMemberClose" aria-label="Close">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M18 6 6 18M6 6l12 12"/></svg>
+      </button>
+    </div>
+    <div class="modal__body">
+      <p style="font-size:0.9375rem;color:var(--clr-muted);line-height:1.6">Are you sure you want to cancel your Diamond Club membership? You'll lose access to member benefits at the end of your current billing period.</p>
+    </div>
+    <div class="modal__actions">
+      <button class="btn btn--ghost btn--sm" id="cancelMemberNo">Keep Membership</button>
+      <button class="btn btn--danger btn--sm" id="cancelMemberYes">
+        <span id="cancelMemberBtnText">Yes, Cancel</span>
+        <span class="spinner" id="cancelMemberSpinner" style="display:none"></span>
+      </button>
+    </div>
+  </div>
+</div>
+
+<!-- ========== JOIN INFO DIALOG ========== -->
+<div class="modal-overlay" id="joinInfoOverlay" role="dialog" aria-modal="true">
+  <div class="modal">
+    <div class="modal__head">
+      <h2 class="modal__title" id="joinPlanName">Join Diamond Club</h2>
+      <button class="modal__close" id="joinInfoClose" aria-label="Close">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M18 6 6 18M6 6l12 12"/></svg>
+      </button>
+    </div>
+    <div class="modal__body">
+      <p style="font-size:0.9375rem;color:var(--clr-muted);line-height:1.6;margin-bottom:1rem">We're excited to have you join! To set up your membership, please contact us directly:</p>
+      <a href="mailto:sales@diamondtouchdetails.com" class="btn btn--primary btn--full">
+        Email sales@diamondtouchdetails.com
+      </a>
+      <p style="text-align:center;font-size:0.8125rem;color:var(--clr-muted-2);margin-top:1rem">We'll get you set up within 24 hours.</p>
+    </div>
+  </div>
+</div>
+
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2/dist/umd/supabase.js"></script>
+<script src="../js/supabase-config.js"></script>
+<script src="../js/auth.js"></script>
+<script>
+(async () => {
+  const session = await requireAuth('../portal/login.html');
+  if (!session) return;
+
+  const profile = await getUserProfile();
+  if (!profile) return;
+
+  // Sidebar
+  document.getElementById('userName').textContent = profile.full_name || 'Client';
+  document.getElementById('userEmail').textContent = session.user.email || '';
+  document.getElementById('userAvatar').textContent = (profile.full_name || 'C').charAt(0).toUpperCase();
+
+  const contentEl = document.getElementById('membershipContent');
+
+  // ── Load membership ────────────────────────────────────────
+  const { data: membership } = await _supabase
+    .from('memberships')
+    .select('*')
+    .eq('user_id', profile.id)
+    .maybeSingle();
+
+  const isActive = membership && membership.status === 'active';
+
+  if (isActive) {
+    renderActiveMembership(membership);
+  } else {
+    renderJoinPlans();
+  }
+
+  // ── Render: active membership ──────────────────────────────
+  function renderActiveMembership(m) {
+    const planLabel = m.plan === 'suv' ? 'SUV / Truck Plan' : 'Sedan Plan';
+    const price = m.plan === 'suv' ? '$179' : '$149';
+    const nextBilling = formatDate(m.next_billing_date);
+
+    contentEl.innerHTML = `
+      <div class="active-membership-card">
+        <div class="active-membership-card__badge">
+          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z"/></svg>
+          Diamond Club Member
+        </div>
+        <div class="active-membership-card__header">
+          <div>
+            <div class="active-membership-card__plan">${planLabel}</div>
+            <span class="badge badge--active" style="margin-top:0.5rem">Active</span>
+          </div>
+          <div class="active-membership-card__price">${price}<span class="active-membership-card__period">/mo</span></div>
+        </div>
+        <div class="active-membership-card__divider"></div>
+        <div class="active-membership-card__info">
+          <div class="active-membership-card__info-row">
+            <span class="active-membership-card__info-label">Next billing</span>
+            <span class="active-membership-card__info-value">${nextBilling}</span>
+          </div>
+          <div class="active-membership-card__info-row">
+            <span class="active-membership-card__info-label">Status</span>
+            <span class="active-membership-card__info-value">Active &amp; renewing</span>
+          </div>
+        </div>
+      </div>
+
+      <div class="section-card" style="margin-top:1.5rem">
+        <h2 class="section-card__title">Member Benefits</h2>
+        <ul class="benefits-list">
+          <li class="benefits-list__item">
+            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M20 6 9 17l-5-5"/></svg>
+            Monthly Signature Detail included
+          </li>
+          <li class="benefits-list__item">
+            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M20 6 9 17l-5-5"/></svg>
+            Priority 48-hour booking window
+          </li>
+          <li class="benefits-list__item">
+            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M20 6 9 17l-5-5"/></svg>
+            15% off all add-on services
+          </li>
+          <li class="benefits-list__item">
+            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M20 6 9 17l-5-5"/></svg>
+            Free quarterly odor treatment
+          </li>
+          <li class="benefits-list__item">
+            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M20 6 9 17l-5-5"/></svg>
+            Cancel anytime, no fees
+          </li>
+        </ul>
+      </div>
+
+      <div class="danger-zone" style="margin-top:1.5rem">
+        <div class="danger-zone__inner">
+          <div>
+            <div class="danger-zone__title">Cancel Membership</div>
+            <div class="danger-zone__sub">You'll keep access until the end of your billing period.</div>
+          </div>
+          <button class="btn btn--ghost btn--sm" id="openCancelMemberBtn" style="color:#fca5a5;border-color:rgba(239,68,68,0.3);white-space:nowrap">Cancel Membership</button>
+        </div>
+      </div>`;
+
+    document.getElementById('openCancelMemberBtn').addEventListener('click', () => {
+      document.getElementById('cancelMemberOverlay').classList.add('open');
+    });
+  }
+
+  // ── Render: join plans ─────────────────────────────────────
+  function renderJoinPlans() {
+    contentEl.innerHTML = `
+      <div class="plan-hero">
+        <div class="plan-hero__icon">
+          <svg width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.2"><path d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z"/></svg>
+        </div>
+        <h2 class="plan-hero__title">Join the Diamond Club</h2>
+        <p class="plan-hero__sub">Monthly luxury detailing at a preferred rate. Cancel anytime.</p>
+      </div>
+
+      <div class="plan-grid">
+
+        <div class="plan-card">
+          <div class="plan-card__name">Sedan Plan</div>
+          <div class="plan-card__price-row">
+            <span class="plan-card__price">$149</span>
+            <span class="plan-card__period">/month</span>
+          </div>
+          <ul class="plan-card__features">
+            <li class="plan-card__feature">
+              <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M20 6 9 17l-5-5"/></svg>
+              Monthly Signature Detail
+            </li>
+            <li class="plan-card__feature">
+              <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M20 6 9 17l-5-5"/></svg>
+              Priority 48-hour booking
+            </li>
+            <li class="plan-card__feature">
+              <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M20 6 9 17l-5-5"/></svg>
+              15% off add-on services
+            </li>
+            <li class="plan-card__feature">
+              <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M20 6 9 17l-5-5"/></svg>
+              Free quarterly odor treatment
+            </li>
+            <li class="plan-card__feature">
+              <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M20 6 9 17l-5-5"/></svg>
+              Cancel anytime
+            </li>
+          </ul>
+          <button class="btn btn--ghost btn--full join-plan-btn" data-plan="Sedan Plan">Join Now</button>
+        </div>
+
+        <div class="plan-card plan-card--featured">
+          <div class="plan-card__top-badge">SUV &amp; Truck</div>
+          <div class="plan-card__name">SUV / Truck Plan</div>
+          <div class="plan-card__price-row">
+            <span class="plan-card__price">$179</span>
+            <span class="plan-card__period">/month</span>
+          </div>
+          <ul class="plan-card__features">
+            <li class="plan-card__feature">
+              <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M20 6 9 17l-5-5"/></svg>
+              Monthly Signature Detail
+            </li>
+            <li class="plan-card__feature">
+              <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M20 6 9 17l-5-5"/></svg>
+              Priority 48-hour booking
+            </li>
+            <li class="plan-card__feature">
+              <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M20 6 9 17l-5-5"/></svg>
+              15% off add-on services
+            </li>
+            <li class="plan-card__feature">
+              <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M20 6 9 17l-5-5"/></svg>
+              Free quarterly odor treatment
+            </li>
+            <li class="plan-card__feature">
+              <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M20 6 9 17l-5-5"/></svg>
+              Cancel anytime
+            </li>
+          </ul>
+          <button class="btn btn--primary btn--full join-plan-btn" data-plan="SUV / Truck Plan">Join Now</button>
+        </div>
+
+      </div>`;
+
+    document.querySelectorAll('.join-plan-btn').forEach(btn => {
+      btn.addEventListener('click', () => {
+        document.getElementById('joinPlanName').textContent = `Join — ${btn.dataset.plan}`;
+        document.getElementById('joinInfoOverlay').classList.add('open');
+      });
+    });
+  }
+
+  // ── Cancel membership dialog ───────────────────────────────
+  function closeCancelMember() {
+    document.getElementById('cancelMemberOverlay').classList.remove('open');
+  }
+
+  document.getElementById('cancelMemberClose').addEventListener('click', closeCancelMember);
+  document.getElementById('cancelMemberNo').addEventListener('click', closeCancelMember);
+  document.getElementById('cancelMemberOverlay').addEventListener('click', (e) => {
+    if (e.target === document.getElementById('cancelMemberOverlay')) closeCancelMember();
+  });
+
+  document.getElementById('cancelMemberYes').addEventListener('click', async () => {
+    document.getElementById('cancelMemberBtnText').style.display = 'none';
+    document.getElementById('cancelMemberSpinner').style.display = 'inline-block';
+    document.getElementById('cancelMemberYes').disabled = true;
+
+    const { error: updateErr } = await _supabase
+      .from('memberships')
+      .update({ status: 'cancelled' })
+      .eq('user_id', profile.id);
+
+    document.getElementById('cancelMemberBtnText').style.display = '';
+    document.getElementById('cancelMemberSpinner').style.display = 'none';
+    document.getElementById('cancelMemberYes').disabled = false;
+    closeCancelMember();
+
+    if (!updateErr) window.location.reload();
+  });
+
+  // ── Join info dialog ───────────────────────────────────────
+  document.getElementById('joinInfoClose').addEventListener('click', () => {
+    document.getElementById('joinInfoOverlay').classList.remove('open');
+  });
+  document.getElementById('joinInfoOverlay').addEventListener('click', (e) => {
+    if (e.target === document.getElementById('joinInfoOverlay'))
+      document.getElementById('joinInfoOverlay').classList.remove('open');
+  });
+})();
+</script>
+
+</body>
+</html>

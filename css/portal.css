@@ -1537,3 +1537,644 @@ tbody td {
   .cal-cell__pills { display: none; }
   .cal-title { font-size: 1.25rem; min-width: 140px; }
 }
+
+/* ============================================================
+   STEP 4 — Client Portal: Bookings, Vehicles, Membership, Account
+   ============================================================ */
+
+/* ─── Section heading ────────────────────────────────────── */
+.section-heading {
+  font-family: var(--font-display);
+  font-size: 1.375rem;
+  font-weight: 400;
+  color: var(--clr-text);
+  margin-bottom: 1rem;
+}
+
+/* ─── Loading row ────────────────────────────────────────── */
+.loading-row {
+  color: var(--clr-muted-2);
+  font-size: 0.9rem;
+  padding: 1.5rem 0;
+}
+
+/* ─── Danger button ──────────────────────────────────────── */
+.btn--danger {
+  background: rgba(239, 68, 68, 0.12);
+  color: #fca5a5;
+  border: 1px solid rgba(239, 68, 68, 0.3);
+}
+
+.btn--danger:hover {
+  background: rgba(239, 68, 68, 0.22);
+  border-color: rgba(239, 68, 68, 0.5);
+}
+
+.btn--danger:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+}
+
+/* ─── Booking cards ──────────────────────────────────────── */
+.booking-list {
+  display: flex;
+  flex-direction: column;
+  gap: 0.875rem;
+}
+
+.booking-card {
+  background: var(--clr-surface);
+  border: 1px solid var(--clr-border);
+  border-radius: var(--radius-lg);
+  padding: 1.25rem 1.5rem;
+  transition: border-color 180ms;
+}
+
+.booking-card:hover {
+  border-color: var(--clr-muted-2);
+}
+
+.booking-card--past {
+  opacity: 0.65;
+}
+
+.booking-card--past:hover {
+  opacity: 0.85;
+  border-color: var(--clr-border);
+}
+
+.booking-card__header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 0.75rem;
+  margin-bottom: 0.5rem;
+  flex-wrap: wrap;
+}
+
+.booking-card__service {
+  font-family: var(--font-display);
+  font-size: 1.25rem;
+  font-weight: 400;
+  color: var(--clr-text);
+}
+
+.booking-card__meta {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  font-size: 0.875rem;
+  color: var(--clr-muted);
+  margin-bottom: 0.35rem;
+}
+
+.booking-card__vehicle {
+  font-size: 0.8125rem;
+  color: var(--clr-muted-2);
+  margin-bottom: 0.875rem;
+}
+
+.booking-card__actions {
+  display: flex;
+  gap: 0.5rem;
+  flex-wrap: wrap;
+}
+
+/* ─── Booking empty state ────────────────────────────────── */
+.booking-empty-state {
+  text-align: center;
+  padding: 3rem 1.5rem;
+  color: var(--clr-muted);
+}
+
+/* ─── Two-column form row ────────────────────────────────── */
+.form-row-2 {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 0.875rem;
+}
+
+@media (max-width: 520px) {
+  .form-row-2 {
+    grid-template-columns: 1fr;
+  }
+}
+
+/* ─── Type toggle buttons (Sedan / SUV / Truck) ──────────── */
+.type-toggle-group {
+  display: flex;
+  gap: 0.5rem;
+  flex-wrap: wrap;
+}
+
+.type-toggle-btn {
+  padding: 0.5rem 1.125rem;
+  border: 1px solid var(--clr-border);
+  border-radius: var(--radius);
+  font-size: 0.875rem;
+  font-weight: 500;
+  color: var(--clr-muted);
+  background: var(--clr-surface-2);
+  cursor: pointer;
+  transition: all 180ms;
+}
+
+.type-toggle-btn:hover {
+  border-color: var(--clr-muted);
+  color: var(--clr-text);
+}
+
+.type-toggle-btn.active {
+  background: var(--clr-pink-dim);
+  border-color: var(--clr-pink);
+  color: var(--clr-pink);
+}
+
+/* ─── Vehicle cards ──────────────────────────────────────── */
+.vehicle-card {
+  background: var(--clr-surface);
+  border: 1px solid var(--clr-border);
+  border-radius: var(--radius-lg);
+  padding: 1.25rem 1.5rem;
+  display: flex;
+  align-items: flex-start;
+  gap: 1rem;
+  margin-bottom: 0.875rem;
+  transition: border-color 180ms;
+}
+
+.vehicle-card:hover {
+  border-color: var(--clr-muted-2);
+}
+
+.vehicle-card__edit {
+  width: 100%;
+}
+
+.vehicle-card__icon {
+  width: 42px;
+  height: 42px;
+  border-radius: 50%;
+  background: var(--clr-pink-dim);
+  border: 1px solid rgba(233, 30, 140, 0.2);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: var(--clr-pink);
+  flex-shrink: 0;
+}
+
+.vehicle-card__info {
+  flex: 1;
+  min-width: 0;
+}
+
+.vehicle-card__name {
+  font-size: 0.9375rem;
+  font-weight: 600;
+  margin-bottom: 0.35rem;
+}
+
+.vehicle-card__meta {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  font-size: 0.8125rem;
+  color: var(--clr-muted);
+  flex-wrap: wrap;
+}
+
+.vehicle-card__notes {
+  font-size: 0.8125rem;
+  color: var(--clr-muted-2);
+  margin-top: 0.35rem;
+}
+
+.vehicle-card__actions {
+  display: flex;
+  gap: 0.5rem;
+  flex-shrink: 0;
+}
+
+.badge--vehicle-type {
+  background: rgba(255,255,255,0.06);
+  color: var(--clr-muted);
+  border: 1px solid var(--clr-border);
+  font-size: 0.65rem;
+  padding: 2px 7px;
+}
+
+/* ─── Section card (account / vehicles add form) ─────────── */
+.section-card {
+  background: var(--clr-surface);
+  border: 1px solid var(--clr-border);
+  border-radius: var(--radius-lg);
+  padding: 1.75rem;
+}
+
+.section-card__title {
+  font-family: var(--font-display);
+  font-size: 1.25rem;
+  font-weight: 400;
+  color: var(--clr-text);
+  margin-bottom: 1.25rem;
+  padding-bottom: 1rem;
+  border-bottom: 1px solid var(--clr-border);
+}
+
+/* ─── Danger zone ────────────────────────────────────────── */
+.danger-zone {
+  background: rgba(239, 68, 68, 0.04);
+  border: 1px solid rgba(239, 68, 68, 0.2);
+  border-radius: var(--radius-lg);
+  padding: 1.5rem 1.75rem;
+}
+
+.danger-zone__title {
+  font-size: 0.9375rem;
+  font-weight: 600;
+  color: #fca5a5;
+  margin-bottom: 0.35rem;
+}
+
+.danger-zone__sub {
+  font-size: 0.875rem;
+  color: var(--clr-muted);
+}
+
+.danger-zone__inner {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 1rem;
+  flex-wrap: wrap;
+}
+
+/* ─── Membership: plan hero ──────────────────────────────── */
+.plan-hero {
+  text-align: center;
+  padding: 2.5rem 1rem 2rem;
+  margin-bottom: 2rem;
+}
+
+.plan-hero__icon {
+  width: 64px;
+  height: 64px;
+  border-radius: 50%;
+  background: var(--clr-pink-dim);
+  border: 1px solid rgba(233, 30, 140, 0.3);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: var(--clr-pink);
+  margin: 0 auto 1.25rem;
+}
+
+.plan-hero__title {
+  font-family: var(--font-display);
+  font-size: 2.25rem;
+  font-weight: 400;
+  color: var(--clr-text);
+  margin-bottom: 0.5rem;
+}
+
+.plan-hero__sub {
+  font-size: 0.9375rem;
+  color: var(--clr-muted);
+}
+
+/* ─── Membership: plan grid ──────────────────────────────── */
+.plan-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 1.25rem;
+  max-width: 700px;
+  margin: 0 auto;
+}
+
+@media (max-width: 600px) {
+  .plan-grid { grid-template-columns: 1fr; }
+}
+
+.plan-card {
+  background: var(--clr-surface);
+  border: 1px solid var(--clr-border);
+  border-radius: var(--radius-lg);
+  padding: 2rem;
+  display: flex;
+  flex-direction: column;
+  gap: 0;
+  position: relative;
+}
+
+.plan-card--featured {
+  border-color: var(--clr-pink);
+  box-shadow: 0 0 0 1px var(--clr-pink), 0 8px 40px rgba(233, 30, 140, 0.12);
+}
+
+.plan-card__top-badge {
+  position: absolute;
+  top: -1px;
+  left: 50%;
+  transform: translateX(-50%);
+  background: var(--clr-pink);
+  color: #fff;
+  font-size: 0.65rem;
+  font-weight: 700;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  padding: 3px 12px;
+  border-radius: 0 0 6px 6px;
+}
+
+.plan-card__name {
+  font-family: var(--font-display);
+  font-size: 1.375rem;
+  font-weight: 400;
+  color: var(--clr-text);
+  margin-top: 0.75rem;
+  margin-bottom: 0.75rem;
+}
+
+.plan-card__price-row {
+  display: flex;
+  align-items: baseline;
+  gap: 0.25rem;
+  margin-bottom: 1.5rem;
+}
+
+.plan-card__price {
+  font-family: var(--font-display);
+  font-size: 3rem;
+  font-weight: 300;
+  color: var(--clr-text);
+  line-height: 1;
+}
+
+.plan-card__period {
+  font-size: 0.9rem;
+  color: var(--clr-muted);
+}
+
+.plan-card__features {
+  list-style: none;
+  display: flex;
+  flex-direction: column;
+  gap: 0.625rem;
+  margin-bottom: 1.75rem;
+  flex: 1;
+}
+
+.plan-card__feature {
+  display: flex;
+  align-items: center;
+  gap: 0.625rem;
+  font-size: 0.875rem;
+  color: var(--clr-muted);
+}
+
+.plan-card__feature svg {
+  color: var(--clr-pink);
+  flex-shrink: 0;
+}
+
+/* ─── Membership: active card ────────────────────────────── */
+.active-membership-card {
+  background: linear-gradient(135deg, var(--clr-surface) 0%, rgba(233,30,140,0.06) 100%);
+  border: 1px solid rgba(233, 30, 140, 0.3);
+  border-radius: var(--radius-lg);
+  padding: 2rem;
+  max-width: 540px;
+}
+
+.active-membership-card__badge {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.5rem;
+  font-size: 0.7rem;
+  font-weight: 700;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+  color: var(--clr-pink);
+  margin-bottom: 1rem;
+}
+
+.active-membership-card__header {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: 1rem;
+  flex-wrap: wrap;
+  margin-bottom: 1.25rem;
+}
+
+.active-membership-card__plan {
+  font-family: var(--font-display);
+  font-size: 1.75rem;
+  font-weight: 400;
+  color: var(--clr-text);
+}
+
+.active-membership-card__price {
+  font-family: var(--font-display);
+  font-size: 2.5rem;
+  font-weight: 300;
+  color: var(--clr-text);
+  line-height: 1;
+}
+
+.active-membership-card__period {
+  font-size: 1rem;
+  color: var(--clr-muted);
+  font-family: var(--font-body);
+}
+
+.active-membership-card__divider {
+  height: 1px;
+  background: rgba(233, 30, 140, 0.15);
+  margin-bottom: 1.25rem;
+}
+
+.active-membership-card__info {
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+}
+
+.active-membership-card__info-row {
+  display: flex;
+  justify-content: space-between;
+  gap: 1rem;
+  font-size: 0.875rem;
+}
+
+.active-membership-card__info-label { color: var(--clr-muted-2); }
+.active-membership-card__info-value { color: var(--clr-text); }
+
+/* ─── Benefits list ──────────────────────────────────────── */
+.benefits-list {
+  display: flex;
+  flex-direction: column;
+  gap: 0.75rem;
+  list-style: none;
+}
+
+.benefits-list__item {
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+  font-size: 0.9375rem;
+  color: var(--clr-muted);
+}
+
+.benefits-list__item svg {
+  color: var(--clr-pink);
+  flex-shrink: 0;
+}
+
+/* ─── Quick actions grid ─────────────────────────────────── */
+.quick-actions-grid {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: 0.875rem;
+  margin-bottom: 0.5rem;
+}
+
+@media (max-width: 640px) {
+  .quick-actions-grid {
+    grid-template-columns: repeat(2, 1fr);
+  }
+}
+
+.quick-action {
+  background: var(--clr-surface);
+  border: 1px solid var(--clr-border);
+  border-radius: var(--radius-lg);
+  padding: 1.25rem 1rem;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 0.625rem;
+  text-align: center;
+  color: var(--clr-text);
+  transition: border-color 180ms, background 180ms;
+  cursor: pointer;
+}
+
+.quick-action:hover {
+  border-color: var(--clr-pink);
+  background: var(--clr-pink-dim);
+  color: var(--clr-pink);
+}
+
+.quick-action__icon {
+  width: 44px;
+  height: 44px;
+  border-radius: 50%;
+  background: var(--clr-base);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: background 180ms;
+}
+
+.quick-action:hover .quick-action__icon {
+  background: rgba(233, 30, 140, 0.12);
+}
+
+.quick-action__label {
+  font-size: 0.8125rem;
+  font-weight: 500;
+}
+
+/* ─── Upcoming appointments list ─────────────────────────── */
+.upcoming-apt-item {
+  display: flex;
+  align-items: center;
+  gap: 1rem;
+  padding: 1rem 1.25rem;
+  background: var(--clr-surface);
+  border: 1px solid var(--clr-border);
+  border-radius: var(--radius-lg);
+  margin-bottom: 0.625rem;
+  transition: border-color 180ms;
+}
+
+.upcoming-apt-item:hover {
+  border-color: var(--clr-muted-2);
+}
+
+.upcoming-apt-item__date {
+  text-align: center;
+  min-width: 44px;
+  flex-shrink: 0;
+}
+
+.upcoming-apt-item__month {
+  font-size: 0.6rem;
+  font-weight: 700;
+  letter-spacing: 0.1em;
+  color: var(--clr-pink);
+  margin-bottom: 1px;
+}
+
+.upcoming-apt-item__day {
+  font-family: var(--font-display);
+  font-size: 1.75rem;
+  font-weight: 300;
+  line-height: 1;
+  color: var(--clr-text);
+}
+
+.upcoming-apt-item__info {
+  flex: 1;
+  min-width: 0;
+}
+
+.upcoming-apt-item__service {
+  font-size: 0.9375rem;
+  font-weight: 500;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.upcoming-apt-item__meta {
+  font-size: 0.8125rem;
+  color: var(--clr-muted);
+  margin-top: 0.2rem;
+}
+
+/* ─── Toast notification ─────────────────────────────────── */
+.toast {
+  position: fixed;
+  bottom: 1.5rem;
+  left: 50%;
+  transform: translateX(-50%) translateY(20px);
+  background: var(--clr-surface);
+  border: 1px solid var(--clr-border);
+  border-radius: var(--radius);
+  padding: 0.875rem 1.5rem;
+  font-size: 0.9rem;
+  color: var(--clr-text);
+  z-index: 500;
+  box-shadow: 0 8px 32px rgba(0,0,0,0.5);
+  opacity: 0;
+  pointer-events: none;
+  transition: opacity 220ms, transform 220ms;
+  white-space: nowrap;
+}
+
+.toast.visible {
+  opacity: 1;
+  transform: translateX(-50%) translateY(0);
+}
+
+.toast--success { border-color: rgba(34, 197, 94, 0.4); color: #86efac; }
+.toast--error   { border-color: rgba(239, 68, 68, 0.4);  color: #fca5a5; }
+
+@media (max-width: 768px) {
+  .toast { bottom: calc(var(--tabbar-h) + 1rem); }
+  .vehicle-card { flex-wrap: wrap; }
+  .vehicle-card__actions { width: 100%; justify-content: flex-end; }
+}

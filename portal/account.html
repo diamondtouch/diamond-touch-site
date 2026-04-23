@@ -1,0 +1,253 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Account — Diamond Touch Detailing</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300;0,400;0,500;0,600;1,300;1,400&family=DM+Sans:ital,opsz,wght@0,9..40,300;0,9..40,400;0,9..40,500;0,9..40,600;1,9..40,300&display=swap" rel="stylesheet" />
+  <link rel="stylesheet" href="../css/portal.css" />
+</head>
+<body>
+
+<div class="portal-layout">
+
+  <!-- ========== SIDEBAR ========== -->
+  <aside class="sidebar">
+    <div class="sidebar__logo">
+      <a href="/"><img src="../assets/logo-horizontal.png" alt="Diamond Touch Detailing" /></a>
+    </div>
+    <nav class="sidebar__nav" aria-label="Portal navigation">
+      <a href="dashboard.html" class="sidebar__link">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><rect x="3" y="3" width="7" height="7" rx="1"/><rect x="14" y="3" width="7" height="7" rx="1"/><rect x="3" y="14" width="7" height="7" rx="1"/><rect x="14" y="14" width="7" height="7" rx="1"/></svg>
+        Dashboard
+      </a>
+      <a href="bookings.html" class="sidebar__link">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><rect x="3" y="4" width="18" height="18" rx="2"/><path d="M16 2v4M8 2v4M3 10h18"/></svg>
+        My Bookings
+      </a>
+      <a href="vehicles.html" class="sidebar__link">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M5 17H3a2 2 0 01-2-2V9a2 2 0 012-2h1l2-3h10l2 3h1a2 2 0 012 2v6a2 2 0 01-2 2h-2"/><circle cx="7" cy="17" r="2"/><circle cx="17" cy="17" r="2"/></svg>
+        My Vehicles
+      </a>
+      <a href="membership.html" class="sidebar__link">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z"/></svg>
+        Membership
+      </a>
+      <a href="account.html" class="sidebar__link active">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><circle cx="12" cy="8" r="4"/><path d="M4 20c0-4 3.6-7 8-7s8 3 8 7"/></svg>
+        Account
+      </a>
+    </nav>
+    <div class="sidebar__footer">
+      <div class="sidebar__user">
+        <div class="sidebar__avatar" id="userAvatar">—</div>
+        <div class="sidebar__user-info">
+          <div class="sidebar__user-name" id="userName">Loading...</div>
+          <div class="sidebar__user-email" id="userEmail"></div>
+        </div>
+      </div>
+      <button class="btn-signout" onclick="signOut()">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M17 16l4-4m0 0l-4-4m4 4H7m6 4v1a2 2 0 01-2 2H5a2 2 0 01-2-2V7a2 2 0 012-2h6a2 2 0 012 2v1"/></svg>
+        Sign out
+      </button>
+    </div>
+  </aside>
+
+  <!-- ========== MAIN ========== -->
+  <main class="portal-main">
+    <div class="portal-main__inner">
+
+      <div class="page-header">
+        <p class="page-header__eyebrow">Client Portal</p>
+        <h1 class="page-header__title">Account Settings</h1>
+        <p class="page-header__sub">Manage your profile, security, and account preferences.</p>
+      </div>
+
+      <!-- PROFILE SECTION -->
+      <div class="section-card">
+        <h2 class="section-card__title">Profile</h2>
+        <div class="inline-alert" id="profileAlert"></div>
+        <form id="profileForm" novalidate>
+          <div class="form-row-2">
+            <div class="form-group">
+              <label class="form-label" for="fieldName">Full Name</label>
+              <input class="form-input" type="text" id="fieldName" name="full_name" placeholder="Jane Doe" autocomplete="name" />
+            </div>
+            <div class="form-group">
+              <label class="form-label" for="fieldPhone">Phone</label>
+              <input class="form-input" type="tel" id="fieldPhone" name="phone" placeholder="(555) 000-0000" autocomplete="tel" />
+            </div>
+          </div>
+          <div class="form-group">
+            <label class="form-label" for="fieldEmail">Email address</label>
+            <input class="form-input" type="email" id="fieldEmail" name="email" readonly aria-describedby="emailNote" style="opacity:0.55;cursor:not-allowed" />
+            <p id="emailNote" style="font-size:0.8rem;color:var(--clr-muted-2);margin-top:0.35rem">Email cannot be changed here. Contact us if you need to update it.</p>
+          </div>
+          <button type="submit" class="btn btn--primary" id="saveProfileBtn">
+            <span id="saveBtnText">Save Changes</span>
+            <span class="spinner" id="saveSpinner" style="display:none"></span>
+          </button>
+        </form>
+      </div>
+
+      <!-- SECURITY SECTION -->
+      <div class="section-card" style="margin-top:1.5rem">
+        <h2 class="section-card__title">Security</h2>
+        <div class="inline-alert" id="securityAlert"></div>
+        <div style="display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:1rem">
+          <div>
+            <div style="font-size:0.9375rem;font-weight:500">Password</div>
+            <div style="font-size:0.875rem;color:var(--clr-muted);margin-top:0.2rem">A reset link will be sent to your email address.</div>
+          </div>
+          <button class="btn btn--ghost btn--sm" id="resetPasswordBtn">
+            <span id="resetBtnText">Change Password</span>
+            <span class="spinner" id="resetSpinner" style="display:none"></span>
+          </button>
+        </div>
+      </div>
+
+      <!-- DANGER ZONE -->
+      <div class="danger-zone" style="margin-top:1.5rem">
+        <div class="danger-zone__title" style="margin-bottom:1rem">Sign Out</div>
+        <div class="danger-zone__inner">
+          <div class="danger-zone__sub">Sign out of your account on this device.</div>
+          <button class="btn btn--ghost btn--sm" onclick="signOut()" style="color:#fca5a5;border-color:rgba(239,68,68,0.3);white-space:nowrap">
+            Sign Out
+          </button>
+        </div>
+      </div>
+
+    </div>
+  </main>
+
+</div>
+
+<!-- ========== TOAST ========== -->
+<div class="toast" id="toast" role="status" aria-live="polite"></div>
+
+<!-- ========== MOBILE TAB BAR ========== -->
+<nav class="tab-bar" aria-label="Mobile navigation">
+  <div class="tab-bar__inner">
+    <a href="dashboard.html" class="tab-bar__item">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><rect x="3" y="3" width="7" height="7" rx="1"/><rect x="14" y="3" width="7" height="7" rx="1"/><rect x="3" y="14" width="7" height="7" rx="1"/><rect x="14" y="14" width="7" height="7" rx="1"/></svg>
+      Home
+    </a>
+    <a href="bookings.html" class="tab-bar__item">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><rect x="3" y="4" width="18" height="18" rx="2"/><path d="M16 2v4M8 2v4M3 10h18"/></svg>
+      Bookings
+    </a>
+    <a href="vehicles.html" class="tab-bar__item">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M5 17H3a2 2 0 01-2-2V9a2 2 0 012-2h1l2-3h10l2 3h1a2 2 0 012 2v6a2 2 0 01-2 2h-2"/><circle cx="7" cy="17" r="2"/><circle cx="17" cy="17" r="2"/></svg>
+      Vehicles
+    </a>
+    <a href="membership.html" class="tab-bar__item">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z"/></svg>
+      Member
+    </a>
+    <a href="account.html" class="tab-bar__item active">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><circle cx="12" cy="8" r="4"/><path d="M4 20c0-4 3.6-7 8-7s8 3 8 7"/></svg>
+      Account
+    </a>
+  </div>
+</nav>
+
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2/dist/umd/supabase.js"></script>
+<script src="../js/supabase-config.js"></script>
+<script src="../js/auth.js"></script>
+<script>
+(async () => {
+  const session = await requireAuth('../portal/login.html');
+  if (!session) return;
+
+  const profile = await getUserProfile();
+  if (!profile) return;
+
+  // Sidebar + form pre-fill
+  document.getElementById('userName').textContent = profile.full_name || 'Client';
+  document.getElementById('userEmail').textContent = session.user.email || '';
+  document.getElementById('userAvatar').textContent = (profile.full_name || 'C').charAt(0).toUpperCase();
+
+  document.getElementById('fieldName').value  = profile.full_name || '';
+  document.getElementById('fieldPhone').value = profile.phone || '';
+  document.getElementById('fieldEmail').value = session.user.email || '';
+
+  // ── Toast helper ───────────────────────────────────────────
+  let toastTimer;
+  function showToast(msg, type = 'success') {
+    const el = document.getElementById('toast');
+    el.textContent = msg;
+    el.className = `toast toast--${type} visible`;
+    clearTimeout(toastTimer);
+    toastTimer = setTimeout(() => { el.className = 'toast'; }, 4000);
+  }
+
+  // ── Profile form ───────────────────────────────────────────
+  document.getElementById('profileForm').addEventListener('submit', async (e) => {
+    e.preventDefault();
+    const alertEl = document.getElementById('profileAlert');
+    alertEl.className = 'inline-alert';
+
+    const fullName = document.getElementById('fieldName').value.trim();
+    const phone    = document.getElementById('fieldPhone').value.trim();
+
+    document.getElementById('saveBtnText').style.display = 'none';
+    document.getElementById('saveSpinner').style.display = 'inline-block';
+    document.getElementById('saveProfileBtn').disabled = true;
+
+    const { error } = await _supabase
+      .from('profiles')
+      .update({ full_name: fullName || null, phone: phone || null })
+      .eq('id', profile.id);
+
+    document.getElementById('saveBtnText').style.display = '';
+    document.getElementById('saveSpinner').style.display = 'none';
+    document.getElementById('saveProfileBtn').disabled = false;
+
+    if (error) {
+      alertEl.textContent = 'Failed to save changes. Please try again.';
+      alertEl.className = 'inline-alert inline-alert--error visible';
+      return;
+    }
+
+    // Update sidebar name
+    document.getElementById('userName').textContent = fullName || 'Client';
+    document.getElementById('userAvatar').textContent = (fullName || 'C').charAt(0).toUpperCase();
+
+    showToast('Profile updated successfully.');
+  });
+
+  // ── Change password ────────────────────────────────────────
+  document.getElementById('resetPasswordBtn').addEventListener('click', async () => {
+    const alertEl = document.getElementById('securityAlert');
+    alertEl.className = 'inline-alert';
+
+    document.getElementById('resetBtnText').style.display = 'none';
+    document.getElementById('resetSpinner').style.display = 'inline-block';
+    document.getElementById('resetPasswordBtn').disabled = true;
+
+    const { error } = await _supabase.auth.resetPasswordForEmail(
+      session.user.email,
+      { redirectTo: window.location.origin + '/portal/reset-password.html' }
+    );
+
+    document.getElementById('resetBtnText').style.display = '';
+    document.getElementById('resetSpinner').style.display = 'none';
+    document.getElementById('resetPasswordBtn').disabled = false;
+
+    if (error) {
+      alertEl.textContent = 'Failed to send reset email. Please try again.';
+      alertEl.className = 'inline-alert inline-alert--error visible';
+      return;
+    }
+
+    alertEl.textContent = `Password reset link sent to ${session.user.email}.`;
+    alertEl.className = 'inline-alert inline-alert--success visible';
+    setTimeout(() => { alertEl.className = 'inline-alert'; }, 6000);
+  });
+})();
+</script>
+
+</body>
+</html>
