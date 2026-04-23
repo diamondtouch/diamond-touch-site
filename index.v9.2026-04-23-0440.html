@@ -1313,38 +1313,34 @@
   document.getElementById("embed-step3-next").addEventListener("click", () => {
     goStep(4);
     renderSummary();
-    // Attach Square card now that container is visible
+    // Trigger Square card init via module script
     if (!window._embedSquareInited) {
       window._embedSquareInited = true;
       window._embedSquareReady = false;
-      (async () => {
-        // Wait one frame to ensure the panel is painted and visible
-        await new Promise(r => requestAnimationFrame(r));
-        const statusEl = document.getElementById('embed-payment-status');
-        try {
-          if (!window.Square) throw new Error('Square.js failed to load.');
-          const payments = window.Square.payments('sandbox-sq0idb-e4hfCqcraP5ssqJLEEJcoA', 'LE683QS3VSGN7');
-          const card = await payments.card({
-            style: {
-              '.input-container': { borderColor: 'transparent', borderRadius: '4px' },
-              '.input-container.is-focus': { borderColor: '#e91e8c' },
-              '.input-container.is-error': { borderColor: '#ff4444' },
-              input: { color: '#f5f5f5', fontFamily: "'DM Sans', sans-serif", fontSize: '15px', backgroundColor: 'transparent' },
-              'input::placeholder': { color: '#555' },
-              '.message-text': { color: '#e91e8c' },
-            }
-          });
-          await card.attach('#embed-card-container');
-          window._embedSquareCard = card;
-          window._embedSquareReady = true;
-          console.log('Square card attached');
-        } catch(err) {
-          console.error('Square init failed:', err);
-          statusEl.textContent = 'Payment form error: ' + err.message;
-          statusEl.style.color = '#e91e8c';
-          window._embedSquareInited = false;
-        }
-      })();
+      const s = document.createElement('script');
+      s.type = 'module';
+      s.textContent = `
+        const payments = Square.payments('sandbox-sq0idb-e4hfCqcraP5ssqJLEEJcoA', 'LE683QS3VSGN7');
+        const card = await payments.card({
+          style: {
+            '.input-container': { borderColor: 'transparent', borderRadius: '4px' },
+            '.input-container.is-focus': { borderColor: '#e91e8c' },
+            '.input-container.is-error': { borderColor: '#ff4444' },
+            input: { color: '#f5f5f5', fontFamily: "'DM Sans', sans-serif", fontSize: '15px', backgroundColor: 'transparent' },
+            'input::placeholder': { color: '#555' },
+            '.message-text': { color: '#e91e8c' },
+          }
+        });
+        await card.attach('#embed-card-container');
+        window._embedSquareCard = card;
+        window._embedSquareReady = true;
+        console.log('Square card ready');
+      `;
+      s.onerror = () => {
+        document.getElementById('embed-payment-status').textContent = 'Payment form failed to load. Please refresh.';
+        document.getElementById('embed-payment-status').style.color = '#e91e8c';
+      };
+      document.body.appendChild(s);
     }
   });
 
