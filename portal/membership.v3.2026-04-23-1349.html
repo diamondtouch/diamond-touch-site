@@ -339,6 +339,25 @@
 
   const isActive = membership && membership.status === 'active';
 
+  if (isActive) {
+    renderActiveMembership(membership);
+  } else {
+    renderJoinPlans();
+  }
+
+  // ── Helper: format date ─────────────────────────────────────
+  function formatDate(dateStr) {
+    if (!dateStr) return '—';
+    const d = new Date(dateStr + (dateStr.includes('T') ? '' : 'T00:00:00'));
+    return d.toLocaleDateString('en-US', { year: 'numeric', month: 'long', day: 'numeric' });
+  }
+
+  function getNextMonthDate() {
+    const d = new Date();
+    d.setMonth(d.getMonth() + 1);
+    return d.toISOString().split('T')[0];
+  }
+
   // ── Plan config ──────────────────────────────────────────────
   const checkSVG = `<svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M20 6 9 17l-5-5"/></svg>`;
   const featureItems = [
@@ -361,26 +380,6 @@
     sedan_12month:  { label: 'Sedan — 12 Month Prepay',vehicle: 'sedan', billing: 'prepay_12',months: 12, price: 149900,display: '$1,499',   total: 1499,  save: '16%', permo: '$125/mo' },
     suv_12month:    { label: 'SUV/Truck — 12 Mo Prepay',vehicle: 'suv',  billing: 'prepay_12',months: 12, price: 179900,display: '$1,799',   total: 1799,  save: '16%', permo: '$150/mo' },
   };
-
-
-  if (isActive) {
-    renderActiveMembership(membership);
-  } else {
-    renderJoinPlans();
-  }
-
-  // ── Helper: format date ─────────────────────────────────────
-  function formatDate(dateStr) {
-    if (!dateStr) return '—';
-    const d = new Date(dateStr + (dateStr.includes('T') ? '' : 'T00:00:00'));
-    return d.toLocaleDateString('en-US', { year: 'numeric', month: 'long', day: 'numeric' });
-  }
-
-  function getNextMonthDate() {
-    const d = new Date();
-    d.setMonth(d.getMonth() + 1);
-    return d.toISOString().split('T')[0];
-  }
 
   // ── STATE 1: Render join plans ──────────────────────────────
   // ── STATE 1: Render join plans (tabbed: monthly / 6mo / 12mo) ─
