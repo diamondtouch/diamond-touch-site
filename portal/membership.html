@@ -382,102 +382,135 @@
   };
 
   // ── STATE 1: Render join plans ──────────────────────────────
+  // ── STATE 1: Render join plans (tabbed: monthly / 6mo / 12mo) ─
+  let selectedPlanKey = null;
+  let activeBilling = 'monthly';
+
   function renderJoinPlans() {
     contentEl.innerHTML = `
       <div class="plan-hero">
-        <div class="plan-hero__icon">
-          <svg width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.2"><path d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z"/></svg>
-        </div>
+        <div class="plan-hero__icon"><svg width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.2"><path d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z"/></svg></div>
         <h2 class="plan-hero__title">Join the Diamond Club</h2>
-        <p class="plan-hero__sub">One monthly detail. Priority booking. Always looking your best.</p>
+        <p class="plan-hero__sub">One monthly detail. Priority booking. Always looking your best. <strong style="color:#e91e8c">6-month minimum commitment.</strong></p>
       </div>
-
-      <div class="plan-grid">
-
-        <!-- Sedan -->
-        <div class="plan-card">
-          <div class="plan-card__name">Sedan Plan</div>
-          <div class="plan-card__price-row">
-            <span class="plan-card__price">$149</span>
-            <span class="plan-card__period">/month</span>
-          </div>
-          <ul class="plan-card__features">${featuresHTML()}</ul>
-          <button class="btn btn--ghost btn--full" data-plan="sedan" data-price="14900" id="selectSedan">Select Sedan Plan</button>
-        </div>
-
-        <!-- SUV / Truck (featured) -->
-        <div class="plan-card plan-card--featured">
-          <div class="plan-card__top-badge">Most Popular</div>
-          <div class="plan-card__name">SUV / Truck Plan</div>
-          <div class="plan-card__price-row">
-            <span class="plan-card__price">$179</span>
-            <span class="plan-card__period">/month</span>
-          </div>
-          <ul class="plan-card__features">${featuresHTML()}</ul>
-          <button class="btn btn--primary btn--full" data-plan="suv" data-price="17900" id="selectSuv">Select SUV / Truck Plan</button>
-        </div>
-
+      <div id="billingTabs" style="display:flex;gap:.5rem;margin-bottom:1.5rem;background:#111;border-radius:8px;padding:4px">
+        <button class="billing-tab active" data-billing="monthly" style="flex:1;padding:.6rem 1rem;border-radius:6px;border:none;background:#1e1e1e;color:#f5f5f5;cursor:pointer;font-size:.875rem;font-family:inherit;font-weight:500">Monthly</button>
+        <button class="billing-tab" data-billing="prepay_6" style="flex:1;padding:.6rem 1rem;border-radius:6px;border:none;background:transparent;color:#888;cursor:pointer;font-size:.875rem;font-family:inherit">6 Months <span style="background:#e91e8c22;color:#e91e8c;border-radius:4px;padding:1px 6px;font-size:.72rem">Save 11%</span></button>
+        <button class="billing-tab" data-billing="prepay_12" style="flex:1;padding:.6rem 1rem;border-radius:6px;border:none;background:transparent;color:#888;cursor:pointer;font-size:.875rem;font-family:inherit">12 Months <span style="background:#e91e8c22;color:#e91e8c;border-radius:4px;padding:1px 6px;font-size:.72rem">Save 16%</span></button>
       </div>
-
-      <!-- Payment section (hidden until plan selected) -->
+      <div class="plan-grid" id="planCards"></div>
       <div id="paymentSection" style="display:none">
-        <h3>Complete Your Membership</h3>
-
-        <!-- Selected plan summary -->
         <div class="plan-summary-card" id="planSummaryCard">
-          <div class="plan-summary-card__icon">
-            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z"/></svg>
-          </div>
+          <div class="plan-summary-card__icon"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z"/></svg></div>
           <div class="plan-summary-card__info">
             <div class="plan-summary-card__name" id="planSummaryName">—</div>
             <button class="plan-summary-card__change" id="changePlanBtn">Change plan</button>
           </div>
         </div>
-
-        <p class="billing-info-text" id="billingInfoText">Your card will be charged on the same day each month.</p>
-
-        <div id="membership-card-container"></div>
-
+        <p class="billing-info-text" id="billingInfoText"></p>
+        <div style="background:#111;border:1px solid #2a2a2a;border-radius:8px;padding:1.25rem;margin:1.25rem 0;font-size:.875rem;line-height:1.7;color:#aaa">
+          <div style="color:#f5f5f5;font-weight:600;margin-bottom:.75rem">Diamond Club Membership Agreement</div>
+          <ul style="padding-left:1.25rem;margin:.25rem 0">
+            <li>Minimum commitment: <strong style="color:#f5f5f5">6 months</strong> from your start date</li>
+            <li>Monthly plans: billed on the same date each month for 6 months, then month-to-month</li>
+            <li>Prepay plans: full amount charged today, services valid for the selected term</li>
+            <li>Early cancellation within the 6-month commitment forfeits remaining prepaid services; monthly members owe the balance of remaining months</li>
+            <li>After the commitment period, cancel anytime with 30 days\' notice</li>
+            <li>Missed or skipped months do not roll over</li>
+          </ul>
+        </div>
+        <label style="display:flex;align-items:flex-start;gap:.75rem;margin:1rem 0;cursor:pointer;font-size:.875rem;color:#aaa">
+          <input type="checkbox" id="contractCheck" style="margin-top:3px;accent-color:#e91e8c;flex-shrink:0" />
+          <span>I have read and agree to the Diamond Club Membership Agreement, including the 6-month minimum commitment.</span>
+        </label>
+        <div id="membership-card-container" style="margin:1.25rem 0"></div>
         <div class="inline-alert inline-alert--error" id="membershipError" role="alert"></div>
-
-        <button class="btn btn--primary btn--full" id="startMembershipBtn">Start My Membership</button>
-
-        <p class="fine-print">Cancel anytime from your account. No contracts.</p>
+        <button class="btn btn--primary btn--full" id="startMembershipBtn" disabled>Start My Membership</button>
+        <p class="fine-print" style="margin-top:.75rem;color:#555;font-size:.8rem">After the 6-month commitment, cancel anytime with 30 days\' notice.</p>
       </div>`;
 
-    // Attach plan selection handlers
-    contentEl.querySelectorAll('[data-plan]').forEach(btn => {
-      btn.addEventListener('click', () => selectPlan(btn.dataset.plan, parseInt(btn.dataset.price, 10)));
+    renderPlanCards();
+
+    // Billing tab switching
+    document.getElementById('billingTabs').querySelectorAll('.billing-tab').forEach(tab => {
+      tab.addEventListener('click', () => {
+        document.querySelectorAll('.billing-tab').forEach(t => {
+          t.style.background = 'transparent'; t.style.color = '#888'; t.style.fontWeight = '';
+        });
+        tab.style.background = '#1e1e1e'; tab.style.color = '#f5f5f5'; tab.style.fontWeight = '500';
+        activeBilling = tab.dataset.billing;
+        selectedPlanKey = null;
+        document.getElementById('paymentSection').style.display = 'none';
+        renderPlanCards();
+      });
     });
 
-    document.getElementById('changePlanBtn').addEventListener('click', resetPlanSelection);
-    document.getElementById('startMembershipBtn').addEventListener('click', () => startMembership(selectedPlan));
+    document.getElementById('contractCheck').addEventListener('change', function() {
+      document.getElementById('startMembershipBtn').disabled = !this.checked;
+    });
+
+    document.getElementById('changePlanBtn').addEventListener('click', () => {
+      selectedPlanKey = null;
+      document.getElementById('paymentSection').style.display = 'none';
+      renderPlanCards();
+      window.scrollTo({ top: 0, behavior: 'smooth' });
+    });
+
+    document.getElementById('startMembershipBtn').addEventListener('click', () => startMembership());
   }
 
-  function selectPlan(plan, priceCents) {
-    selectedPlan = plan;
-    const label = plan === 'sedan' ? 'Sedan Plan' : 'SUV / Truck Plan';
-    const price  = plan === 'sedan' ? '$149' : '$179';
+  function renderPlanCards() {
+    const keys = Object.keys(PLANS).filter(k => PLANS[k].billing === activeBilling);
+    document.getElementById('planCards').innerHTML = keys.map(key => {
+      const p = PLANS[key];
+      const isFeatured = p.vehicle === 'suv';
+      const isSelected = key === selectedPlanKey;
+      return `
+        <div class="plan-card ${isFeatured ? 'plan-card--featured' : ''}" style="${isSelected ? 'border-color:#e91e8c;background:#1a0a10' : ''}">
+          ${isFeatured ? '<div class="plan-card__top-badge">Most Popular</div>' : ''}
+          <div class="plan-card__name">${p.vehicle === 'sedan' ? 'Sedan / Coupe' : 'SUV / Truck'}</div>
+          <div class="plan-card__price-row">
+            <span class="plan-card__price">${p.display}</span>
+            ${p.permo ? `<span class="plan-card__period">&nbsp;(${p.permo})</span>` : '<span class="plan-card__period">/mo</span>'}
+          </div>
+          ${p.save ? `<div style="color:#e91e8c;font-size:.8rem;margin-bottom:.75rem">Save ${p.save} vs monthly</div>` : ''}
+          <ul class="plan-card__features">${featuresHTML()}</ul>
+          <button class="btn ${isSelected ? 'btn--primary' : 'btn--ghost'} btn--full select-plan-btn" data-key="${key}">${isSelected ? 'Selected ✓' : 'Select Plan'}</button>
+        </div>`;
+    }).join('');
 
-    document.getElementById('planSummaryName').textContent = `${label} — ${price}/month`;
+    document.getElementById('planCards').querySelectorAll('.select-plan-btn').forEach(btn => {
+      btn.addEventListener('click', () => selectPlan(btn.dataset.key));
+    });
+  }
 
-    const day = new Date().getDate();
-    const suffix = day === 1 ? 'st' : day === 2 ? 'nd' : day === 3 ? 'rd' : 'th';
-    document.getElementById('billingInfoText').textContent =
-      `Your card will be charged ${price} on the ${day}${suffix} of each month.`;
+  function selectPlan(key) {
+    const p = PLANS[key];
+    if (!p) return;
+    selectedPlanKey = key;
+
+    document.getElementById('planSummaryName').textContent = `${p.label} — ${p.display}${p.permo ? ' (' + p.permo + ')' : '/mo'}`;
+
+    let billingText;
+    if (p.billing === 'monthly') {
+      const day = new Date().getDate();
+      const sfx = ['','st','nd','rd'][day] || 'th';
+      billingText = `$${(p.price/100).toFixed(0)}/month billed on the ${day}${sfx} of each month. 6-month minimum commitment.`;
+    } else {
+      billingText = `${p.display} charged today. Covers ${p.months} months of Diamond Club service.`;
+    }
+    document.getElementById('billingInfoText').textContent = billingText;
 
     const paySection = document.getElementById('paymentSection');
     paySection.style.display = 'block';
-    paySection.scrollIntoView({ behavior: 'smooth', block: 'start' });
+    paySection.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
 
-    // Init Square card field
-    if (!membershipCard) {
-      initMembershipPayment();
-    }
+    if (!membershipCard) initMembershipPayment();
+    renderPlanCards();
   }
 
   function resetPlanSelection() {
-    selectedPlan  = null;
+    selectedPlanKey = null;
     membershipCard = null;
     document.getElementById('paymentSection').style.display = 'none';
     document.getElementById('membership-card-container').innerHTML = '';
@@ -487,46 +520,63 @@
   async function initMembershipPayment() {
     try {
       const payments = getSquarePayments();
-      const card = await payments.card();
+      const card = await payments.card({
+        style: {
+          '.input-container': { borderColor: '#333333', borderRadius: '6px' },
+          '.input-container.is-focus': { borderColor: '#e91e8c' },
+          '.input-container.is-error': { borderColor: '#ff1600' },
+          '.message-text': { color: '#999999' },
+          input: { backgroundColor: '#1a1a1a', color: '#f5f5f5' },
+          'input::placeholder': { color: '#666666' },
+        }
+      });
       await card.attach('#membership-card-container');
       membershipCard = card;
     } catch (e) {
-      console.warn('Square init:', e);
+      console.warn('Square membership init:', e);
       document.getElementById('membership-card-container').innerHTML =
-        '<p style="color:#777;font-size:0.875rem;padding:0.5rem 0">Card field loading...</p>';
+        '<p style="color:#777;font-size:0.875rem;padding:0.5rem 0">Card form loading... please wait.</p>';
     }
   }
 
-  async function startMembership(plan) {
-    if (!membershipCard) return;
+  async function startMembership() {
+    const plan = PLANS[selectedPlanKey];
+    if (!membershipCard || !plan) return;
+    if (!document.getElementById('contractCheck').checked) return;
+
     const btn   = document.getElementById('startMembershipBtn');
     const errEl = document.getElementById('membershipError');
     errEl.classList.remove('visible');
     btn.disabled = true;
-    btn.innerHTML = '<span class="spinner"></span>';
+    btn.innerHTML = '<span class="spinner"></span> Processing…';
 
     try {
       const result = await membershipCard.tokenize();
       if (result.status !== 'OK') throw new Error(result.errors?.[0]?.message || 'Card error');
 
-      const token        = result.token;
-      const price        = plan === 'sedan' ? 14900 : 17900;
-      const nextBilling  = getNextMonthDate();
-
       const { data: { user } } = await _supabase.auth.getUser();
+      const now = new Date();
+      const endDate = new Date(now);
+      endDate.setMonth(now.getMonth() + plan.months);
+
       const { error } = await _supabase.from('memberships').upsert({
-        user_id:                 user.id,
-        plan:                    plan,
-        status:                  'active',
-        price_cents:             price,
-        square_subscription_id:  token,
-        next_billing_date:       nextBilling,
+        user_id:                user.id,
+        plan:                   selectedPlanKey,
+        vehicle_type:           plan.vehicle,
+        status:                 'active',
+        price_cents:            plan.price,
+        billing_type:           plan.billing,
+        commitment_months:      plan.months,
+        square_subscription_id: result.token,
+        next_billing_date:      plan.billing === 'monthly' ? getNextMonthDate() : null,
+        start_date:             now.toISOString().split('T')[0],
+        end_date:               endDate.toISOString().split('T')[0],
+        contract_accepted_at:   now.toISOString(),
       }, { onConflict: 'user_id' });
 
       if (error) throw error;
 
-      await sendMembershipWelcomeEmail(user.email, plan, price);
-      showMembershipSuccess(plan, price, nextBilling);
+      showMembershipSuccess(plan, endDate.toISOString().split('T')[0]);
     } catch (e) {
       errEl.textContent = e.message || 'Something went wrong. Please try again.';
       errEl.classList.add('visible');
@@ -535,18 +585,8 @@
     }
   }
 
-  async function sendMembershipWelcomeEmail(userEmail, plan, price) {
-    // TODO: implement with Resend when DNS propagates
-    // Will send from: bookings@diamondtouchdetails.com
-    // Template: welcome to Diamond Club, what to expect, how to book
-    console.log('Welcome email queued for:', userEmail, plan, price);
-  }
-
   // ── STATE 2: Membership success ─────────────────────────────
-  function showMembershipSuccess(plan, priceCents, nextBilling) {
-    const label    = plan === 'sedan' ? 'Sedan Plan' : 'SUV / Truck Plan';
-    const priceStr = plan === 'sedan' ? '$149' : '$179';
-
+  function showMembershipSuccess(planObj, endDateStr) {
     contentEl.innerHTML = `
       <div class="membership-success">
         <div class="membership-success__check">
@@ -554,30 +594,35 @@
         </div>
         <h2 class="membership-success__title">Welcome to the Diamond Club ◆</h2>
         <p class="membership-success__sub">Your membership is now active. We can't wait to keep your car looking its best.</p>
-
         <div class="membership-success__details">
           <div class="membership-success__detail-row">
             <span class="membership-success__detail-label">Plan</span>
-            <span class="membership-success__detail-value">${label}</span>
+            <span class="membership-success__detail-value">${planObj.label}</span>
           </div>
           <div class="membership-success__detail-row">
-            <span class="membership-success__detail-label">Monthly price</span>
-            <span class="membership-success__detail-value">${priceStr}/month</span>
+            <span class="membership-success__detail-label">Amount</span>
+            <span class="membership-success__detail-value">${planObj.display}${planObj.permo ? ' (' + planObj.permo + ')' : ''}</span>
           </div>
+          <div class="membership-success__detail-row">
+            <span class="membership-success__detail-label">Commitment ends</span>
+            <span class="membership-success__detail-value">${formatDate(endDateStr)}</span>
+          </div>
+          ${planObj.billing === 'monthly' ? `
           <div class="membership-success__detail-row">
             <span class="membership-success__detail-label">Next billing</span>
-            <span class="membership-success__detail-value">${formatDate(nextBilling)}</span>
-          </div>
+            <span class="membership-success__detail-value">${formatDate(getNextMonthDate())}</span>
+          </div>` : ''}
         </div>
-
         <button class="btn btn--primary" onclick="window.location.reload()">View My Membership</button>
       </div>`;
   }
 
   // ── STATE 3: Active member ──────────────────────────────────
   function renderActiveMembership(m) {
-    const planLabel  = m.plan === 'suv' ? 'SUV / Truck Plan' : 'Sedan Plan';
-    const price      = m.plan === 'suv' ? '$179' : '$149';
+    const planConfig = PLANS[m.plan] || null;
+    const planLabel  = planConfig ? planConfig.label : (m.plan || 'Diamond Club');
+    const price      = planConfig ? planConfig.display : (m.price_cents ? '$' + (m.price_cents/100).toFixed(0) : '—');
+    const billingType = m.billing_type === 'prepay_6' ? '6-Month Prepay' : m.billing_type === 'prepay_12' ? '12-Month Prepay' : 'Monthly';
     const nextBilling = formatDate(m.next_billing_date);
     const memberSince = formatDate(m.created_at);
 
@@ -593,17 +638,19 @@
             <div class="active-membership-card__plan">${planLabel}</div>
             <span class="badge badge--active" style="margin-top:0.5rem">Active ◆</span>
           </div>
-          <div class="active-membership-card__price">${price}<span class="active-membership-card__period">/mo</span></div>
+          <div class="active-membership-card__price">${price}</div>
         </div>
         <div class="active-membership-card__divider"></div>
         <div class="active-membership-card__info">
           <div class="active-membership-card__info-row">
-            <span class="active-membership-card__info-label">Next billing</span>
-            <span class="active-membership-card__info-value">${nextBilling}</span>
+            <span class="active-membership-card__info-label">Billing type</span>
+            <span class="active-membership-card__info-value">${billingType}</span>
           </div>
+          ${m.next_billing_date ? `<div class="active-membership-card__info-row"><span class="active-membership-card__info-label">Next billing</span><span class="active-membership-card__info-value">${nextBilling}</span></div>` : ''}
+          ${m.end_date ? `<div class="active-membership-card__info-row"><span class="active-membership-card__info-label">Commitment ends</span><span class="active-membership-card__info-value">${formatDate(m.end_date)}</span></div>` : ''}
           <div class="active-membership-card__info-row">
             <span class="active-membership-card__info-label">Status</span>
-            <span class="active-membership-card__info-value">Active &amp; renewing</span>
+            <span class="active-membership-card__info-value">Active ◆</span>
           </div>
           <div class="active-membership-card__info-row">
             <span class="active-membership-card__info-label">Member since</span>
