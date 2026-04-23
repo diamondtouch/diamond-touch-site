@@ -15,7 +15,7 @@
   <link rel="stylesheet" href="css/styles.css" />
 
   <!-- Square Web Payments SDK (Sandbox) -->
-  <script src="https://sandbox.web.squarecdn.com/v1/square.js"></script>
+  <script src="https://web.squarecdn.com/v1/square.js"></script>
   <link rel="apple-touch-icon" sizes="180x180" href="/apple-touch-icon.png">
   <link rel="icon" type="image/png" sizes="32x32" href="/favicon-32x32.png">
   <link rel="icon" type="image/png" sizes="16x16" href="/favicon-16x16.png">
@@ -1320,7 +1320,7 @@
       const s = document.createElement('script');
       s.type = 'module';
       s.textContent = `
-        const payments = Square.payments('sandbox-sq0idb-e4hfCqcraP5ssqJLEEJcoA', 'LE683QS3VSGN7');
+        const payments = Square.payments('sq0idp--RtyLXcLrc5ZANHKmDm30Q', 'LE683QS3VSGN7');
         const card = await payments.card({
           style: {
             '.input-container': { borderColor: 'transparent', borderRadius: '4px' },
