@@ -301,39 +301,36 @@
 <script src="../js/auth.js"></script>
 <script>
 (async () => {
-  // ── Plan definitions — must be first ────────────────────────
-  const PLANS = {
-    sedan_monthly:  { label:'Sedan — Monthly',          vehicle:'sedan', billing:'monthly',   months:6,  price:14900,  display:'$149/mo', permo:null,      save:null  },
-    suv_monthly:    { label:'SUV/Truck — Monthly',      vehicle:'suv',   billing:'monthly',   months:6,  price:17900,  display:'$179/mo', permo:null,      save:null  },
-    sedan_6month:   { label:'Sedan — 6 Month Prepay',   vehicle:'sedan', billing:'prepay_6',  months:6,  price:79900,  display:'$799',    permo:'$133/mo', save:'11%' },
-    suv_6month:     { label:'SUV/Truck — 6 Mo Prepay',  vehicle:'suv',   billing:'prepay_6',  months:6,  price:95900,  display:'$959',    permo:'$160/mo', save:'11%' },
-    sedan_12month:  { label:'Sedan — 12 Month Prepay',  vehicle:'sedan', billing:'prepay_12', months:12, price:149900, display:'$1,499',  permo:'$125/mo', save:'16%' },
-    suv_12month:    { label:'SUV/Truck — 12 Mo Prepay', vehicle:'suv',   billing:'prepay_12', months:12, price:179900, display:'$1,799',  permo:'$150/mo', save:'16%' },
-  };
-
-  // ── State vars — all declared before any function call ──────
-  const APP_ID      = 'sq0idp--RtyLXcLrc5ZANHKmDm30Q';
-  const LOCATION_ID = 'LE683QS3VSGN7';
-  let selectedPlanKey = null;
-  let activeBilling   = 'monthly';
-  let membershipCard  = null;
-  let updateCard      = null;
-  let squarePayments  = null;
-
-  // ── Auth ─────────────────────────────────────────────────────
+  // ── Auth ────────────────────────────────────────────────────
   const session = await requireAuth('../portal/login.html');
   if (!session) return;
 
   const profile = await getUserProfile();
   if (!profile) return;
 
-  document.getElementById('userName').textContent   = profile.full_name || 'Client';
-  document.getElementById('userEmail').textContent  = session.user.email || '';
+  // Sidebar
+  document.getElementById('userName').textContent  = profile.full_name || 'Client';
+  document.getElementById('userEmail').textContent = session.user.email || '';
   document.getElementById('userAvatar').textContent = (profile.full_name || 'C').charAt(0).toUpperCase();
 
   const contentEl = document.getElementById('membershipContent');
 
-  // ── Load membership ──────────────────────────────────────────
+  // ── Square / payment state ──────────────────────────────────
+  const APP_ID      = 'sq0idp--RtyLXcLrc5ZANHKmDm30Q';
+  const LOCATION_ID = 'LE683QS3VSGN7';
+  let membershipCard  = null;
+  let updateCard      = null;
+  let selectedPlan    = null;
+  let squarePayments  = null;
+
+  function getSquarePayments() {
+    if (!squarePayments) {
+      squarePayments = Square.payments(APP_ID, LOCATION_ID);
+    }
+    return squarePayments;
+  }
+
+  // ── Load membership ─────────────────────────────────────────
   const { data: membership } = await _supabase
     .from('memberships')
     .select('*')
@@ -342,58 +339,7 @@
 
   const isActive = membership && membership.status === 'active';
 
-  // ── Route ─────────────────────────────────────────────────────
-  if (isActive) {
-    renderActiveMembership(membership);
-  } else {
-    renderJoinPlans();
-  }
-
-  // ── Cancel dialog wiring (elements always in DOM) ────────────
-  function closeCancelMember() {
-    document.getElementById('cancelMemberOverlay').classList.remove('open');
-  }
-  document.getElementById('cancelMemberClose').addEventListener('click', closeCancelMember);
-  document.getElementById('cancelMemberNo').addEventListener('click', closeCancelMember);
-  document.getElementById('cancelMemberOverlay').addEventListener('click', (e) => {
-    if (e.target === document.getElementById('cancelMemberOverlay')) closeCancelMember();
-  });
-  document.getElementById('cancelMemberYes').addEventListener('click', async () => {
-    const btnText = document.getElementById('cancelMemberBtnText');
-    const spinner = document.getElementById('cancelMemberSpinner');
-    const yesBtn  = document.getElementById('cancelMemberYes');
-    btnText.style.display = 'none';
-    spinner.style.display = 'inline-block';
-    yesBtn.disabled       = true;
-    const { error: updateErr } = await _supabase
-      .from('memberships')
-      .update({ status: 'cancelled', cancelled_at: new Date().toISOString() })
-      .eq('user_id', profile.id);
-    btnText.style.display = '';
-    spinner.style.display = 'none';
-    yesBtn.disabled       = false;
-    closeCancelMember();
-    if (!updateErr) window.location.reload();
-  });
-
-  // ── Helpers ──────────────────────────────────────────────────
-  function formatDate(dateStr) {
-    if (!dateStr) return '—';
-    const d = new Date(dateStr + (dateStr.includes('T') ? '' : 'T00:00:00'));
-    return d.toLocaleDateString('en-US', { year:'numeric', month:'long', day:'numeric' });
-  }
-
-  function getNextMonthDate() {
-    const d = new Date();
-    d.setMonth(d.getMonth() + 1);
-    return d.toISOString().split('T')[0];
-  }
-
-  function getSquarePayments() {
-    if (!squarePayments) squarePayments = Square.payments(APP_ID, LOCATION_ID);
-    return squarePayments;
-  }
-
+  // ── Plan config ──────────────────────────────────────────────
   const checkSVG = `<svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M20 6 9 17l-5-5"/></svg>`;
   const featureItems = [
     'Monthly Signature Detail',
@@ -407,7 +353,40 @@
     return featureItems.map(f => `<li class="plan-card__feature">${checkSVG}${f}</li>`).join('');
   }
 
-  // ── renderJoinPlans ───────────────────────────────────────────
+  const PLANS = {
+    sedan_monthly:  { label: 'Sedan — Monthly',       vehicle: 'sedan', billing: 'monthly',  months: 6,  price: 14900, display: '$149/mo',  total: null,  save: null },
+    suv_monthly:    { label: 'SUV/Truck — Monthly',    vehicle: 'suv',   billing: 'monthly',  months: 6,  price: 17900, display: '$179/mo',  total: null,  save: null },
+    sedan_6month:   { label: 'Sedan — 6 Month Prepay', vehicle: 'sedan', billing: 'prepay_6', months: 6,  price: 79900, display: '$799',     total: 799,   save: '11%', permo: '$133/mo' },
+    suv_6month:     { label: 'SUV/Truck — 6 Mo Prepay',vehicle: 'suv',   billing: 'prepay_6', months: 6,  price: 95900, display: '$959',     total: 959,   save: '11%', permo: '$160/mo' },
+    sedan_12month:  { label: 'Sedan — 12 Month Prepay',vehicle: 'sedan', billing: 'prepay_12',months: 12, price: 149900,display: '$1,499',   total: 1499,  save: '16%', permo: '$125/mo' },
+    suv_12month:    { label: 'SUV/Truck — 12 Mo Prepay',vehicle: 'suv',  billing: 'prepay_12',months: 12, price: 179900,display: '$1,799',   total: 1799,  save: '16%', permo: '$150/mo' },
+  };
+
+
+  if (isActive) {
+    renderActiveMembership(membership);
+  } else {
+    renderJoinPlans();
+  }
+
+  // ── Helper: format date ─────────────────────────────────────
+  function formatDate(dateStr) {
+    if (!dateStr) return '—';
+    const d = new Date(dateStr + (dateStr.includes('T') ? '' : 'T00:00:00'));
+    return d.toLocaleDateString('en-US', { year: 'numeric', month: 'long', day: 'numeric' });
+  }
+
+  function getNextMonthDate() {
+    const d = new Date();
+    d.setMonth(d.getMonth() + 1);
+    return d.toISOString().split('T')[0];
+  }
+
+  // ── STATE 1: Render join plans ──────────────────────────────
+  // ── STATE 1: Render join plans (tabbed: monthly / 6mo / 12mo) ─
+  let selectedPlanKey = null;
+  let activeBilling = 'monthly';
+
   function renderJoinPlans() {
     contentEl.innerHTML = `
       <div class="plan-hero">
@@ -463,7 +442,6 @@
         <p class="fine-print" style="margin-top:.75rem;color:#555;font-size:.8rem">A signed copy of this agreement will be emailed to you. After the 6-month commitment, cancel anytime with 30 days\' written notice.</p>
       </div>`;
 
-    // Populate plan cards now that DOM exists
     renderPlanCards();
 
     // Billing tab switching
@@ -473,20 +451,20 @@
           t.style.background = 'transparent'; t.style.color = '#888'; t.style.fontWeight = '';
         });
         tab.style.background = '#1e1e1e'; tab.style.color = '#f5f5f5'; tab.style.fontWeight = '500';
-        activeBilling   = tab.dataset.billing;
+        activeBilling = tab.dataset.billing;
         selectedPlanKey = null;
         document.getElementById('paymentSection').style.display = 'none';
         renderPlanCards();
       });
     });
 
-    // Enable/disable sign button
     function updateStartBtn() {
-      const name    = document.getElementById('contractSignedName')?.value.trim();
+      const name = document.getElementById('contractSignedName')?.value.trim();
       const checked = document.getElementById('contractCheck')?.checked;
       document.getElementById('startMembershipBtn').disabled = !(name && name.length >= 2 && checked);
     }
     document.getElementById('contractCheck').addEventListener('change', updateStartBtn);
+    // Name input listener added after render via event delegation below
     document.addEventListener('input', e => { if (e.target.id === 'contractSignedName') updateStartBtn(); });
 
     document.getElementById('changePlanBtn').addEventListener('click', () => {
@@ -499,11 +477,10 @@
     document.getElementById('startMembershipBtn').addEventListener('click', () => startMembership());
   }
 
-  // ── renderPlanCards ───────────────────────────────────────────
   function renderPlanCards() {
     const keys = Object.keys(PLANS).filter(k => PLANS[k].billing === activeBilling);
     document.getElementById('planCards').innerHTML = keys.map(key => {
-      const p          = PLANS[key];
+      const p = PLANS[key];
       const isFeatured = p.vehicle === 'suv';
       const isSelected = key === selectedPlanKey;
       return `
@@ -525,20 +502,18 @@
     });
   }
 
-  // ── selectPlan ────────────────────────────────────────────────
   function selectPlan(key) {
     const p = PLANS[key];
     if (!p) return;
     selectedPlanKey = key;
 
-    document.getElementById('planSummaryName').textContent =
-      `${p.label} — ${p.display}${p.permo ? ' (' + p.permo + ')' : '/mo'}`;
+    document.getElementById('planSummaryName').textContent = `${p.label} — ${p.display}${p.permo ? ' (' + p.permo + ')' : '/mo'}`;
 
     let billingText;
     if (p.billing === 'monthly') {
       const day = new Date().getDate();
-      const sfx = [,'st','nd','rd'][day] || 'th';
-      billingText = `$${(p.price / 100).toFixed(0)}/month billed on the ${day}${sfx} of each month. 6-month minimum commitment.`;
+      const sfx = ['','st','nd','rd'][day] || 'th';
+      billingText = `$${(p.price/100).toFixed(0)}/month billed on the ${day}${sfx} of each month. 6-month minimum commitment.`;
     } else {
       billingText = `${p.display} charged today. Covers ${p.months} months of Diamond Club service.`;
     }
@@ -548,22 +523,29 @@
     paySection.style.display = 'block';
     paySection.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
 
-    if (!membershipCard) initMembershipSquare();
+    if (!membershipCard) initMembershipPayment();
     renderPlanCards();
   }
 
-  // ── initMembershipSquare ──────────────────────────────────────
-  async function initMembershipSquare() {
+  function resetPlanSelection() {
+    selectedPlanKey = null;
+    membershipCard = null;
+    document.getElementById('paymentSection').style.display = 'none';
+    document.getElementById('membership-card-container').innerHTML = '';
+    window.scrollTo({ top: 0, behavior: 'smooth' });
+  }
+
+  async function initMembershipPayment() {
     try {
       const payments = getSquarePayments();
       const card = await payments.card({
         style: {
-          '.input-container':         { borderColor: '#333333', borderRadius: '6px' },
+          '.input-container': { borderColor: '#333333', borderRadius: '6px' },
           '.input-container.is-focus': { borderColor: '#e91e8c' },
           '.input-container.is-error': { borderColor: '#ff1600' },
-          '.message-text':            { color: '#999999' },
-          'input':                    { backgroundColor: '#1a1a1a', color: '#f5f5f5' },
-          'input::placeholder':       { color: '#666666' },
+          '.message-text': { color: '#999999' },
+          input: { backgroundColor: '#1a1a1a', color: '#f5f5f5' },
+          'input::placeholder': { color: '#666666' },
         }
       });
       await card.attach('#membership-card-container');
@@ -575,16 +557,14 @@
     }
   }
 
-  // ── startMembership ───────────────────────────────────────────
   async function startMembership() {
     const plan = PLANS[selectedPlanKey];
     if (!membershipCard || !plan) return;
 
     const signedName = document.getElementById('contractSignedName')?.value.trim();
     if (!signedName || signedName.length < 2) {
-      const errEl = document.getElementById('membershipError');
-      errEl.textContent = 'Please type your full legal name to sign the agreement.';
-      errEl.classList.add('visible');
+      document.getElementById('membershipError').textContent = 'Please type your full legal name to sign the agreement.';
+      document.getElementById('membershipError').classList.add('visible');
       return;
     }
     if (!document.getElementById('contractCheck').checked) return;
@@ -592,20 +572,19 @@
     const btn   = document.getElementById('startMembershipBtn');
     const errEl = document.getElementById('membershipError');
     errEl.classList.remove('visible');
-    btn.disabled  = true;
+    btn.disabled = true;
     btn.innerHTML = '<span class="spinner"></span> Signing agreement…';
 
     try {
-      const { data: { session: authSession } } = await _supabase.auth.getSession();
-      const userToken = authSession?.access_token ?? null;
-      const userEmail = authSession?.user?.email ?? '';
+      const { data: { session } } = await _supabase.auth.getSession();
+      const userToken = session?.access_token ?? null;
+      const userEmail = session?.user?.email ?? '';
 
+      // Step 1: Record legally binding e-signature
       btn.innerHTML = '<span class="spinner"></span> Recording signature…';
-      const billingTypeLabel = plan.billing === 'prepay_6' ? '6-Month Prepay'
-                             : plan.billing === 'prepay_12' ? '12-Month Prepay'
-                             : 'Monthly';
+      const billingTypeLabel = plan.billing === 'prepay_6' ? '6-Month Prepay' : plan.billing === 'prepay_12' ? '12-Month Prepay' : 'Monthly';
       const sigRes = await fetch('https://fjafmptbzydqizafuaru.supabase.co/functions/v1/sign-contract', {
-        method:  'POST',
+        method: 'POST',
         headers: { 'Content-Type': 'application/json', 'Authorization': 'Bearer ' + SUPABASE_ANON_KEY },
         body: JSON.stringify({
           signedName,
@@ -616,21 +595,23 @@
           priceCents:       plan.price,
           commitmentMonths: plan.months,
           billingType:      billingTypeLabel,
-        }),
+        })
       });
       const sigData = await sigRes.json();
       if (!sigData.success) throw new Error(sigData.error || 'Failed to record signature.');
 
+      // Step 2: Tokenize card
       btn.innerHTML = '<span class="spinner"></span> Processing payment…';
       const result = await membershipCard.tokenize();
       if (result.status !== 'OK') throw new Error(result.errors?.[0]?.message || 'Card error');
 
-      const now     = new Date();
+      // Step 3: Save membership record
+      const now = new Date();
       const endDate = new Date(now);
       endDate.setMonth(now.getMonth() + plan.months);
 
       const { error } = await _supabase.from('memberships').upsert({
-        user_id:                authSession?.user?.id,
+        user_id:                session?.user?.id,
         plan:                   selectedPlanKey,
         vehicle_type:           plan.vehicle,
         status:                 'active',
@@ -645,16 +626,17 @@
       }, { onConflict: 'user_id' });
 
       if (error) throw error;
+
       showMembershipSuccess(plan, endDate.toISOString().split('T')[0]);
     } catch (e) {
       errEl.textContent = e.message || 'Something went wrong. Please try again.';
       errEl.classList.add('visible');
-      btn.disabled    = false;
+      btn.disabled = false;
       btn.textContent = 'Sign & Start My Membership';
     }
   }
 
-  // ── showMembershipSuccess ─────────────────────────────────────
+  // ── STATE 2: Membership success ─────────────────────────────
   function showMembershipSuccess(planObj, endDateStr) {
     contentEl.innerHTML = `
       <div class="membership-success">
@@ -686,18 +668,17 @@
       </div>`;
   }
 
-  // ── renderActiveMembership ────────────────────────────────────
+  // ── STATE 3: Active member ──────────────────────────────────
   function renderActiveMembership(m) {
-    const planConfig  = PLANS[m.plan] || null;
-    const planLabel   = planConfig ? planConfig.label   : (m.plan || 'Diamond Club');
-    const price       = planConfig ? planConfig.display : (m.price_cents ? '$' + (m.price_cents / 100).toFixed(0) : '—');
-    const billingType = m.billing_type === 'prepay_6'  ? '6-Month Prepay'
-                      : m.billing_type === 'prepay_12' ? '12-Month Prepay'
-                      : 'Monthly';
+    const planConfig = PLANS[m.plan] || null;
+    const planLabel  = planConfig ? planConfig.label : (m.plan || 'Diamond Club');
+    const price      = planConfig ? planConfig.display : (m.price_cents ? '$' + (m.price_cents/100).toFixed(0) : '—');
+    const billingType = m.billing_type === 'prepay_6' ? '6-Month Prepay' : m.billing_type === 'prepay_12' ? '12-Month Prepay' : 'Monthly';
     const nextBilling = formatDate(m.next_billing_date);
     const memberSince = formatDate(m.created_at);
 
     contentEl.innerHTML = `
+      <!-- Active membership card -->
       <div class="active-membership-card">
         <div class="active-membership-card__badge">
           <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z"/></svg>
@@ -729,17 +710,34 @@
         </div>
       </div>
 
+      <!-- Benefits -->
       <div class="section-card" style="margin-top:1.5rem">
         <h2 class="section-card__title">Member Benefits</h2>
         <ul class="benefits-list">
-          <li class="benefits-list__item"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M20 6 9 17l-5-5"/></svg>Monthly Signature Detail included</li>
-          <li class="benefits-list__item"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M20 6 9 17l-5-5"/></svg>Priority 48-hour booking window</li>
-          <li class="benefits-list__item"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M20 6 9 17l-5-5"/></svg>15% off all add-on services</li>
-          <li class="benefits-list__item"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M20 6 9 17l-5-5"/></svg>Free quarterly odor treatment</li>
-          <li class="benefits-list__item"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M20 6 9 17l-5-5"/></svg>Cancel anytime, no fees</li>
+          <li class="benefits-list__item">
+            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M20 6 9 17l-5-5"/></svg>
+            Monthly Signature Detail included
+          </li>
+          <li class="benefits-list__item">
+            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M20 6 9 17l-5-5"/></svg>
+            Priority 48-hour booking window
+          </li>
+          <li class="benefits-list__item">
+            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M20 6 9 17l-5-5"/></svg>
+            15% off all add-on services
+          </li>
+          <li class="benefits-list__item">
+            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M20 6 9 17l-5-5"/></svg>
+            Free quarterly odor treatment
+          </li>
+          <li class="benefits-list__item">
+            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M20 6 9 17l-5-5"/></svg>
+            Cancel anytime, no fees
+          </li>
         </ul>
       </div>
 
+      <!-- Update payment method -->
       <div class="section-card" id="updatePaymentSection" style="margin-top:1.5rem">
         <h2 class="section-card__title">Update Payment Method</h2>
         <p style="font-size:0.875rem;color:#888;margin:0 0 1rem">Enter a new card to update your billing method.</p>
@@ -749,6 +747,7 @@
         <button class="btn btn--ghost" id="updatePaymentBtn">Update Card</button>
       </div>
 
+      <!-- Danger zone -->
       <div class="danger-zone" style="margin-top:1.5rem">
         <div class="danger-zone__inner">
           <div>
@@ -759,12 +758,13 @@
         </div>
       </div>`;
 
+    // Cancel button
     document.getElementById('openCancelMemberBtn').addEventListener('click', () => {
       document.getElementById('cancelMemberOverlay').classList.add('open');
     });
 
-    // Update payment — lazy Square init on hover/click
-    const updateBtn       = document.getElementById('updatePaymentBtn');
+    // Update payment — lazy init Square on hover or click
+    const updateBtn      = document.getElementById('updatePaymentBtn');
     const updateContainer = document.getElementById('update-card-container');
     let updateCardInited  = false;
 
@@ -785,31 +785,69 @@
     updateBtn.addEventListener('mouseenter', initUpdateCard, { once: true });
     updateBtn.addEventListener('click', async () => {
       await initUpdateCard();
+
       const errEl     = document.getElementById('updateCardError');
       const successEl = document.getElementById('updateCardSuccess');
       errEl.classList.remove('visible');
       successEl.classList.remove('visible');
+
       if (!updateCard) {
         errEl.textContent = 'Card field not ready. Please try again.';
         errEl.classList.add('visible');
         return;
       }
-      updateBtn.disabled  = true;
+
+      updateBtn.disabled = true;
       updateBtn.innerHTML = '<span class="spinner"></span>';
+
       try {
         const result = await updateCard.tokenize();
         if (result.status !== 'OK') throw new Error(result.errors?.[0]?.message || 'Card error');
+        // Token captured — production would update Square subscription here
         console.log('Update card token:', result.token);
         successEl.classList.add('visible');
       } catch (e) {
         errEl.textContent = e.message || 'Could not update card. Please try again.';
         errEl.classList.add('visible');
       } finally {
-        updateBtn.disabled  = false;
+        updateBtn.disabled = false;
         updateBtn.textContent = 'Update Card';
       }
     });
   }
+
+  // ── Cancel membership dialog ────────────────────────────────
+  function closeCancelMember() {
+    document.getElementById('cancelMemberOverlay').classList.remove('open');
+  }
+
+  document.getElementById('cancelMemberClose').addEventListener('click', closeCancelMember);
+  document.getElementById('cancelMemberNo').addEventListener('click', closeCancelMember);
+  document.getElementById('cancelMemberOverlay').addEventListener('click', (e) => {
+    if (e.target === document.getElementById('cancelMemberOverlay')) closeCancelMember();
+  });
+
+  document.getElementById('cancelMemberYes').addEventListener('click', async () => {
+    const btnText  = document.getElementById('cancelMemberBtnText');
+    const spinner  = document.getElementById('cancelMemberSpinner');
+    const yesBtn   = document.getElementById('cancelMemberYes');
+
+    btnText.style.display  = 'none';
+    spinner.style.display  = 'inline-block';
+    yesBtn.disabled        = true;
+
+    const { error: updateErr } = await _supabase
+      .from('memberships')
+      .update({ status: 'cancelled', cancelled_at: new Date().toISOString() })
+      .eq('user_id', profile.id);
+
+    btnText.style.display  = '';
+    spinner.style.display  = 'none';
+    yesBtn.disabled        = false;
+    closeCancelMember();
+
+    if (!updateErr) window.location.reload();
+  });
 })();
 </script>
 
