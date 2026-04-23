@@ -2057,7 +2057,7 @@ input[type="date"]::-webkit-calendar-picker-indicator {
 
 .pkg-col__solo-tag--center {
   display: flex;
-  margin: 0.5rem auto 0;
+  margin: 1.25rem auto 1.25rem;
   justify-content: center;
 }
 
