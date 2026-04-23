@@ -38,8 +38,10 @@
       <ul class="nav__links" role="list">
         <li><a href="#services" class="nav__link">Services</a></li>
         <li><a href="#packages" class="nav__link">Packages</a></li>
-        <li><a href="book.html" class="nav__link">Booking</a></li>
-        <li><a href="#contact" class="nav__link">Contact</a></li>
+        <li><a href="#results" class="nav__link">Results</a></li>
+        <li><a href="#maintenance" class="nav__link">Membership</a></li>
+        <li><a href="#testimonials" class="nav__link">Reviews</a></li>
+        <li><a href="#faq" class="nav__link">FAQ</a></li>
         <li><a href="portal/login.html" class="nav__link" id="nav-account-link">My Account</a></li>
         <li><a href="portal/dashboard.html" class="nav__link" id="nav-dash-link" style="display:none">Dashboard</a></li>
       </ul>
@@ -64,8 +66,10 @@
       <ul class="mobile-menu__links" role="list">
         <li><a href="#services" class="mobile-menu__link">Services</a></li>
         <li><a href="#packages" class="mobile-menu__link">Packages</a></li>
-        <li><a href="book.html" class="mobile-menu__link">Booking</a></li>
-        <li><a href="#contact" class="mobile-menu__link">Contact</a></li>
+        <li><a href="#results" class="mobile-menu__link">Results</a></li>
+        <li><a href="#maintenance" class="mobile-menu__link">Membership</a></li>
+        <li><a href="#testimonials" class="mobile-menu__link">Reviews</a></li>
+        <li><a href="#faq" class="mobile-menu__link">FAQ</a></li>
         <li><a href="portal/login.html" class="mobile-menu__link" id="mobile-account-link">My Account</a></li>
         <li><a href="portal/dashboard.html" class="mobile-menu__link" id="mobile-dash-link" style="display:none">Dashboard</a></li>
       </ul>
@@ -441,103 +445,197 @@
   </section>
 
 
-  <!-- ========== BOOKING FORM ========== -->
+  <!-- ========== BOOKING ========== -->
   <section class="section booking" id="booking">
     <div class="container">
       <div class="section__header" data-animate="fade-up">
-        <p class="section__eyebrow">Schedule Service</p>
+        <p class="section__eyebrow">Ready to Book?</p>
         <h2 class="section__title">Book Your Detail</h2>
-        <p class="section__sub">A $50 deposit is required to confirm your appointment. Remaining balance due day of service.</p>
+        <p class="section__sub">Select your service, pick a time, and secure your spot with a $50 deposit.</p>
       </div>
 
-      <div class="booking__card" data-animate="fade-up" style="--delay:0.1s">
-        <form class="booking-form" id="bookingForm" novalidate>
+      <div class="booking-embed" data-animate="fade-up" style="--delay:0.1s">
 
-          <div class="form-row">
-            <div class="form-group">
-              <label class="form-label" for="name">Full Name <span class="required" aria-hidden="true">*</span></label>
-              <input class="form-input" type="text" id="name" name="name" placeholder="Jane Smith" required autocomplete="name" />
+        <!-- PROGRESS BAR -->
+        <div class="booking-progress">
+          <div class="booking-step active" data-step="1">
+            <div class="booking-step__num">1</div>
+            <div class="booking-step__label">Service</div>
+          </div>
+          <div class="booking-step__line"></div>
+          <div class="booking-step" data-step="2">
+            <div class="booking-step__num">2</div>
+            <div class="booking-step__label">Details</div>
+          </div>
+          <div class="booking-step__line"></div>
+          <div class="booking-step" data-step="3">
+            <div class="booking-step__num">3</div>
+            <div class="booking-step__label">Date & Time</div>
+          </div>
+          <div class="booking-step__line"></div>
+          <div class="booking-step" data-step="4">
+            <div class="booking-step__num">4</div>
+            <div class="booking-step__label">Payment</div>
+          </div>
+        </div>
+
+        <!-- STEP 1: SERVICE SELECTION -->
+        <div class="booking-panel active" id="embed-step1">
+          <div class="embed-vehicle-toggle">
+            <button class="embed-vehicle-btn active" data-type="sedan">Sedan / Coupe</button>
+            <button class="embed-vehicle-btn" data-type="suv">SUV / Truck</button>
+          </div>
+          <div class="embed-services-grid">
+            <div class="embed-service-card" data-service="wash-shine" data-sedan="99" data-suv="119">
+              <div class="embed-service-card__tag">Quick Clean</div>
+              <div class="embed-service-card__name">The Wash & Shine</div>
+              <div class="embed-service-card__price">$<span class="price-val">99</span></div>
+              <div class="embed-service-card__time">1–1.5 hrs · Exterior only</div>
             </div>
-            <div class="form-group">
-              <label class="form-label" for="email">Email Address <span class="required" aria-hidden="true">*</span></label>
-              <input class="form-input" type="email" id="email" name="email" placeholder="jane@example.com" required autocomplete="email" />
+            <div class="embed-service-card" data-service="inside-clean" data-sedan="99" data-suv="119">
+              <div class="embed-service-card__tag">Quick Clean</div>
+              <div class="embed-service-card__name">The Inside Clean</div>
+              <div class="embed-service-card__price">$<span class="price-val">99</span></div>
+              <div class="embed-service-card__time">1–1.5 hrs · Interior only</div>
+            </div>
+            <div class="embed-service-card" data-service="quick-shine" data-sedan="149" data-suv="179">
+              <div class="embed-service-card__tag">Quick Clean</div>
+              <div class="embed-service-card__name">The Quick Shine</div>
+              <div class="embed-service-card__price">$<span class="price-val">149</span></div>
+              <div class="embed-service-card__time">1.5–2 hrs · Interior + exterior</div>
+            </div>
+            <div class="embed-service-card" data-service="signature" data-sedan="249" data-suv="299">
+              <div class="embed-service-card__name">The Signature</div>
+              <div class="embed-service-card__price">$<span class="price-val">249</span></div>
+              <div class="embed-service-card__time">2–3 hrs · Most popular</div>
+            </div>
+            <div class="embed-service-card" data-service="diamond" data-sedan="399" data-suv="449">
+              <div class="embed-service-card__name">The Diamond</div>
+              <div class="embed-service-card__price">$<span class="price-val">399</span></div>
+              <div class="embed-service-card__time">4–6 hrs · Premium detail</div>
+            </div>
+            <div class="embed-service-card" data-service="paint-correction" data-sedan="449" data-suv="549">
+              <div class="embed-service-card__name">Paint Correction</div>
+              <div class="embed-service-card__price">$<span class="price-val">449</span></div>
+              <div class="embed-service-card__time">5–7 hrs · Machine polish</div>
+            </div>
+            <div class="embed-service-card" data-service="ceramic" data-sedan="799" data-suv="999">
+              <div class="embed-service-card__name">Ceramic Coating</div>
+              <div class="embed-service-card__price">$<span class="price-val">799</span></div>
+              <div class="embed-service-card__time">6–8 hrs · Long-term protection</div>
+            </div>
+            <div class="embed-service-card" data-service="ultimate" data-sedan="1199" data-suv="1499">
+              <div class="embed-service-card__name">The Ultimate ◆</div>
+              <div class="embed-service-card__price">$<span class="price-val">1199</span></div>
+              <div class="embed-service-card__time">8–10 hrs · Everything</div>
             </div>
           </div>
+          <div class="embed-actions">
+            <button class="btn btn--primary" id="embed-step1-next" disabled>Continue →</button>
+          </div>
+        </div>
 
-          <div class="form-row">
-            <div class="form-group">
-              <label class="form-label" for="phone">Phone Number <span class="required" aria-hidden="true">*</span></label>
-              <input class="form-input" type="tel" id="phone" name="phone" placeholder="(951) 555-0100" required autocomplete="tel" />
+        <!-- STEP 2: DETAILS -->
+        <div class="booking-panel" id="embed-step2">
+          <div class="embed-form-grid">
+            <div class="embed-field">
+              <label>Full Name *</label>
+              <input type="text" id="embed-name" placeholder="Your full name" />
             </div>
-            <div class="form-group">
-              <label class="form-label" for="preferred_date">Preferred Date <span class="required" aria-hidden="true">*</span></label>
-              <input class="form-input" type="date" id="preferred_date" name="preferred_date" required />
+            <div class="embed-field">
+              <label>Email *</label>
+              <input type="email" id="embed-email" placeholder="your@email.com" />
+            </div>
+            <div class="embed-field">
+              <label>Phone *</label>
+              <input type="tel" id="embed-phone" placeholder="(555) 000-0000" />
+            </div>
+            <div class="embed-field">
+              <label>Vehicle (Year Make Model)</label>
+              <input type="text" id="embed-vehicle" placeholder="e.g. 2022 BMW M3" />
             </div>
           </div>
-
-          <div class="form-row">
-            <div class="form-group">
-              <label class="form-label" for="service">Service <span class="required" aria-hidden="true">*</span></label>
-              <select class="form-input form-select" id="service" name="service" required>
-                <option value="" disabled selected>Select a service</option>
-                <option value="the-quick-shine-sedan">Tier 1: The Quick Shine — Sedan ($149)</option>
-                <option value="the-quick-shine-suv">Tier 1: The Quick Shine — SUV/Truck ($179)</option>
-                <option value="the-signature-sedan">Tier 2: The Signature — Sedan ($249)</option>
-                <option value="the-signature-suv">Tier 2: The Signature — SUV/Truck ($299)</option>
-                <option value="the-diamond-sedan">Tier 3: The Diamond — Sedan ($399)</option>
-                <option value="the-diamond-suv">Tier 3: The Diamond — SUV/Truck ($449)</option>
-                <option value="paint-correction-sedan">Tier 4: Paint Correction — Sedan ($449)</option>
-                <option value="paint-correction-suv">Tier 4: Paint Correction — SUV/Truck ($549)</option>
-                <option value="ceramic-coating-sedan">Tier 5: Ceramic Coating — Sedan ($799)</option>
-                <option value="ceramic-coating-suv">Tier 5: Ceramic Coating — SUV/Truck ($999)</option>
-                <option value="the-ultimate-sedan">Tier 6: The Ultimate — Sedan ($1,199)</option>
-                <option value="the-ultimate-suv">Tier 6: The Ultimate — SUV/Truck ($1,499)</option>
-                <option value="diamond-club-sedan">Diamond Club Membership — Sedan ($149/mo)</option>
-                <option value="diamond-club-suv">Diamond Club Membership — SUV/Truck ($179/mo)</option>
-              </select>
-            </div>
-            <div class="form-group">
-              <label class="form-label" for="vehicle_type">Vehicle Type <span class="required" aria-hidden="true">*</span></label>
-              <select class="form-input form-select" id="vehicle_type" name="vehicle_type" required>
-                <option value="" disabled selected>Select vehicle type</option>
-                <option value="sedan">Sedan / Coupe</option>
-                <option value="suv">SUV / Crossover</option>
-                <option value="truck">Truck</option>
-                <option value="van">Van / Minivan</option>
-                <option value="luxury">Luxury / Exotic</option>
-              </select>
+          <div class="embed-addons">
+            <h4 class="embed-addons__title">Add-Ons <span class="embed-addons__sub">(optional)</span></h4>
+            <div class="embed-addons__grid">
+              <label class="embed-addon"><input type="checkbox" value="75" data-name="Pet Hair Removal"> Pet Hair Removal <span>+$75</span></label>
+              <label class="embed-addon"><input type="checkbox" value="50" data-name="Odor Treatment"> Odor Treatment <span>+$50</span></label>
+              <label class="embed-addon"><input type="checkbox" value="75" data-name="Engine Bay"> Engine Bay <span>+$75</span></label>
+              <label class="embed-addon"><input type="checkbox" value="79" data-name="Headlights"> Headlight Restoration <span>+$79</span></label>
+              <label class="embed-addon"><input type="checkbox" value="60" data-name="Clay Bar"> Clay Bar <span>+$60</span></label>
+              <label class="embed-addon"><input type="checkbox" value="40" data-name="Rim Polish"> Rim Polish <span>+$40</span></label>
             </div>
           </div>
-
-          <div class="form-group">
-            <label class="form-label" for="notes">Additional Notes</label>
-            <textarea class="form-input form-textarea" id="notes" name="notes" placeholder="Any specific concerns, pet hair, special requests..."></textarea>
+          <div class="embed-total-bar">
+            <span>Service: <strong id="embed-service-label">-</strong></span>
+            <span>Add-ons: <strong id="embed-addons-total">$0</strong></span>
+            <span>Deposit today: <strong style="color:#e91e8c">$50</strong></span>
           </div>
+          <div class="embed-actions">
+            <button class="btn btn--ghost" id="embed-step2-back">← Back</button>
+            <button class="btn btn--primary" id="embed-step2-next">Continue →</button>
+          </div>
+        </div>
 
-          <!-- Square Card Container -->
-          <div class="payment-section">
-            <div class="payment-section__header">
-              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" aria-hidden="true"><rect x="1" y="4" width="22" height="16" rx="2"/><line x1="1" y1="10" x2="23" y2="10"/></svg>
-              <p class="payment-section__label">Payment — $50 Deposit</p>
-              <div class="payment-badges">
-                <span>Visa</span><span>MC</span><span>Amex</span>
-              </div>
+        <!-- STEP 3: DATE & TIME -->
+        <div class="booking-panel" id="embed-step3">
+          <div class="embed-calendar-wrap">
+            <div class="embed-cal-header">
+              <button class="embed-cal-nav" id="embed-cal-prev">‹</button>
+              <span class="embed-cal-month" id="embed-cal-month"></span>
+              <button class="embed-cal-nav" id="embed-cal-next">›</button>
             </div>
-            <div id="card-container"></div>
-            <div id="payment-status" class="payment-status" role="alert" aria-live="polite"></div>
+            <div class="embed-cal-grid">
+              <div class="embed-cal-day-label">Sun</div>
+              <div class="embed-cal-day-label">Mon</div>
+              <div class="embed-cal-day-label">Tue</div>
+              <div class="embed-cal-day-label">Wed</div>
+              <div class="embed-cal-day-label">Thu</div>
+              <div class="embed-cal-day-label">Fri</div>
+              <div class="embed-cal-day-label">Sat</div>
+            </div>
+            <div class="embed-cal-days" id="embed-cal-days"></div>
           </div>
+          <div class="embed-timeslots" id="embed-timeslots" style="display:none">
+            <h4 class="embed-timeslots__label">Select a time</h4>
+            <div class="embed-timeslots__grid">
+              <button class="embed-time-btn" data-time="8:00 AM">8:00 AM</button>
+              <button class="embed-time-btn" data-time="9:00 AM">9:00 AM</button>
+              <button class="embed-time-btn" data-time="10:00 AM">10:00 AM</button>
+              <button class="embed-time-btn" data-time="11:00 AM">11:00 AM</button>
+              <button class="embed-time-btn" data-time="12:00 PM">12:00 PM</button>
+              <button class="embed-time-btn" data-time="1:00 PM">1:00 PM</button>
+              <button class="embed-time-btn" data-time="2:00 PM">2:00 PM</button>
+              <button class="embed-time-btn" data-time="3:00 PM">3:00 PM</button>
+            </div>
+          </div>
+          <div class="embed-actions">
+            <button class="btn btn--ghost" id="embed-step3-back">← Back</button>
+            <button class="btn btn--primary" id="embed-step3-next" disabled>Continue →</button>
+          </div>
+        </div>
 
-          <button type="submit" class="btn btn--primary btn--full" id="submitBtn">
-            <span class="btn__text">Confirm &amp; Pay Deposit</span>
-            <span class="btn__spinner" aria-hidden="true"></span>
-          </button>
+        <!-- STEP 4: REVIEW & PAY -->
+        <div class="booking-panel" id="embed-step4">
+          <div class="embed-summary" id="embed-summary"></div>
+          <div class="embed-payment-wrap">
+            <h4 class="embed-payment__label">Card Details</h4>
+            <div id="embed-card-container"></div>
+            <div id="embed-payment-status"></div>
+          </div>
+          <div class="embed-deposit-note">$50 deposit secures your appointment · Balance due at time of service · Non-refundable within 24hrs of appointment</div>
+          <div class="embed-actions">
+            <button class="btn btn--ghost" id="embed-step4-back">← Back</button>
+            <button class="btn btn--primary" id="embed-confirm-btn">Confirm & Pay $50 Deposit</button>
+          </div>
+          <div class="embed-success" id="embed-success" style="display:none">
+            <div class="embed-success__icon">◆</div>
+            <h3>You're Booked!</h3>
+            <p id="embed-success-msg"></p>
+            <a href="portal/dashboard.html" class="btn btn--primary" style="margin-top:1.5rem">View My Bookings</a>
+          </div>
+        </div>
 
-          <p class="booking-form__note">
-            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" aria-hidden="true"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/></svg>
-            Secured by Square Payments. We never store your card details.
-          </p>
-
-        </form>
       </div>
     </div>
   </section>
@@ -770,6 +868,191 @@
   <script>
     document.addEventListener('DOMContentLoaded', updateNavAuthState);
   </script>
+
+  <script>
+// ─── EMBEDDED BOOKING WIZARD ───────────────────────────────
+(function() {
+  const APP_ID = "sandbox-sq0idb-e4hfCqcraP5ssqJLEEJcoA";
+  const LOCATION_ID = "LE683QS3VSGN7";
+  const SUPABASE_URL = "https://fjafmptbzydqizafuaru.supabase.co";
+  const SUPABASE_KEY = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImZqYWZtcHRienlkcWl6YWZ1YXJ1Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzU1MzI2NDUsImV4cCI6MjA5MTEwODY0NX0.XT_T3h9wsoPJqMTeBV0ohoCbAiDc8oFdZg7LHxoAeAM";
+
+  let state = { step: 1, vehicleType: "sedan", service: null, serviceName: "", servicePrice: 0, addons: [], addonTotal: 0, name: "", email: "", phone: "", vehicle: "", date: null, time: null };
+  let squareCard = null;
+  let calDate = new Date();
+
+  function goStep(n) {
+    document.querySelectorAll(".booking-panel").forEach(p => p.classList.remove("active"));
+    document.querySelector("#embed-step" + n).classList.add("active");
+    document.querySelectorAll(".booking-step").forEach((s, i) => {
+      s.classList.remove("active", "done");
+      if (i + 1 < n) s.classList.add("done");
+      if (i + 1 === n) s.classList.add("active");
+    });
+    state.step = n;
+    if (n === 4) initSquare();
+  }
+
+  // Vehicle toggle
+  document.querySelectorAll(".embed-vehicle-btn").forEach(btn => {
+    btn.addEventListener("click", () => {
+      document.querySelectorAll(".embed-vehicle-btn").forEach(b => b.classList.remove("active"));
+      btn.classList.add("active");
+      state.vehicleType = btn.dataset.type;
+      document.querySelectorAll(".embed-service-card").forEach(card => {
+        const price = card.dataset[state.vehicleType];
+        card.querySelector(".price-val").textContent = price;
+      });
+    });
+  });
+
+  // Service cards
+  document.querySelectorAll(".embed-service-card").forEach(card => {
+    card.addEventListener("click", () => {
+      document.querySelectorAll(".embed-service-card").forEach(c => c.classList.remove("selected"));
+      card.classList.add("selected");
+      state.service = card.dataset.service;
+      state.serviceName = card.querySelector(".embed-service-card__name").textContent;
+      state.servicePrice = parseInt(card.dataset[state.vehicleType]);
+      document.getElementById("embed-step1-next").disabled = false;
+      updateServiceLabel();
+    });
+  });
+
+  function updateServiceLabel() {
+    const el = document.getElementById("embed-service-label");
+    if (el) el.textContent = state.serviceName + " $" + state.servicePrice;
+  }
+
+  document.getElementById("embed-step1-next").addEventListener("click", () => goStep(2));
+
+  // Addons
+  document.querySelectorAll(".embed-addon input").forEach(cb => {
+    cb.addEventListener("change", () => {
+      state.addons = [];
+      state.addonTotal = 0;
+      document.querySelectorAll(".embed-addon input:checked").forEach(c => {
+        state.addonTotal += parseInt(c.value);
+        state.addons.push({ name: c.dataset.name, price: parseInt(c.value) });
+      });
+      document.getElementById("embed-addons-total").textContent = "$" + state.addonTotal;
+    });
+  });
+
+  document.getElementById("embed-step2-back").addEventListener("click", () => goStep(1));
+  document.getElementById("embed-step2-next").addEventListener("click", () => {
+    state.name = document.getElementById("embed-name").value;
+    state.email = document.getElementById("embed-email").value;
+    state.phone = document.getElementById("embed-phone").value;
+    state.vehicle = document.getElementById("embed-vehicle").value;
+    if (!state.name || !state.email || !state.phone) { alert("Please fill in name, email and phone."); return; }
+    goStep(3);
+    renderCal();
+  });
+
+  // Calendar
+  function renderCal() {
+    const monthNames = ["January","February","March","April","May","June","July","August","September","October","November","December"];
+    document.getElementById("embed-cal-month").textContent = monthNames[calDate.getMonth()] + " " + calDate.getFullYear();
+    const daysEl = document.getElementById("embed-cal-days");
+    daysEl.innerHTML = "";
+    const today = new Date(); today.setHours(0,0,0,0);
+    const firstDay = new Date(calDate.getFullYear(), calDate.getMonth(), 1).getDay();
+    const daysInMonth = new Date(calDate.getFullYear(), calDate.getMonth() + 1, 0).getDate();
+    for (let i = 0; i < firstDay; i++) { const el = document.createElement("div"); el.className = "embed-cal-day empty"; daysEl.appendChild(el); }
+    for (let d = 1; d <= daysInMonth; d++) {
+      const el = document.createElement("div");
+      const thisDate = new Date(calDate.getFullYear(), calDate.getMonth(), d);
+      el.className = "embed-cal-day";
+      el.textContent = d;
+      const isSun = thisDate.getDay() === 0;
+      const isPast = thisDate < today;
+      if (isSun || isPast) { el.classList.add("disabled"); }
+      else {
+        if (thisDate.toDateString() === today.toDateString()) el.classList.add("today");
+        if (state.date && thisDate.toDateString() === state.date.toDateString()) el.classList.add("selected");
+        el.addEventListener("click", () => {
+          state.date = thisDate;
+          document.querySelectorAll(".embed-cal-day").forEach(d => d.classList.remove("selected"));
+          el.classList.add("selected");
+          document.getElementById("embed-timeslots").style.display = "block";
+          document.getElementById("embed-step3-next").disabled = !state.time;
+        });
+      }
+      daysEl.appendChild(el);
+    }
+  }
+
+  document.getElementById("embed-cal-prev").addEventListener("click", () => { calDate.setMonth(calDate.getMonth() - 1); renderCal(); });
+  document.getElementById("embed-cal-next").addEventListener("click", () => { calDate.setMonth(calDate.getMonth() + 1); renderCal(); });
+
+  document.querySelectorAll(".embed-time-btn").forEach(btn => {
+    btn.addEventListener("click", () => {
+      document.querySelectorAll(".embed-time-btn").forEach(b => b.classList.remove("selected"));
+      btn.classList.add("selected");
+      state.time = btn.dataset.time;
+      document.getElementById("embed-step3-next").disabled = !state.date;
+    });
+  });
+
+  document.getElementById("embed-step3-back").addEventListener("click", () => goStep(2));
+  document.getElementById("embed-step3-next").addEventListener("click", () => { goStep(4); renderSummary(); });
+
+  function renderSummary() {
+    const dateStr = state.date ? state.date.toLocaleDateString("en-US", { weekday:"long", month:"long", day:"numeric", year:"numeric" }) : "-";
+    let addonsHtml = state.addons.length ? state.addons.map(a => `<div>${a.name}: +$${a.price}</div>`).join("") : "<div>None</div>";
+    const balance = state.servicePrice + state.addonTotal - 50;
+    document.getElementById("embed-summary").innerHTML = `
+      <div><strong>Service:</strong> ${state.serviceName} (${state.vehicleType}) — $${state.servicePrice}</div>
+      <div><strong>Add-ons:</strong> ${addonsHtml}</div>
+      <div><strong>Date:</strong> ${dateStr} at ${state.time || "-"}</div>
+      <div><strong>Name:</strong> ${state.name} &nbsp;|&nbsp; <strong>Phone:</strong> ${state.phone}</div>
+      <div style="margin-top:0.75rem;padding-top:0.75rem;border-top:1px solid #2a2a2a">
+        <strong>Deposit due now:</strong> <span style="color:#e91e8c;font-size:1.1rem">$50</span> &nbsp;&nbsp;
+        <strong>Balance at appointment:</strong> $${balance}
+      </div>`;
+  }
+
+  document.getElementById("embed-step4-back").addEventListener("click", () => goStep(3));
+
+  async function initSquare() {
+    if (squareCard) return;
+    try {
+      const payments = Square.payments(APP_ID, LOCATION_ID);
+      squareCard = await payments.card();
+      await squareCard.attach("#embed-card-container");
+    } catch(e) { document.getElementById("embed-payment-status").textContent = "Payment loading error. Please refresh."; }
+  }
+
+  document.getElementById("embed-confirm-btn").addEventListener("click", async () => {
+    const btn = document.getElementById("embed-confirm-btn");
+    const status = document.getElementById("embed-payment-status");
+    btn.disabled = true;
+    btn.textContent = "Processing...";
+    status.textContent = "";
+    try {
+      const result = await squareCard.tokenize();
+      if (result.status === "OK") {
+        const res = await fetch(SUPABASE_URL + "/rest/v1/bookings", {
+          method: "POST",
+          headers: { "apikey": SUPABASE_KEY, "Authorization": "Bearer " + SUPABASE_KEY, "Content-Type": "application/json", "Prefer": "return=minimal" },
+          body: JSON.stringify({ service_name: state.serviceName, vehicle_type: state.vehicleType, preferred_date: state.date ? state.date.toISOString().split("T")[0] : null, preferred_time: state.time, notes: "Vehicle: " + state.vehicle + " | Addons: " + state.addons.map(a=>a.name).join(", "), deposit_paid: true, deposit_amount: 5000, total_amount: (state.servicePrice + state.addonTotal) * 100, square_payment_id: result.token, status: "pending" })
+        });
+        document.getElementById("embed-confirm-btn").style.display = "none";
+        document.getElementById("embed-step4-back").style.display = "none";
+        document.getElementById("embed-success").style.display = "block";
+        document.getElementById("embed-success-msg").textContent = state.serviceName + " booked for " + (state.date ? state.date.toLocaleDateString() : "") + " at " + state.time + ". Confirmation sent to " + state.email;
+      } else {
+        status.textContent = "Payment failed: " + (result.errors?.[0]?.message || "Unknown error");
+        btn.disabled = false; btn.textContent = "Confirm & Pay $50 Deposit";
+      }
+    } catch(e) {
+      status.textContent = "Error: " + e.message;
+      btn.disabled = false; btn.textContent = "Confirm & Pay $50 Deposit";
+    }
+  });
+})();
+</script>
 
 </body>
 </html>
