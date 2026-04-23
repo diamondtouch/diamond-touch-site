@@ -168,7 +168,7 @@
     const timeDisplay = b.preferred_time ? formatTime(b.preferred_time) : '';
 
     if (isPast) {
-      const bookAgainUrl = `../book.html${b.service_name ? '?service=' + encodeURIComponent(b.service_name) : ''}`;
+      const bookAgainUrl = `../#booking`;
       return `
         <div class="booking-card booking-card--past">
           <div class="booking-card__header">
@@ -253,7 +253,7 @@
         </div>
         <div class="empty-state__title">No upcoming bookings</div>
         <div class="empty-state__sub">Ready for your next detail?</div>
-        <a href="../book.html" class="btn btn--primary btn--sm" style="margin-top:1.25rem">Book Now</a>
+        <a href="../#booking" class="btn btn--primary btn--sm" style="margin-top:1.25rem">Book Now</a>
       </div>`;
   } else {
     upcomingEl.innerHTML = `<div class="booking-list">${upcoming.map(b => bookingCardHTML(b, false)).join('')}</div>`;

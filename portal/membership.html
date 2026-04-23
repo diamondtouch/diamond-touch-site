@@ -296,7 +296,7 @@
 </div>
 
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2/dist/umd/supabase.js"></script>
-<script src="https://sandbox.web.squarecdn.com/v1/square.js"></script>
+<script src="https://web.squarecdn.com/v1/square.js"></script>
 <script src="../js/supabase-config.js"></script>
 <script src="../js/auth.js"></script>
 <script>
@@ -316,7 +316,7 @@
   const contentEl = document.getElementById('membershipContent');
 
   // ── Square / payment state ──────────────────────────────────
-  const APP_ID      = 'sandbox-sq0idb-e4hfCqcraP5ssqJLEEJcoA';
+  const APP_ID      = 'sq0idp--RtyLXcLrc5ZANHKmDm30Q';
   const LOCATION_ID = 'LE683QS3VSGN7';
   let membershipCard  = null;
   let updateCard      = null;
@@ -485,7 +485,7 @@
     } catch (e) {
       console.warn('Square init:', e);
       document.getElementById('membership-card-container').innerHTML =
-        '<p style="color:#777;font-size:0.875rem;padding:0.5rem 0">Card field loading... (sandbox)</p>';
+        '<p style="color:#777;font-size:0.875rem;padding:0.5rem 0">Card field loading...</p>';
     }
   }
 
@@ -672,7 +672,7 @@
       } catch (e) {
         console.warn('Square update card init:', e);
         updateContainer.innerHTML =
-          '<p style="color:#777;font-size:0.875rem;padding:0.5rem 0">Card field loading... (sandbox)</p>';
+          '<p style="color:#777;font-size:0.875rem;padding:0.5rem 0">Card field loading...</p>';
       }
     }
 
