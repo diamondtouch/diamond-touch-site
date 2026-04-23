@@ -205,8 +205,10 @@ input, select, textarea { font: inherit; }
 }
 
 .btn--sm {
-  font-size: 0.8125rem;
-  padding: 0.625rem 1.25rem;
+  font-size: 1rem;
+  padding: 0.5rem 1.25rem;
+  font-weight: 500;
+  letter-spacing: 0.04em;
 }
 
 .btn--full {
@@ -238,7 +240,7 @@ input, select, textarea { font: inherit; }
   display: flex;
   align-items: center;
   height: 100%;
-  gap: var(--space-md);
+  gap: 2rem;
   padding-inline: clamp(1.25rem, 5vw, 2.5rem);
   max-width: var(--container);
   margin-inline: auto;
@@ -269,7 +271,9 @@ input, select, textarea { font: inherit; }
 
 .nav__links {
   display: none;
-  gap: var(--space-lg);
+  gap: 2rem;
+  align-items: center;
+  margin-right: auto;
 }
 
 @media (min-width: 768px) {
