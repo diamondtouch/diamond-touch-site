@@ -955,6 +955,17 @@ input, select, textarea { font: inherit; }
   white-space: nowrap;
 }
 
+.pkg-col__photo {
+  width: calc(100% + 3.5rem);
+  margin: -2rem -1.75rem 1.5rem;
+  height: 160px;
+  background-size: cover;
+  background-position: center;
+  border-radius: var(--radius-lg) var(--radius-lg) 0 0;
+  overflow: hidden;
+  flex-shrink: 0;
+}
+
 .pkg-col__header {
   text-align: center;
 }
