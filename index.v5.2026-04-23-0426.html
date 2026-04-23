@@ -1161,7 +1161,7 @@
       if (i + 1 === n) s.classList.add("active");
     });
     state.step = n;
-    if (n === 4) { /* Square init triggered from step3-next click */ }
+    if (n === 4) { if (typeof initEmbedSquare === 'function' && !window._embedSquareInited) { window._embedSquareInited = true; initEmbedSquare(); } }
   }
 
   // Vehicle toggle
@@ -1310,48 +1310,7 @@
   });
 
   document.getElementById("embed-step3-back").addEventListener("click", () => goStep(2));
-  document.getElementById("embed-step3-next").addEventListener("click", () => {
-    goStep(4);
-    renderSummary();
-    // Init Square inline card when step 4 becomes visible
-    if (!window._embedSquareInited) {
-      window._embedSquareInited = true;
-      (async () => {
-        // Wait for Square SDK if not ready yet
-        let attempts = 0;
-        while (typeof Square === 'undefined' && attempts < 20) {
-          await new Promise(r => setTimeout(r, 250));
-          attempts++;
-        }
-        const statusEl = document.getElementById('embed-payment-status');
-        if (typeof Square === 'undefined') {
-          statusEl.textContent = 'Payment form unavailable. Please refresh the page.';
-          statusEl.style.color = '#e91e8c';
-          return;
-        }
-        try {
-          const payments = Square.payments(APP_ID, LOCATION_ID);
-          embedSquareCard = await payments.card({
-            style: {
-              '.input-container': { borderColor: 'transparent', borderRadius: '4px' },
-              '.input-container.is-focus': { borderColor: '#e91e8c' },
-              '.input-container.is-error': { borderColor: '#ff4444' },
-              input: { color: '#f5f5f5', fontFamily: "'DM Sans', sans-serif", fontSize: '15px', backgroundColor: 'transparent' },
-              'input::placeholder': { color: '#555' },
-              '.message-text': { color: '#e91e8c' },
-            }
-          });
-          await embedSquareCard.attach('#embed-card-container');
-        } catch(err) {
-          console.error('Square card init error:', err);
-          const statusEl2 = document.getElementById('embed-payment-status');
-          statusEl2.textContent = 'Payment form failed to load. Please refresh.';
-          statusEl2.style.color = '#e91e8c';
-          window._embedSquareInited = false; // allow retry
-        }
-      })();
-    }
-  });
+  document.getElementById("embed-step3-next").addEventListener("click", () => { goStep(4); renderSummary(); });
 
   function renderSummary() {
     const dateStr = state.date ? state.date.toLocaleDateString("en-US", { weekday:"long", month:"long", day:"numeric", year:"numeric" }) : "-";
@@ -1376,6 +1335,27 @@
   // ─── Square inline card payment ─────────────────────────────
   const EDGE_FN_URL = "https://fjafmptbzydqizafuaru.supabase.co/functions/v1/process-payment";
   let embedSquareCard = null;
+
+  window.initEmbedSquare = async function initEmbedSquare() {
+    if (typeof Square === 'undefined') return;
+    try {
+      const payments = Square.payments(APP_ID, LOCATION_ID);
+      embedSquareCard = await payments.card({
+        style: {
+          '.input-container': { borderColor: 'transparent', borderRadius: '4px' },
+          '.input-container.is-focus': { borderColor: '#e91e8c' },
+          '.input-container.is-error': { borderColor: '#ff4444' },
+          input: { color: '#f5f5f5', fontFamily: "'DM Sans', sans-serif", fontSize: '15px', backgroundColor: 'transparent' },
+          'input::placeholder': { color: '#555' },
+          '.message-text': { color: '#e91e8c' },
+        }
+      });
+      await embedSquareCard.attach('#embed-card-container');
+    } catch(err) {
+      console.error('Square init error:', err);
+      document.getElementById('embed-payment-status').textContent = 'Payment form unavailable. Please refresh.';
+    }
+  }
 
   // Terms checkbox enables button
   document.getElementById("embed-terms-agree").addEventListener("change", function() {
