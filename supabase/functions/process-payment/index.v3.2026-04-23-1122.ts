@@ -1,5 +1,5 @@
 // Diamond Touch Detailing — process-payment edge function
-// Handles Square charge + Supabase booking insert server-side
+// Handles Square production charge + Supabase booking insert server-side
 
 import { serve } from "https://deno.land/std@0.177.0/http/server.ts";
 import { createClient } from "https://esm.sh/@supabase/supabase-js@2";
@@ -13,8 +13,6 @@ const SUPABASE_URL = "https://fjafmptbzydqizafuaru.supabase.co";
 const SUPABASE_SERVICE_ROLE_KEY = Deno.env.get("SUPABASE_SERVICE_ROLE_KEY") ??
   "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImZqYWZtcHRienlkcWl6YWZ1YXJ1Iiwicm9sZSI6InNlcnZpY2Vfcm9sZSIsImlhdCI6MTc3NTUzMjY0NSwiZXhwIjoyMDkxMTA4NjQ1fQ.d33SmL7SpC28hZSNc6Uo5TRyUIKaILoIr13TEMXDPys";
 
-const RESEND_API_KEY = "re_jUFg2vy6_2572fxadFZLiMVk9dYvBon9E";
-
 const corsHeaders = {
   "Access-Control-Allow-Origin": "*",
   "Access-Control-Allow-Headers": "authorization, x-client-info, apikey, content-type",
@@ -22,6 +20,7 @@ const corsHeaders = {
 };
 
 serve(async (req: Request) => {
+  // Handle CORS preflight
   if (req.method === "OPTIONS") {
     return new Response("ok", { headers: corsHeaders });
   }
@@ -35,7 +34,7 @@ serve(async (req: Request) => {
 
   try {
     const body = await req.json();
-    const { sourceId, amount, currency, locationId, note, buyerEmail, bookingData, userToken } = body;
+    const { sourceId, amount, currency, locationId, note, buyerEmail, bookingData } = body;
 
     if (!sourceId || !amount || !locationId || !bookingData) {
       return new Response(JSON.stringify({ success: false, error: "Missing required fields" }), {
@@ -57,7 +56,10 @@ serve(async (req: Request) => {
       body: JSON.stringify({
         idempotency_key: idempotencyKey,
         source_id: sourceId,
-        amount_money: { amount, currency: currency ?? "USD" },
+        amount_money: {
+          amount: amount,
+          currency: currency ?? "USD",
+        },
         location_id: locationId,
         note: note ?? "Diamond Touch Detailing deposit",
         buyer_email_address: buyerEmail,
@@ -76,35 +78,18 @@ serve(async (req: Request) => {
 
     const paymentId = squareData.payment?.id;
 
-    // 2. Get user_id from session token if provided
+    // 2. Insert booking into Supabase
     const supabase = createClient(SUPABASE_URL, SUPABASE_SERVICE_ROLE_KEY);
-    let userId: string | null = null;
 
-    if (userToken) {
-      try {
-        const { data: { user } } = await supabase.auth.getUser(userToken);
-        userId = user?.id ?? null;
-      } catch (_) { /* guest checkout — no user_id */ }
-    }
-
-    // 3. Insert booking
     const { data: booking, error: dbError } = await supabase
       .from("bookings")
       .insert({
-        user_id: userId,
         service_name: bookingData.service,
         vehicle_type: bookingData.vehicle_type,
         preferred_date: bookingData.preferred_date ?? null,
-        preferred_time: bookingData.preferred_time ?? null,
-        notes: [
-          bookingData.notes,
-          `Customer: ${bookingData.name}`,
-          `Email: ${bookingData.email}`,
-          `Phone: ${bookingData.phone}`,
-        ].filter(Boolean).join(" | "),
+        notes: (bookingData.notes ?? "") + ` | Customer: ${bookingData.name} | Email: ${bookingData.email} | Phone: ${bookingData.phone}`,
         deposit_paid: true,
         deposit_amount: 5000,
-        total_amount: bookingData.total_amount ?? null,
         square_payment_id: paymentId,
         status: "confirmed",
       })
@@ -112,46 +97,17 @@ serve(async (req: Request) => {
       .single();
 
     if (dbError) {
-      console.error("DB insert error:", dbError.message);
-      // Payment captured — return success with warning
+      // Payment succeeded but DB insert failed — log it but don't fail the user
+      console.error("DB insert error (payment already captured):", dbError.message);
       return new Response(
-        JSON.stringify({ success: true, paymentId, bookingId: null, warning: "Booking saved but may be delayed." }),
+        JSON.stringify({
+          success: true,
+          paymentId,
+          bookingId: null,
+          warning: "Booking saved but confirmation may be delayed.",
+        }),
         { headers: { ...corsHeaders, "Content-Type": "application/json" } }
       );
-    }
-
-    // 4. Send confirmation email via Resend
-    try {
-      await fetch("https://api.resend.com/emails", {
-        method: "POST",
-        headers: {
-          "Authorization": `Bearer ${RESEND_API_KEY}`,
-          "Content-Type": "application/json",
-        },
-        body: JSON.stringify({
-          from: "Diamond Touch Detailing <bookings@diamondtouchdetails.com>",
-          to: [bookingData.email],
-          subject: "Your Booking is Confirmed — Diamond Touch Detailing",
-          html: `
-            <div style="font-family: sans-serif; max-width: 600px; margin: 0 auto; background: #0a0a0a; color: #f5f5f5; padding: 40px; border-radius: 8px;">
-              <h1 style="color: #e91e8c; font-size: 24px; margin-bottom: 8px;">You're Booked! ◆</h1>
-              <p style="color: #aaa; margin-top: 0;">Your $50 deposit has been received.</p>
-              <hr style="border: 1px solid #222; margin: 24px 0;" />
-              <p><strong>Service:</strong> ${bookingData.service}</p>
-              <p><strong>Vehicle:</strong> ${bookingData.vehicle_type}</p>
-              <p><strong>Date:</strong> ${bookingData.preferred_date ?? "To be confirmed"}</p>
-              <p><strong>Time:</strong> ${bookingData.preferred_time ?? "To be confirmed"}</p>
-              <p><strong>Deposit Paid:</strong> $50</p>
-              <hr style="border: 1px solid #222; margin: 24px 0;" />
-              <p style="color: #aaa; font-size: 14px;">We'll be in touch to confirm your appointment details. Questions? Reply to this email or text us.</p>
-              <p style="color: #e91e8c; font-size: 14px; margin-top: 32px;">Diamond Touch Detailing — Your Vehicle. Perfected.</p>
-            </div>
-          `,
-        }),
-      });
-    } catch (emailErr) {
-      console.error("Email send error:", emailErr);
-      // Don't fail the booking over email
     }
 
     return new Response(

@@ -1382,14 +1382,6 @@
       btn.textContent = "Charging $50 deposit...";
 
       // 2. Charge via edge function + save booking
-      // Get session token to link booking to user account
-      let userToken = null;
-      try {
-        const sb = supabase.createClient(SUPABASE_URL, SUPABASE_KEY);
-        const { data: { session } } = await sb.auth.getSession();
-        userToken = session?.access_token ?? null;
-      } catch(_) {}
-
       const bookingPayload = {
         name: state.name,
         email: state.email,
@@ -1397,9 +1389,7 @@
         service: state.serviceName,
         vehicle_type: state.vehicleType,
         preferred_date: state.date ? state.date.toISOString().split('T')[0] : null,
-        preferred_time: state.time ?? null,
-        total_amount: (state.servicePrice + state.addonTotal) * 100,
-        notes: ['Vehicle: ' + state.vehicle, state.address ? 'Address: ' + state.address : '', state.addons.length ? 'Addons: ' + state.addons.map(a=>a.name).join(', ') : ''].filter(Boolean).join(' | ')
+        notes: 'Vehicle: ' + state.vehicle + (state.address ? ' | Address: ' + state.address : '') + (state.addons.length ? ' | Addons: ' + state.addons.map(a=>a.name).join(', ') : '') + (state.time ? ' | Time: ' + state.time : '')
       };
 
       const res = await fetch(EDGE_FN_URL, {
@@ -1412,8 +1402,7 @@
           locationId: LOCATION_ID,
           note: 'Diamond Touch Detailing deposit — ' + state.serviceName + ' for ' + state.name,
           buyerEmail: state.email,
-          bookingData: bookingPayload,
-          userToken
+          bookingData: bookingPayload
         })
       });
 
