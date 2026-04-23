@@ -609,10 +609,7 @@
               </div>
               <div class="embed-field">
                 <label>Service Address</label>
-                <div style="position:relative">
-                  <input type="text" id="embed-address" placeholder="Where should we come?" autocomplete="off" />
-                  <div id="embed-address-suggestions" style="position:absolute;top:100%;left:0;right:0;background:#1a1a1a;border:1px solid #2a2a2a;border-radius:6px;z-index:200;display:none;max-height:200px;overflow-y:auto"></div>
-                </div>
+                <input type="text" id="embed-address" placeholder="Where should we come?" />
               </div>
             </div>
           </div>
@@ -1081,11 +1078,6 @@
         state.name = profile.full_name || "";
         state.email = profile.email || session.user.email || "";
         state.phone = profile.phone || "";
-        // Autofill address from profile
-        if (profile.address) {
-          const addrEl = document.getElementById('embed-address');
-          if (addrEl && !addrEl.value) { addrEl.value = profile.address; state.address = profile.address; }
-        }
 
         // Show autofill banner
         const banner = document.getElementById("embed-autofill-banner");
@@ -1556,29 +1548,5 @@ document.addEventListener('DOMContentLoaded', async function() {
     else window.addEventListener("load", checkAuth);
   })();
   </script>
-<script>
-// Address autocomplete — Nominatim (free, no API key)
-(function() {
-  const input = document.getElementById('embed-address');
-  const box   = document.getElementById('embed-address-suggestions');
-  if (!input || !box) return;
-  let debounce;
-  input.addEventListener('input', () => {
-    clearTimeout(debounce);
-    const q = input.value.trim();
-    if (q.length < 4) { box.style.display = 'none'; return; }
-    debounce = setTimeout(async () => {
-      try {
-        const res = await fetch(`https://nominatim.openstreetmap.org/search?format=json&countrycodes=us&limit=5&q=${encodeURIComponent(q)}`, { headers: { 'Accept-Language': 'en' } });
-        const data = await res.json();
-        if (!data.length) { box.style.display = 'none'; return; }
-        box.innerHTML = data.map(r => `<div style="padding:10px 14px;cursor:pointer;font-size:0.85rem;border-bottom:1px solid #222;color:#f5f5f5" onmousedown="event.preventDefault()" onclick="document.getElementById('embed-address').value=this.dataset.addr;document.getElementById('embed-address-suggestions').style.display='none'" data-addr="${r.display_name.replace(/"/g,'&quot;')}">${r.display_name}</div>`).join('');
-        box.style.display = 'block';
-      } catch(_) {}
-    }, 350);
-  });
-  input.addEventListener('blur', () => setTimeout(() => { box.style.display = 'none'; }, 200));
-})();
-</script>
 </body>
 </html>
