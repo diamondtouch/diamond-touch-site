@@ -1326,12 +1326,16 @@
           const payments = window.Square.payments(APP_ID, LOCATION_ID);
           const card = await payments.card({
             style: {
-              '.input-container': { borderColor: 'transparent', borderRadius: '4px' },
+              '.input-container': { borderColor: '#333333', borderRadius: '6px' },
               '.input-container.is-focus': { borderColor: '#e91e8c' },
               '.input-container.is-error': { borderColor: '#ff4444' },
-              input: { color: '#f5f5f5', fontSize: '15px' },
-              'input::placeholder': { color: '#555555' },
-              '.message-text': { color: '#e91e8c' },
+              '.message-text': { color: '#999999' },
+              '.message-icon': { color: '#999999' },
+              '.message-text.is-error': { color: '#e91e8c' },
+              '.message-icon.is-error': { color: '#e91e8c' },
+              input: { backgroundColor: '#1a1a1a', color: '#f5f5f5', fontFamily: 'DM Sans, sans-serif' },
+              'input::placeholder': { color: '#666666' },
+              'input.is-error': { color: '#e91e8c' },
             }
           });
           await card.attach('#embed-card-container');
