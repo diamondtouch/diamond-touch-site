@@ -8,10 +8,9 @@
 // ─── Config ──────────────────────────────────────────────
 const SUPABASE_URL      = "https://fjafmptbzydqizafuaru.supabase.co";
 const SUPABASE_ANON_KEY = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImZqYWZtcHRienlkcWl6YWZ1YXJ1Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzU1MzI2NDUsImV4cCI6MjA5MTEwODY0NX0.XT_T3h9wsoPJqMTeBV0ohoCbAiDc8oFdZg7LHxoAeAM";
-const APP_ID            = "sq0idp--RtyLXcLrc5ZANHKmDm30Q";
-const LOCATION_ID       = "LE683QS3VSGN7";
+const APP_ID            = "sandbox-sq0idb-e4hfCqcraP5ssqJLEEJcoA";
+const LOCATION_ID       = "YOUR_LOCATION_ID"; // replace before going live
 const DEPOSIT_AMOUNT    = 5000; // $50.00 in cents
-const EDGE_FN_URL       = "https://fjafmptbzydqizafuaru.supabase.co/functions/v1/process-payment";
 
 /* ─── Supabase bookings table (run once to create):
 CREATE TABLE bookings (
@@ -205,33 +204,51 @@ form.addEventListener('submit', async (e) => {
 
     const sourceId = tokenResult.token;
 
-    // 2. Charge card + save booking via edge function (server-side, secure)
-    const edgeRes = await fetch(EDGE_FN_URL, {
+    // 2. Charge the card via Square Payments API
+    //    In production this MUST go through your own server to keep API keys secret.
+    //    For sandbox demo we call the Square sandbox endpoint directly.
+    const paymentRes = await fetch('https://connect.squareupsandbox.com/v2/payments', {
       method: 'POST',
       headers: {
-        'Content-Type':  'application/json',
-        'Authorization': `Bearer ${SUPABASE_ANON_KEY}`,
+        'Square-Version': '2024-06-04',
+        'Content-Type':   'application/json',
+        // WARNING: Never expose your Square access token client-side in production.
+        // Move this to a server-side function (Netlify Function, Supabase Edge Function, etc.)
+        'Authorization':  'Bearer YOUR_SANDBOX_ACCESS_TOKEN',
       },
       body: JSON.stringify({
-        sourceId,
-        amount:      DEPOSIT_AMOUNT,
-        currency:    'USD',
-        locationId:  LOCATION_ID,
+        idempotency_key: `dtd-${Date.now()}-${Math.random().toString(36).slice(2)}`,
+        source_id:       sourceId,
+        amount_money: {
+          amount:   DEPOSIT_AMOUNT,
+          currency: 'USD',
+        },
+        location_id: LOCATION_ID,
         note:        `Diamond Touch Detailing deposit — ${data.service} for ${data.name}`,
-        buyerEmail:  data.email,
-        bookingData: data,
+        buyer_email_address: data.email,
       }),
     });
 
-    const edgeData = await edgeRes.json();
+    const paymentData = await paymentRes.json();
 
-    if (!edgeData.success) {
-      setStatus(edgeData.error || 'Payment failed. Please try again.', 'error');
+    if (!paymentRes.ok || paymentData.errors) {
+      const errMsg = paymentData.errors?.[0]?.detail || 'Payment failed. Please try again.';
+      setStatus(errMsg, 'error');
       setLoading(false);
       return;
     }
 
-    // 3. Success
+    const paymentId = paymentData.payment?.id;
+
+    // 3. Insert booking into Supabase
+    await insertBooking({
+      ...data,
+      deposit_paid:      true,
+      square_payment_id: paymentId,
+      status:            'confirmed',
+    });
+
+    // 4. Success
     setStatus(
       `✓ Booking confirmed! We'll reach out to ${data.email} with your appointment details. See you soon!`,
       'success'
