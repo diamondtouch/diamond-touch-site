@@ -1053,7 +1053,7 @@
   <script>
 // ─── EMBEDDED BOOKING WIZARD ───────────────────────────────
 (function() {
-  const APP_ID = "sandbox-sq0idb-e4hfCqcraP5ssqJLEEJcoA";
+  const APP_ID = "sq0idp--RtyLXcLrc5ZANHKmDm30Q";
   const LOCATION_ID = "LE683QS3VSGN7";
   const SUPABASE_URL = "https://fjafmptbzydqizafuaru.supabase.co";
   const SUPABASE_KEY = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImZqYWZtcHRienlkcWl6YWZ1YXJ1Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzU1MzI2NDUsImV4cCI6MjA5MTEwODY0NX0.XT_T3h9wsoPJqMTeBV0ohoCbAiDc8oFdZg7LHxoAeAM";
@@ -1323,7 +1323,7 @@
         const statusEl = document.getElementById('embed-payment-status');
         try {
           if (!window.Square) throw new Error('Square.js failed to load.');
-          const payments = window.Square.payments(APP_ID, LOCATION_ID);
+          const payments = window.Square.payments('sandbox-sq0idb-e4hfCqcraP5ssqJLEEJcoA', 'LE683QS3VSGN7');
           const card = await payments.card({
             style: {
               '.input-container': { borderColor: 'transparent', borderRadius: '4px' },
@@ -1388,25 +1388,8 @@
       const embedSquareCard = window._embedSquareCard;
       if (!embedSquareCard || !window._embedSquareReady) throw new Error("Payment form not ready. Please wait a moment and try again.");
 
-      // 1. Tokenize card with buyer verification details (required by Square)
-      const verificationDetails = {
-        amount: '50.00',
-        currencyCode: 'USD',
-        intent: 'CHARGE',
-        customerInitiated: true,
-        sellerKeyedIn: false,
-        billingContact: {
-          givenName: state.name.split(' ')[0] || state.name,
-          familyName: state.name.split(' ').slice(1).join(' ') || '.',
-          email: state.email,
-          phone: state.phone,
-          addressLines: [state.address || ''],
-          city: 'Murrieta',
-          state: 'CA',
-          countryCode: 'US',
-        }
-      };
-      const tokenResult = await embedSquareCard.tokenize(verificationDetails);
+      // 1. Tokenize card
+      const tokenResult = await embedSquareCard.tokenize();
       if (tokenResult.status !== 'OK') {
         const msg = tokenResult.errors ? tokenResult.errors.map(e=>e.message).join(' ') : 'Card verification failed.';
         throw new Error(msg);
