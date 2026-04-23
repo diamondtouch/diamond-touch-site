@@ -2052,6 +2052,13 @@ input[type="date"]::-webkit-calendar-picker-indicator {
   padding: 0.2rem 0.75rem;
   margin-bottom: 0.75rem;
   width: fit-content;
+  background: rgba(233,30,140,0.08);
+}
+
+.pkg-col__solo-tag--center {
+  display: flex;
+  margin: 0.875rem auto 0;
+  justify-content: center;
 }
 
 /* ─── EMBEDDED BOOKING WIZARD ────────────────────────────── */
