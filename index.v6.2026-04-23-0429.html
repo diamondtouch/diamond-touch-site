@@ -1342,11 +1342,10 @@
             }
           });
           await embedSquareCard.attach('#embed-card-container');
-          console.log('Square card attached successfully');
         } catch(err) {
-          console.error('Square card init FULL ERROR:', JSON.stringify(err), err.message, err);
+          console.error('Square card init error:', err);
           const statusEl2 = document.getElementById('embed-payment-status');
-          statusEl2.textContent = 'Error: ' + (err.message || JSON.stringify(err));
+          statusEl2.textContent = 'Payment form failed to load. Please refresh.';
           statusEl2.style.color = '#e91e8c';
           window._embedSquareInited = false; // allow retry
         }
