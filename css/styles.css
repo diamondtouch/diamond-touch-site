@@ -2596,3 +2596,81 @@ input[type="date"]::-webkit-calendar-picker-indicator {
 }
 
 .booking-agree__label a { color: var(--clr-pink); }
+
+/* ── BOOKING STEP 2: LOGGED-IN SMART CHECKOUT ── */
+.embed-autofill-banner {
+  display: flex;
+  align-items: center;
+  gap: 0.625rem;
+  background: rgba(233,30,140,0.06);
+  border: 1px solid rgba(233,30,140,0.2);
+  border-radius: 8px;
+  padding: 0.75rem 1rem;
+  font-size: 0.875rem;
+  color: var(--clr-muted);
+  margin-bottom: 1.5rem;
+}
+.embed-autofill-banner strong { color: var(--clr-text); }
+.embed-autofill-banner a { color: var(--clr-pink); }
+
+.embed-form-section {
+  margin-bottom: 1.75rem;
+}
+.embed-form-section__title {
+  font-size: 0.9375rem;
+  font-weight: 600;
+  margin-bottom: 1rem;
+  color: var(--clr-text);
+  padding-bottom: 0.5rem;
+  border-bottom: 1px solid var(--clr-border);
+}
+
+.embed-vehicles-grid {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 0.75rem;
+  margin-bottom: 0.75rem;
+}
+
+@media (max-width: 640px) {
+  .embed-vehicles-grid { grid-template-columns: 1fr 1fr; }
+}
+
+.embed-vehicle-card {
+  background: var(--clr-base);
+  border: 1px solid var(--clr-border);
+  border-radius: 10px;
+  padding: 0.875rem 1rem;
+  cursor: pointer;
+  transition: all 0.2s;
+}
+.embed-vehicle-card:hover { border-color: rgba(233,30,140,0.4); }
+.embed-vehicle-card.selected {
+  border-color: var(--clr-pink);
+  background: rgba(233,30,140,0.06);
+  box-shadow: 0 0 0 1px rgba(233,30,140,0.2);
+}
+.embed-vehicle-card__name {
+  font-size: 0.9375rem;
+  font-weight: 500;
+  margin-bottom: 0.25rem;
+}
+.embed-vehicle-card__color {
+  font-size: 0.8125rem;
+  color: var(--clr-muted);
+  text-transform: capitalize;
+}
+
+.embed-add-vehicle-btn {
+  background: none;
+  border: 1px dashed var(--clr-border);
+  color: var(--clr-pink);
+  font-size: 0.875rem;
+  padding: 0.5rem 1rem;
+  border-radius: 8px;
+  cursor: pointer;
+  transition: all 0.2s;
+  width: 100%;
+  margin-bottom: 1rem;
+}
+.embed-add-vehicle-btn:hover { border-color: var(--clr-pink); background: rgba(233,30,140,0.04); }

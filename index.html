@@ -584,26 +584,80 @@
 
         <!-- STEP 2: DETAILS -->
         <div class="booking-panel" id="embed-step2">
-          <div class="embed-form-grid">
-            <div class="embed-field">
-              <label>Full Name *</label>
-              <input type="text" id="embed-name" placeholder="Your full name" />
-            </div>
-            <div class="embed-field">
-              <label>Email *</label>
-              <input type="email" id="embed-email" placeholder="your@email.com" />
-            </div>
-            <div class="embed-field">
-              <label>Phone *</label>
-              <input type="tel" id="embed-phone" placeholder="(555) 000-0000" />
-            </div>
-            <div class="embed-field">
-              <label>Vehicle (Year Make Model)</label>
-              <input type="text" id="embed-vehicle" placeholder="e.g. 2022 BMW M3" />
+
+          <!-- LOGGED IN: show saved info banner -->
+          <div class="embed-autofill-banner" id="embed-autofill-banner" style="display:none">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" width="16" height="16"><path d="M20 21v-2a4 4 0 00-4-4H8a4 4 0 00-4 4v2"/><circle cx="12" cy="7" r="4"/></svg>
+            <span>Booking as <strong id="embed-autofill-name"></strong> — <a href="#" id="embed-edit-info">Edit info</a></span>
+          </div>
+
+          <!-- CONTACT INFO -->
+          <div class="embed-form-section">
+            <h4 class="embed-form-section__title">Your Info</h4>
+            <div class="embed-form-grid">
+              <div class="embed-field">
+                <label>Full Name *</label>
+                <input type="text" id="embed-name" placeholder="Your full name" />
+              </div>
+              <div class="embed-field">
+                <label>Email *</label>
+                <input type="email" id="embed-email" placeholder="your@email.com" />
+              </div>
+              <div class="embed-field">
+                <label>Phone *</label>
+                <input type="tel" id="embed-phone" placeholder="(555) 000-0000" />
+              </div>
+              <div class="embed-field">
+                <label>Service Address</label>
+                <input type="text" id="embed-address" placeholder="Where should we come?" />
+              </div>
             </div>
           </div>
-          <div class="embed-addons">
-            <h4 class="embed-addons__title">Add-Ons <span class="embed-addons__sub">(optional)</span></h4>
+
+          <!-- VEHICLE SELECTION -->
+          <div class="embed-form-section">
+            <h4 class="embed-form-section__title">Your Vehicle</h4>
+
+            <!-- Saved vehicles (shown when logged in) -->
+            <div id="embed-saved-vehicles" style="display:none">
+              <div class="embed-vehicles-grid" id="embed-vehicles-grid"></div>
+              <button class="embed-add-vehicle-btn" id="embed-show-new-vehicle">
+                + Add a different vehicle
+              </button>
+            </div>
+
+            <!-- New vehicle form (shown when logged out OR adding new) -->
+            <div id="embed-new-vehicle-form">
+              <div class="embed-form-grid">
+                <div class="embed-field">
+                  <label>Year</label>
+                  <input type="text" id="embed-year" placeholder="2022" maxlength="4" />
+                </div>
+                <div class="embed-field">
+                  <label>Make</label>
+                  <input type="text" id="embed-make" placeholder="BMW" />
+                </div>
+                <div class="embed-field">
+                  <label>Model</label>
+                  <input type="text" id="embed-model" placeholder="M3" />
+                </div>
+                <div class="embed-field">
+                  <label>Color</label>
+                  <input type="text" id="embed-color" placeholder="Black" />
+                </div>
+              </div>
+              <div id="embed-save-vehicle-opt" style="display:none">
+                <label class="embed-addon" style="margin-top:0.5rem">
+                  <input type="checkbox" id="embed-save-vehicle" checked />
+                  <span style="color:#aaa">Save this vehicle to my account for future bookings</span>
+                </label>
+              </div>
+            </div>
+          </div>
+
+          <!-- ADD-ONS -->
+          <div class="embed-form-section">
+            <h4 class="embed-form-section__title">Add-Ons <span class="embed-addons__sub">(optional)</span></h4>
             <div class="embed-addons__grid">
               <label class="embed-addon"><input type="checkbox" value="75" data-name="Pet Hair Removal"> Pet Hair Removal <span>+$75</span></label>
               <label class="embed-addon"><input type="checkbox" value="50" data-name="Odor Treatment"> Odor Treatment <span>+$50</span></label>
@@ -613,11 +667,13 @@
               <label class="embed-addon"><input type="checkbox" value="40" data-name="Rim Polish"> Rim Polish <span>+$40</span></label>
             </div>
           </div>
+
           <div class="embed-total-bar">
             <span>Service: <strong id="embed-service-label">-</strong></span>
             <span>Add-ons: <strong id="embed-addons-total">$0</strong></span>
             <span>Deposit today: <strong style="color:#e91e8c">$50</strong></span>
           </div>
+
           <div class="embed-actions">
             <button class="btn btn--ghost" id="embed-step2-back">← Back</button>
             <button class="btn btn--primary" id="embed-step2-next">Continue →</button>
@@ -933,9 +989,99 @@
   const SUPABASE_URL = "https://fjafmptbzydqizafuaru.supabase.co";
   const SUPABASE_KEY = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImZqYWZtcHRienlkcWl6YWZ1YXJ1Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzU1MzI2NDUsImV4cCI6MjA5MTEwODY0NX0.XT_T3h9wsoPJqMTeBV0ohoCbAiDc8oFdZg7LHxoAeAM";
 
-  let state = { step: 1, vehicleType: "sedan", service: null, serviceName: "", servicePrice: 0, addons: [], addonTotal: 0, name: "", email: "", phone: "", vehicle: "", date: null, time: null };
+  let state = { step: 1, vehicleType: "sedan", service: null, serviceName: "", servicePrice: 0, addons: [], addonTotal: 0, name: "", email: "", phone: "", vehicle: "", address: "", date: null, time: null };
   let squareCard = null;
   let calDate = new Date();
+
+  // Load logged-in user data into Step 2
+  async function loadUserData() {
+    try {
+      const sb = supabase.createClient(SUPABASE_URL, SUPABASE_KEY);
+      const { data: { session } } = await sb.auth.getSession();
+      if (!session) return;
+
+      // Get profile
+      const { data: profile } = await sb.from("profiles").select("*").eq("id", session.user.id).single();
+      if (profile) {
+        document.getElementById("embed-name").value = profile.full_name || "";
+        document.getElementById("embed-email").value = profile.email || session.user.email || "";
+        document.getElementById("embed-phone").value = profile.phone || "";
+        state.name = profile.full_name || "";
+        state.email = profile.email || session.user.email || "";
+        state.phone = profile.phone || "";
+
+        // Show autofill banner
+        const banner = document.getElementById("embed-autofill-banner");
+        const nameEl = document.getElementById("embed-autofill-name");
+        if (banner && nameEl) {
+          nameEl.textContent = profile.full_name || session.user.email;
+          banner.style.display = "flex";
+        }
+
+        // Show save vehicle option
+        const saveOpt = document.getElementById("embed-save-vehicle-opt");
+        if (saveOpt) saveOpt.style.display = "block";
+      }
+
+      // Get saved vehicles
+      const { data: vehicles } = await sb.from("vehicles").select("*").eq("user_id", session.user.id);
+      if (vehicles && vehicles.length > 0) {
+        const grid = document.getElementById("embed-vehicles-grid");
+        const savedSection = document.getElementById("embed-saved-vehicles");
+        const newForm = document.getElementById("embed-new-vehicle-form");
+        if (grid && savedSection) {
+          savedSection.style.display = "block";
+          newForm.style.display = "none";
+          grid.innerHTML = vehicles.map(v => `
+            <div class="embed-vehicle-card" data-id="${v.id}" data-year="${v.year||""}" data-make="${v.make||""}" data-model="${v.model||""}" data-color="${v.color||""}" data-type="${v.type||"sedan"}">
+              <div class="embed-vehicle-card__name">${v.year||""} ${v.make||""} ${v.model||""}</div>
+              <div class="embed-vehicle-card__color">${v.color||""} · ${v.type||""}</div>
+            </div>
+          `).join("");
+
+          // Auto-select first vehicle
+          const firstCard = grid.querySelector(".embed-vehicle-card");
+          if (firstCard) {
+            firstCard.classList.add("selected");
+            state.vehicle = `${firstCard.dataset.year} ${firstCard.dataset.make} ${firstCard.dataset.model}`;
+            state.vehicleType = firstCard.dataset.type || "sedan";
+            // Update sedan/SUV toggle
+            document.querySelectorAll(".embed-vehicle-btn").forEach(b => b.classList.remove("active"));
+            const matchBtn = document.querySelector(`.embed-vehicle-btn[data-type="${state.vehicleType}"]`);
+            if (matchBtn) matchBtn.classList.add("active");
+          }
+
+          // Vehicle card selection
+          grid.querySelectorAll(".embed-vehicle-card").forEach(card => {
+            card.addEventListener("click", () => {
+              grid.querySelectorAll(".embed-vehicle-card").forEach(c => c.classList.remove("selected"));
+              card.classList.add("selected");
+              state.vehicle = `${card.dataset.year} ${card.dataset.make} ${card.dataset.model}`;
+              state.vehicleType = card.dataset.type || "sedan";
+              // Update price display for vehicle type
+              document.querySelectorAll(".embed-vehicle-btn").forEach(b => b.classList.remove("active"));
+              const matchBtn = document.querySelector(`.embed-vehicle-btn[data-type="${state.vehicleType}"]`);
+              if (matchBtn) matchBtn.classList.add("active");
+              document.querySelectorAll(".embed-service-card").forEach(sc => {
+                const pv = sc.querySelector(".price-val");
+                if (pv) pv.textContent = sc.dataset[state.vehicleType];
+              });
+              updateServiceLabel();
+            });
+          });
+
+          // Show new vehicle form toggle
+          const showNewBtn = document.getElementById("embed-show-new-vehicle");
+          if (showNewBtn) {
+            showNewBtn.addEventListener("click", () => {
+              newForm.style.display = newForm.style.display === "none" ? "block" : "none";
+              showNewBtn.textContent = newForm.style.display === "none" ? "+ Add a different vehicle" : "− Hide new vehicle form";
+            });
+          }
+        }
+      }
+    } catch(e) { console.log("Auth load error:", e); }
+  }
 
   function goStep(n) {
     document.querySelectorAll(".booking-panel").forEach(p => p.classList.remove("active"));
@@ -980,7 +1126,7 @@
     if (el) el.textContent = state.serviceName + " $" + state.servicePrice;
   }
 
-  document.getElementById("embed-step1-next").addEventListener("click", () => goStep(2));
+  document.getElementById("embed-step1-next").addEventListener("click", () => { goStep(2); loadUserData(); });
 
   // Addons
   document.querySelectorAll(".embed-addon input").forEach(cb => {
@@ -1000,7 +1146,16 @@
     state.name = document.getElementById("embed-name").value;
     state.email = document.getElementById("embed-email").value;
     state.phone = document.getElementById("embed-phone").value;
-    state.vehicle = document.getElementById("embed-vehicle").value;
+    state.address = document.getElementById("embed-address")?.value || "";
+    // If new vehicle form is visible, use those values
+    const newVehicleForm = document.getElementById("embed-new-vehicle-form");
+    if (newVehicleForm && newVehicleForm.style.display !== "none") {
+      const yr = document.getElementById("embed-year")?.value || "";
+      const mk = document.getElementById("embed-make")?.value || "";
+      const mo = document.getElementById("embed-model")?.value || "";
+      const cl = document.getElementById("embed-color")?.value || "";
+      if (yr || mk || mo) state.vehicle = `${yr} ${mk} ${mo} ${cl}`.trim();
+    }
     if (!state.name || !state.email || !state.phone) { alert("Please fill in name, email and phone."); return; }
     goStep(3);
     renderCal();
