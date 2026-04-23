@@ -358,7 +358,7 @@
     return d.toISOString().split('T')[0];
   }
 
-  // ── Plan config ──────────────────────────────────────────────
+  // ── Shared feature list HTML ─────────────────────────────────
   const checkSVG = `<svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M20 6 9 17l-5-5"/></svg>`;
   const featureItems = [
     'Monthly Signature Detail',
@@ -366,20 +366,12 @@
     'Priority 48-hour booking',
     '15% off all add-ons',
     'Free quarterly odor treatment',
-    '6-month minimum commitment',
+    'Cancel anytime',
   ];
   function featuresHTML() {
-    return featureItems.map(f => `<li class="plan-card__feature">${checkSVG}${f}</li>`).join('');
+    return featureItems.map(f => `
+      <li class="plan-card__feature">${checkSVG}${f}</li>`).join('');
   }
-
-  const PLANS = {
-    sedan_monthly:  { label: 'Sedan — Monthly',       vehicle: 'sedan', billing: 'monthly',  months: 6,  price: 14900, display: '$149/mo',  total: null,  save: null },
-    suv_monthly:    { label: 'SUV/Truck — Monthly',    vehicle: 'suv',   billing: 'monthly',  months: 6,  price: 17900, display: '$179/mo',  total: null,  save: null },
-    sedan_6month:   { label: 'Sedan — 6 Month Prepay', vehicle: 'sedan', billing: 'prepay_6', months: 6,  price: 79900, display: '$799',     total: 799,   save: '11%', permo: '$133/mo' },
-    suv_6month:     { label: 'SUV/Truck — 6 Mo Prepay',vehicle: 'suv',   billing: 'prepay_6', months: 6,  price: 95900, display: '$959',     total: 959,   save: '11%', permo: '$160/mo' },
-    sedan_12month:  { label: 'Sedan — 12 Month Prepay',vehicle: 'sedan', billing: 'prepay_12',months: 12, price: 149900,display: '$1,499',   total: 1499,  save: '16%', permo: '$125/mo' },
-    suv_12month:    { label: 'SUV/Truck — 12 Mo Prepay',vehicle: 'suv',  billing: 'prepay_12',months: 12, price: 179900,display: '$1,799',   total: 1799,  save: '16%', permo: '$150/mo' },
-  };
 
   // ── STATE 1: Render join plans ──────────────────────────────
   function renderJoinPlans() {
