@@ -725,8 +725,7 @@
             <a href="terms.html" target="_blank" class="booking-terms-box__link">Read full Terms of Service →</a>
           </div>
           <div class="embed-payment-wrap">
-            <div id="embed-card-container" style="background:#1a1a1a;border:1px solid #2a2a2a;border-radius:8px;padding:16px;min-height:90px;margin-bottom:12px;"></div>
-            <div id="embed-payment-status" style="font-size:0.875rem;margin-top:8px;"></div>
+            <div id="embed-payment-status"></div>
           </div>
           <div class="embed-deposit-note">$50 NON-REFUNDABLE deposit secures your time slot · Balance due at service · Cancellations within 24hrs forfeit deposit</div>
           <div class="booking-agree">
@@ -737,7 +736,7 @@
           </div>
           <div class="embed-actions">
             <button class="btn btn--ghost" id="embed-step4-back">← Back</button>
-            <button class="btn btn--primary" id="embed-confirm-btn" disabled>Pay $50 Deposit →</button>
+            <button class="btn btn--primary" id="embed-confirm-btn">Confirm & Pay $50 Deposit →</button>
           </div>
           <div class="embed-success" id="embed-success" style="display:none">
             <div class="embed-success__icon">◆</div>
@@ -1161,7 +1160,7 @@
       if (i + 1 === n) s.classList.add("active");
     });
     state.step = n;
-    if (n === 4) { if (typeof initEmbedSquare === 'function' && !window._embedSquareInited) { window._embedSquareInited = true; initEmbedSquare(); } }
+    if (n === 4) {} // payment handled via Square link
   }
 
   // Vehicle toggle
@@ -1332,98 +1331,50 @@
 
   document.getElementById("embed-step4-back").addEventListener("click", () => goStep(3));
 
-  // ─── Square inline card payment ─────────────────────────────
-  const EDGE_FN_URL = "https://fjafmptbzydqizafuaru.supabase.co/functions/v1/process-payment";
-  let embedSquareCard = null;
+  // Square payment handled via hosted payment link
 
-  window.initEmbedSquare = async function initEmbedSquare() {
-    if (typeof Square === 'undefined') return;
-    try {
-      const payments = Square.payments(APP_ID, LOCATION_ID);
-      embedSquareCard = await payments.card({
-        style: {
-          '.input-container': { borderColor: 'transparent', borderRadius: '4px' },
-          '.input-container.is-focus': { borderColor: '#e91e8c' },
-          '.input-container.is-error': { borderColor: '#ff4444' },
-          input: { color: '#f5f5f5', fontFamily: "'DM Sans', sans-serif", fontSize: '15px', backgroundColor: 'transparent' },
-          'input::placeholder': { color: '#555' },
-          '.message-text': { color: '#e91e8c' },
-        }
-      });
-      await embedSquareCard.attach('#embed-card-container');
-    } catch(err) {
-      console.error('Square init error:', err);
-      document.getElementById('embed-payment-status').textContent = 'Payment form unavailable. Please refresh.';
-    }
-  }
-
-  // Terms checkbox enables button
+  document.getElementById("embed-confirm-btn").disabled = true;
   document.getElementById("embed-terms-agree").addEventListener("change", function() {
     document.getElementById("embed-confirm-btn").disabled = !this.checked;
   });
 
   document.getElementById("embed-confirm-btn").addEventListener("click", async () => {
     const btn = document.getElementById("embed-confirm-btn");
-    const statusEl = document.getElementById("embed-payment-status");
+    const status = document.getElementById("embed-payment-status");
     btn.disabled = true;
-    btn.textContent = "Processing...";
-    statusEl.textContent = "";
-    statusEl.style.color = "";
-
+    btn.textContent = "Saving your booking...";
+    status.textContent = "";
     try {
-      if (!embedSquareCard) throw new Error("Payment form not ready. Please refresh.");
-
-      // 1. Tokenize card
-      const tokenResult = await embedSquareCard.tokenize();
-      if (tokenResult.status !== 'OK') {
-        const msg = tokenResult.errors ? tokenResult.errors.map(e=>e.message).join(' ') : 'Card verification failed.';
-        throw new Error(msg);
-      }
-
-      btn.textContent = "Charging $50 deposit...";
-
-      // 2. Charge via edge function + save booking
-      const bookingPayload = {
-        name: state.name,
-        email: state.email,
-        phone: state.phone,
-        service: state.serviceName,
+      // Save pending booking to Supabase first
+      const bookingData = {
+        service_name: state.serviceName,
         vehicle_type: state.vehicleType,
-        preferred_date: state.date ? state.date.toISOString().split('T')[0] : null,
-        notes: 'Vehicle: ' + state.vehicle + (state.address ? ' | Address: ' + state.address : '') + (state.addons.length ? ' | Addons: ' + state.addons.map(a=>a.name).join(', ') : '') + (state.time ? ' | Time: ' + state.time : '')
+        preferred_date: state.date ? state.date.toISOString().split("T")[0] : null,
+        preferred_time: state.time,
+        notes: "Vehicle: " + state.vehicle + " | Address: " + (state.address||"") + " | Addons: " + state.addons.map(a=>a.name).join(", "),
+        deposit_paid: false,
+        deposit_amount: 5000,
+        total_amount: (state.servicePrice + state.addonTotal) * 100,
+        status: "pending"
       };
+      // Try to save — don't block on failure
+      try {
+        await fetch(SUPABASE_URL + "/rest/v1/bookings", {
+          method: "POST",
+          headers: { "apikey": SUPABASE_KEY, "Authorization": "Bearer " + SUPABASE_KEY, "Content-Type": "application/json", "Prefer": "return=minimal" },
+          body: JSON.stringify(bookingData)
+        });
+      } catch(e2) {}
 
-      const res = await fetch(EDGE_FN_URL, {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json', 'Authorization': 'Bearer ' + SUPABASE_KEY },
-        body: JSON.stringify({
-          sourceId: tokenResult.token,
-          amount: 5000,
-          currency: 'USD',
-          locationId: LOCATION_ID,
-          note: 'Diamond Touch Detailing deposit — ' + state.serviceName + ' for ' + state.name,
-          buyerEmail: state.email,
-          bookingData: bookingPayload
-        })
-      });
-
-      const data = await res.json();
-      if (!data.success) throw new Error(data.error || 'Payment failed. Please try again.');
-
-      // 3. Success
-      document.getElementById('embed-success-msg').textContent =
-        'Your $50 deposit is confirmed! We\'ll text/email ' + state.email + ' with your appointment details.';
-      document.getElementById('embed-success').style.display = 'block';
-      document.getElementById('embed-confirm-btn').style.display = 'none';
-      document.getElementById('embed-step4-back').style.display = 'none';
-      embedSquareCard.destroy();
-      embedSquareCard = null;
-
-    } catch(err) {
-      statusEl.textContent = err.message;
-      statusEl.style.color = '#e91e8c';
+      // Build Square payment link with booking details in the note
+      const note = encodeURIComponent(state.serviceName + " | " + state.vehicleType + " | " + (state.date ? state.date.toLocaleDateString() : "") + " at " + state.time + " | " + state.name + " " + state.phone);
+      btn.textContent = "Redirecting to payment...";
+      // Redirect to Square hosted payment page
+      window.location.href = "https://square.link/u/zorB11kv";
+    } catch(e) {
+      status.textContent = "Error: " + e.message;
       btn.disabled = false;
-      btn.textContent = 'Pay $50 Deposit →';
+      btn.textContent = "Confirm & Pay $50 Deposit";
     }
   });
 })();
