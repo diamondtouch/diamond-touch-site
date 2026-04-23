@@ -40,10 +40,12 @@
         <span>Call or Text: <a href="tel:+19512930214">(951) 293-0214</a></span>
       </div>
       <div class="top-bar__right">
+        <a href="portal/dashboard.html" class="top-bar__link" id="topbar-account" style="display:none">My Account</a>
+        <span class="top-bar__divider" id="topbar-div2" style="display:none">|</span>
         <a href="portal/login.html" class="top-bar__link" id="topbar-signin">Sign In</a>
         <span class="top-bar__divider">|</span>
         <a href="portal/signup.html" class="top-bar__link" id="topbar-signup">Create Account</a>
-        <a href="portal/dashboard.html" class="top-bar__link top-bar__dashboard" id="topbar-dashboard" style="display:none">My Dashboard</a>
+        <a href="#" class="top-bar__link" id="topbar-signout" style="display:none">Sign Out</a>
       </div>
     </div>
   </div>
@@ -1118,5 +1120,34 @@
 })();
 </script>
 
+
+  <script>
+  // Top bar auth state
+  (function() {
+    const SUPABASE_URL = "https://fjafmptbzydqizafuaru.supabase.co";
+    const SUPABASE_KEY = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImZqYWZtcHRienlkcWl6YWZ1YXJ1Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzU1MzI2NDUsImV4cCI6MjA5MTEwODY0NX0.XT_T3h9wsoPJqMTeBV0ohoCbAiDc8oFdZg7LHxoAeAM";
+    async function checkAuth() {
+      try {
+        const sb = supabase.createClient(SUPABASE_URL, SUPABASE_KEY);
+        const { data: { session } } = await sb.auth.getSession();
+        if (session) {
+          document.getElementById("topbar-signin").style.display = "none";
+          document.getElementById("topbar-signup").style.display = "none";
+          document.querySelector(".top-bar__right .top-bar__divider").style.display = "none";
+          document.getElementById("topbar-account").style.display = "inline";
+          document.getElementById("topbar-div2").style.display = "inline";
+          document.getElementById("topbar-signout").style.display = "inline";
+          document.getElementById("topbar-signout").addEventListener("click", async (e) => {
+            e.preventDefault();
+            await sb.auth.signOut();
+            window.location.reload();
+          });
+        }
+      } catch(e) {}
+    }
+    if (typeof supabase !== "undefined") checkAuth();
+    else window.addEventListener("load", checkAuth);
+  })();
+  </script>
 </body>
 </html>
