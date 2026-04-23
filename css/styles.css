@@ -2017,43 +2017,26 @@ input[type="date"]::-webkit-calendar-picker-indicator {
 }
 
 /* ─── PACKAGE GROUP LABELS ───────────────────────────────── */
-.pkg-group-label {
-  grid-column: 1 / -1;
-  display: flex;
-  align-items: center;
-  gap: 1rem;
-  padding: 0.5rem 0 1rem;
-  margin-top: 0.5rem;
-}
-
-.pkg-group-label span {
-  font-size: 0.75rem;
-  font-weight: 600;
-  letter-spacing: 0.18em;
-  text-transform: uppercase;
-  color: #e91e8c;
-  white-space: nowrap;
-}
-
-.pkg-group-label::after {
-  content: "";
-  flex: 1;
-  height: 1px;
-  background: #2a2a2a;
-}
-
-.pkg-group-label--full span {
-  color: #aaaaaa;
-}
-
 .pkg-col--standalone {
-  border-style: dashed;
-  border-color: #2a2a2a;
+  background: #0d0d0d;
+  border-color: #222222;
+  position: relative;
+}
+
+.pkg-col--standalone::before {
+  content: "";
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  height: 3px;
+  background: linear-gradient(90deg, rgba(233,30,140,0.4), rgba(233,30,140,0.1));
+  border-radius: 16px 16px 0 0;
 }
 
 .pkg-col--standalone:hover {
-  border-color: #e91e8c;
-  border-style: solid;
+  border-color: rgba(233,30,140,0.4);
+  background: #0f0f0f;
 }
 
 .pkg-col__solo-tag {
