@@ -8,6 +8,174 @@
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
   <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300;0,400;0,500;0,600;1,300;1,400&family=DM+Sans:ital,opsz,wght@0,9..40,300;0,9..40,400;0,9..40,500;0,9..40,600;1,9..40,300&display=swap" rel="stylesheet" />
   <link rel="stylesheet" href="../css/portal.css" />
+  <style>
+    /* Plan summary card (payment section) */
+    .plan-summary-card {
+      display: flex;
+      align-items: center;
+      gap: 0.875rem;
+      background: #161616;
+      border: 1px solid #2a2a2a;
+      border-left: 3px solid #e91e8c;
+      border-radius: 10px;
+      padding: 1rem 1.25rem;
+      margin-bottom: 1.25rem;
+    }
+    .plan-summary-card__icon {
+      width: 36px;
+      height: 36px;
+      background: rgba(233,30,140,0.12);
+      border-radius: 8px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      flex-shrink: 0;
+      color: #e91e8c;
+    }
+    .plan-summary-card__info {
+      flex: 1;
+    }
+    .plan-summary-card__name {
+      font-size: 0.9375rem;
+      font-weight: 500;
+      color: #f5f5f5;
+      line-height: 1.3;
+    }
+    .plan-summary-card__change {
+      font-size: 0.8rem;
+      color: #666;
+      cursor: pointer;
+      text-decoration: underline;
+      text-underline-offset: 2px;
+      background: none;
+      border: none;
+      padding: 0;
+      margin-top: 0.2rem;
+      display: inline-block;
+    }
+    .plan-summary-card__change:hover {
+      color: #999;
+    }
+
+    /* Payment section wrapper */
+    #paymentSection {
+      margin-top: 2rem;
+      background: #111111;
+      border: 1px solid #2a2a2a;
+      border-radius: 12px;
+      padding: 1.75rem;
+    }
+    #paymentSection h3 {
+      font-family: 'Cormorant Garamond', serif;
+      font-size: 1.375rem;
+      font-weight: 500;
+      color: #f5f5f5;
+      margin: 0 0 0.25rem;
+    }
+    .billing-info-text {
+      font-size: 0.875rem;
+      color: #888;
+      margin: 0 0 1.25rem;
+    }
+
+    /* Square card container */
+    #membership-card-container,
+    #update-card-container {
+      min-height: 50px;
+      border: 1px solid #2a2a2a;
+      border-radius: 8px;
+      padding: 0.875rem 1rem;
+      background: #161616;
+      margin-bottom: 1rem;
+    }
+
+    /* Fine print */
+    .fine-print {
+      text-align: center;
+      font-size: 0.8125rem;
+      color: #555;
+      margin-top: 0.875rem;
+    }
+
+    /* Membership success state */
+    .membership-success {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      text-align: center;
+      padding: 2rem 1rem 1rem;
+    }
+    .membership-success__check {
+      width: 72px;
+      height: 72px;
+      border-radius: 50%;
+      background: rgba(233,30,140,0.15);
+      border: 2px solid #e91e8c;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      margin-bottom: 1.5rem;
+      animation: pop-in 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275) forwards;
+      color: #e91e8c;
+    }
+    @keyframes pop-in {
+      from { transform: scale(0.5); opacity: 0; }
+      to   { transform: scale(1);   opacity: 1; }
+    }
+    .membership-success__title {
+      font-family: 'Cormorant Garamond', serif;
+      font-size: 2rem;
+      font-weight: 500;
+      color: #f5f5f5;
+      margin: 0 0 0.5rem;
+      line-height: 1.2;
+    }
+    .membership-success__sub {
+      font-size: 0.9375rem;
+      color: #888;
+      margin: 0 0 2rem;
+    }
+    .membership-success__details {
+      background: #111111;
+      border: 1px solid #2a2a2a;
+      border-radius: 12px;
+      padding: 1.5rem;
+      width: 100%;
+      max-width: 400px;
+      margin: 0 auto 2rem;
+      text-align: left;
+    }
+    .membership-success__detail-row {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      font-size: 0.9rem;
+      padding: 0.5rem 0;
+      border-bottom: 1px solid #1e1e1e;
+    }
+    .membership-success__detail-row:last-child {
+      border-bottom: none;
+    }
+    .membership-success__detail-label {
+      color: #666;
+    }
+    .membership-success__detail-value {
+      color: #f5f5f5;
+      font-weight: 500;
+    }
+
+    /* Update payment section spacing */
+    #updatePaymentSection {
+      margin-top: 0;
+    }
+    #updatePaymentSection .section-card__title {
+      margin-bottom: 0.5rem;
+    }
+
+    /* inline-alert visibility toggle */
+    .inline-alert { display: none; }
+    .inline-alert.visible { display: flex; }
+  </style>
 </head>
 <body>
 
@@ -111,42 +279,25 @@
       </button>
     </div>
     <div class="modal__body">
-      <p style="font-size:0.9375rem;color:var(--clr-muted);line-height:1.6">Are you sure you want to cancel your Diamond Club membership? You'll lose access to member benefits at the end of your current billing period.</p>
+      <p style="font-size:0.9375rem;color:var(--clr-muted);line-height:1.6">Are you sure? Your membership benefits end immediately.</p>
     </div>
     <div class="modal__actions">
-      <button class="btn btn--ghost btn--sm" id="cancelMemberNo">Keep Membership</button>
+      <button class="btn btn--ghost btn--sm" id="cancelMemberNo">Keep My Membership</button>
       <button class="btn btn--danger btn--sm" id="cancelMemberYes">
-        <span id="cancelMemberBtnText">Yes, Cancel</span>
+        <span id="cancelMemberBtnText">Cancel Membership</span>
         <span class="spinner" id="cancelMemberSpinner" style="display:none"></span>
       </button>
     </div>
   </div>
 </div>
 
-<!-- ========== JOIN INFO DIALOG ========== -->
-<div class="modal-overlay" id="joinInfoOverlay" role="dialog" aria-modal="true">
-  <div class="modal">
-    <div class="modal__head">
-      <h2 class="modal__title" id="joinPlanName">Join Diamond Club</h2>
-      <button class="modal__close" id="joinInfoClose" aria-label="Close">
-        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M18 6 6 18M6 6l12 12"/></svg>
-      </button>
-    </div>
-    <div class="modal__body">
-      <p style="font-size:0.9375rem;color:var(--clr-muted);line-height:1.6;margin-bottom:1rem">We're excited to have you join! To set up your membership, please contact us directly:</p>
-      <a href="mailto:sales@diamondtouchdetails.com" class="btn btn--primary btn--full">
-        Email sales@diamondtouchdetails.com
-      </a>
-      <p style="text-align:center;font-size:0.8125rem;color:var(--clr-muted-2);margin-top:1rem">We'll get you set up within 24 hours.</p>
-    </div>
-  </div>
-</div>
-
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2/dist/umd/supabase.js"></script>
+<script src="https://sandbox.web.squarecdn.com/v1/square.js"></script>
 <script src="../js/supabase-config.js"></script>
 <script src="../js/auth.js"></script>
 <script>
 (async () => {
+  // ── Auth ────────────────────────────────────────────────────
   const session = await requireAuth('../portal/login.html');
   if (!session) return;
 
@@ -154,13 +305,28 @@
   if (!profile) return;
 
   // Sidebar
-  document.getElementById('userName').textContent = profile.full_name || 'Client';
+  document.getElementById('userName').textContent  = profile.full_name || 'Client';
   document.getElementById('userEmail').textContent = session.user.email || '';
   document.getElementById('userAvatar').textContent = (profile.full_name || 'C').charAt(0).toUpperCase();
 
   const contentEl = document.getElementById('membershipContent');
 
-  // ── Load membership ────────────────────────────────────────
+  // ── Square / payment state ──────────────────────────────────
+  const APP_ID      = 'sandbox-sq0idb-e4hfCqcraP5ssqJLEEJcoA';
+  const LOCATION_ID = 'LE683QS3VSGN7';
+  let membershipCard  = null;
+  let updateCard      = null;
+  let selectedPlan    = null;
+  let squarePayments  = null;
+
+  function getSquarePayments() {
+    if (!squarePayments) {
+      squarePayments = Square.payments(APP_ID, LOCATION_ID);
+    }
+    return squarePayments;
+  }
+
+  // ── Load membership ─────────────────────────────────────────
   const { data: membership } = await _supabase
     .from('memberships')
     .select('*')
@@ -175,13 +341,236 @@
     renderJoinPlans();
   }
 
-  // ── Render: active membership ──────────────────────────────
-  function renderActiveMembership(m) {
-    const planLabel = m.plan === 'suv' ? 'SUV / Truck Plan' : 'Sedan Plan';
-    const price = m.plan === 'suv' ? '$179' : '$149';
-    const nextBilling = formatDate(m.next_billing_date);
+  // ── Helper: format date ─────────────────────────────────────
+  function formatDate(dateStr) {
+    if (!dateStr) return '—';
+    const d = new Date(dateStr + (dateStr.includes('T') ? '' : 'T00:00:00'));
+    return d.toLocaleDateString('en-US', { year: 'numeric', month: 'long', day: 'numeric' });
+  }
+
+  function getNextMonthDate() {
+    const d = new Date();
+    d.setMonth(d.getMonth() + 1);
+    return d.toISOString().split('T')[0];
+  }
+
+  // ── Shared feature list HTML ─────────────────────────────────
+  const checkSVG = `<svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M20 6 9 17l-5-5"/></svg>`;
+  const featureItems = [
+    'Monthly Signature Detail',
+    'Interior refresh + exterior wash',
+    'Priority 48-hour booking',
+    '15% off all add-ons',
+    'Free quarterly odor treatment',
+    'Cancel anytime',
+  ];
+  function featuresHTML() {
+    return featureItems.map(f => `
+      <li class="plan-card__feature">${checkSVG}${f}</li>`).join('');
+  }
+
+  // ── STATE 1: Render join plans ──────────────────────────────
+  function renderJoinPlans() {
+    contentEl.innerHTML = `
+      <div class="plan-hero">
+        <div class="plan-hero__icon">
+          <svg width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.2"><path d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z"/></svg>
+        </div>
+        <h2 class="plan-hero__title">Join the Diamond Club</h2>
+        <p class="plan-hero__sub">One monthly detail. Priority booking. Always looking your best.</p>
+      </div>
+
+      <div class="plan-grid">
+
+        <!-- Sedan -->
+        <div class="plan-card">
+          <div class="plan-card__name">Sedan Plan</div>
+          <div class="plan-card__price-row">
+            <span class="plan-card__price">$149</span>
+            <span class="plan-card__period">/month</span>
+          </div>
+          <ul class="plan-card__features">${featuresHTML()}</ul>
+          <button class="btn btn--ghost btn--full" data-plan="sedan" data-price="14900" id="selectSedan">Select Sedan Plan</button>
+        </div>
+
+        <!-- SUV / Truck (featured) -->
+        <div class="plan-card plan-card--featured">
+          <div class="plan-card__top-badge">Most Popular</div>
+          <div class="plan-card__name">SUV / Truck Plan</div>
+          <div class="plan-card__price-row">
+            <span class="plan-card__price">$179</span>
+            <span class="plan-card__period">/month</span>
+          </div>
+          <ul class="plan-card__features">${featuresHTML()}</ul>
+          <button class="btn btn--primary btn--full" data-plan="suv" data-price="17900" id="selectSuv">Select SUV / Truck Plan</button>
+        </div>
+
+      </div>
+
+      <!-- Payment section (hidden until plan selected) -->
+      <div id="paymentSection" style="display:none">
+        <h3>Complete Your Membership</h3>
+
+        <!-- Selected plan summary -->
+        <div class="plan-summary-card" id="planSummaryCard">
+          <div class="plan-summary-card__icon">
+            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z"/></svg>
+          </div>
+          <div class="plan-summary-card__info">
+            <div class="plan-summary-card__name" id="planSummaryName">—</div>
+            <button class="plan-summary-card__change" id="changePlanBtn">Change plan</button>
+          </div>
+        </div>
+
+        <p class="billing-info-text" id="billingInfoText">Your card will be charged on the same day each month.</p>
+
+        <div id="membership-card-container"></div>
+
+        <div class="inline-alert inline-alert--error" id="membershipError" role="alert"></div>
+
+        <button class="btn btn--primary btn--full" id="startMembershipBtn">Start My Membership</button>
+
+        <p class="fine-print">Cancel anytime from your account. No contracts.</p>
+      </div>`;
+
+    // Attach plan selection handlers
+    contentEl.querySelectorAll('[data-plan]').forEach(btn => {
+      btn.addEventListener('click', () => selectPlan(btn.dataset.plan, parseInt(btn.dataset.price, 10)));
+    });
+
+    document.getElementById('changePlanBtn').addEventListener('click', resetPlanSelection);
+    document.getElementById('startMembershipBtn').addEventListener('click', () => startMembership(selectedPlan));
+  }
+
+  function selectPlan(plan, priceCents) {
+    selectedPlan = plan;
+    const label = plan === 'sedan' ? 'Sedan Plan' : 'SUV / Truck Plan';
+    const price  = plan === 'sedan' ? '$149' : '$179';
+
+    document.getElementById('planSummaryName').textContent = `${label} — ${price}/month`;
+
+    const day = new Date().getDate();
+    const suffix = day === 1 ? 'st' : day === 2 ? 'nd' : day === 3 ? 'rd' : 'th';
+    document.getElementById('billingInfoText').textContent =
+      `Your card will be charged ${price} on the ${day}${suffix} of each month.`;
+
+    const paySection = document.getElementById('paymentSection');
+    paySection.style.display = 'block';
+    paySection.scrollIntoView({ behavior: 'smooth', block: 'start' });
+
+    // Init Square card field
+    if (!membershipCard) {
+      initMembershipPayment();
+    }
+  }
+
+  function resetPlanSelection() {
+    selectedPlan  = null;
+    membershipCard = null;
+    document.getElementById('paymentSection').style.display = 'none';
+    document.getElementById('membership-card-container').innerHTML = '';
+    window.scrollTo({ top: 0, behavior: 'smooth' });
+  }
+
+  async function initMembershipPayment() {
+    try {
+      const payments = getSquarePayments();
+      const card = await payments.card();
+      await card.attach('#membership-card-container');
+      membershipCard = card;
+    } catch (e) {
+      console.warn('Square init:', e);
+      document.getElementById('membership-card-container').innerHTML =
+        '<p style="color:#777;font-size:0.875rem;padding:0.5rem 0">Card field loading... (sandbox)</p>';
+    }
+  }
+
+  async function startMembership(plan) {
+    if (!membershipCard) return;
+    const btn   = document.getElementById('startMembershipBtn');
+    const errEl = document.getElementById('membershipError');
+    errEl.classList.remove('visible');
+    btn.disabled = true;
+    btn.innerHTML = '<span class="spinner"></span>';
+
+    try {
+      const result = await membershipCard.tokenize();
+      if (result.status !== 'OK') throw new Error(result.errors?.[0]?.message || 'Card error');
+
+      const token        = result.token;
+      const price        = plan === 'sedan' ? 14900 : 17900;
+      const nextBilling  = getNextMonthDate();
+
+      const { data: { user } } = await _supabase.auth.getUser();
+      const { error } = await _supabase.from('memberships').upsert({
+        user_id:                 user.id,
+        plan:                    plan,
+        status:                  'active',
+        price_cents:             price,
+        square_subscription_id:  token,
+        next_billing_date:       nextBilling,
+      }, { onConflict: 'user_id' });
+
+      if (error) throw error;
+
+      await sendMembershipWelcomeEmail(user.email, plan, price);
+      showMembershipSuccess(plan, price, nextBilling);
+    } catch (e) {
+      errEl.textContent = e.message || 'Something went wrong. Please try again.';
+      errEl.classList.add('visible');
+      btn.disabled = false;
+      btn.textContent = 'Start My Membership';
+    }
+  }
+
+  async function sendMembershipWelcomeEmail(userEmail, plan, price) {
+    // TODO: implement with Resend when DNS propagates
+    // Will send from: bookings@diamondtouchdetails.com
+    // Template: welcome to Diamond Club, what to expect, how to book
+    console.log('Welcome email queued for:', userEmail, plan, price);
+  }
+
+  // ── STATE 2: Membership success ─────────────────────────────
+  function showMembershipSuccess(plan, priceCents, nextBilling) {
+    const label    = plan === 'sedan' ? 'Sedan Plan' : 'SUV / Truck Plan';
+    const priceStr = plan === 'sedan' ? '$149' : '$179';
 
     contentEl.innerHTML = `
+      <div class="membership-success">
+        <div class="membership-success__check">
+          <svg width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M20 6 9 17l-5-5"/></svg>
+        </div>
+        <h2 class="membership-success__title">Welcome to the Diamond Club ◆</h2>
+        <p class="membership-success__sub">Your membership is now active. We can't wait to keep your car looking its best.</p>
+
+        <div class="membership-success__details">
+          <div class="membership-success__detail-row">
+            <span class="membership-success__detail-label">Plan</span>
+            <span class="membership-success__detail-value">${label}</span>
+          </div>
+          <div class="membership-success__detail-row">
+            <span class="membership-success__detail-label">Monthly price</span>
+            <span class="membership-success__detail-value">${priceStr}/month</span>
+          </div>
+          <div class="membership-success__detail-row">
+            <span class="membership-success__detail-label">Next billing</span>
+            <span class="membership-success__detail-value">${formatDate(nextBilling)}</span>
+          </div>
+        </div>
+
+        <button class="btn btn--primary" onclick="window.location.reload()">View My Membership</button>
+      </div>`;
+  }
+
+  // ── STATE 3: Active member ──────────────────────────────────
+  function renderActiveMembership(m) {
+    const planLabel  = m.plan === 'suv' ? 'SUV / Truck Plan' : 'Sedan Plan';
+    const price      = m.plan === 'suv' ? '$179' : '$149';
+    const nextBilling = formatDate(m.next_billing_date);
+    const memberSince = formatDate(m.created_at);
+
+    contentEl.innerHTML = `
+      <!-- Active membership card -->
       <div class="active-membership-card">
         <div class="active-membership-card__badge">
           <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z"/></svg>
@@ -190,7 +579,7 @@
         <div class="active-membership-card__header">
           <div>
             <div class="active-membership-card__plan">${planLabel}</div>
-            <span class="badge badge--active" style="margin-top:0.5rem">Active</span>
+            <span class="badge badge--active" style="margin-top:0.5rem">Active ◆</span>
           </div>
           <div class="active-membership-card__price">${price}<span class="active-membership-card__period">/mo</span></div>
         </div>
@@ -204,9 +593,14 @@
             <span class="active-membership-card__info-label">Status</span>
             <span class="active-membership-card__info-value">Active &amp; renewing</span>
           </div>
+          <div class="active-membership-card__info-row">
+            <span class="active-membership-card__info-label">Member since</span>
+            <span class="active-membership-card__info-value">${memberSince}</span>
+          </div>
         </div>
       </div>
 
+      <!-- Benefits -->
       <div class="section-card" style="margin-top:1.5rem">
         <h2 class="section-card__title">Member Benefits</h2>
         <ul class="benefits-list">
@@ -233,108 +627,86 @@
         </ul>
       </div>
 
+      <!-- Update payment method -->
+      <div class="section-card" id="updatePaymentSection" style="margin-top:1.5rem">
+        <h2 class="section-card__title">Update Payment Method</h2>
+        <p style="font-size:0.875rem;color:#888;margin:0 0 1rem">Enter a new card to update your billing method.</p>
+        <div id="update-card-container"></div>
+        <div class="inline-alert inline-alert--error" id="updateCardError" role="alert"></div>
+        <div class="inline-alert inline-alert--success" id="updateCardSuccess" role="status">Payment method updated.</div>
+        <button class="btn btn--ghost" id="updatePaymentBtn">Update Card</button>
+      </div>
+
+      <!-- Danger zone -->
       <div class="danger-zone" style="margin-top:1.5rem">
         <div class="danger-zone__inner">
           <div>
             <div class="danger-zone__title">Cancel Membership</div>
-            <div class="danger-zone__sub">You'll keep access until the end of your billing period.</div>
+            <div class="danger-zone__sub">Your benefits end immediately upon cancellation.</div>
           </div>
           <button class="btn btn--ghost btn--sm" id="openCancelMemberBtn" style="color:#fca5a5;border-color:rgba(239,68,68,0.3);white-space:nowrap">Cancel Membership</button>
         </div>
       </div>`;
 
+    // Cancel button
     document.getElementById('openCancelMemberBtn').addEventListener('click', () => {
       document.getElementById('cancelMemberOverlay').classList.add('open');
     });
-  }
 
-  // ── Render: join plans ─────────────────────────────────────
-  function renderJoinPlans() {
-    contentEl.innerHTML = `
-      <div class="plan-hero">
-        <div class="plan-hero__icon">
-          <svg width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.2"><path d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z"/></svg>
-        </div>
-        <h2 class="plan-hero__title">Join the Diamond Club</h2>
-        <p class="plan-hero__sub">Monthly luxury detailing at a preferred rate. Cancel anytime.</p>
-      </div>
+    // Update payment — lazy init Square on hover or click
+    const updateBtn      = document.getElementById('updatePaymentBtn');
+    const updateContainer = document.getElementById('update-card-container');
+    let updateCardInited  = false;
 
-      <div class="plan-grid">
+    async function initUpdateCard() {
+      if (updateCardInited) return;
+      updateCardInited = true;
+      try {
+        const payments = getSquarePayments();
+        updateCard = await payments.card();
+        await updateCard.attach('#update-card-container');
+      } catch (e) {
+        console.warn('Square update card init:', e);
+        updateContainer.innerHTML =
+          '<p style="color:#777;font-size:0.875rem;padding:0.5rem 0">Card field loading... (sandbox)</p>';
+      }
+    }
 
-        <div class="plan-card">
-          <div class="plan-card__name">Sedan Plan</div>
-          <div class="plan-card__price-row">
-            <span class="plan-card__price">$149</span>
-            <span class="plan-card__period">/month</span>
-          </div>
-          <ul class="plan-card__features">
-            <li class="plan-card__feature">
-              <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M20 6 9 17l-5-5"/></svg>
-              Monthly Signature Detail
-            </li>
-            <li class="plan-card__feature">
-              <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M20 6 9 17l-5-5"/></svg>
-              Priority 48-hour booking
-            </li>
-            <li class="plan-card__feature">
-              <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M20 6 9 17l-5-5"/></svg>
-              15% off add-on services
-            </li>
-            <li class="plan-card__feature">
-              <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M20 6 9 17l-5-5"/></svg>
-              Free quarterly odor treatment
-            </li>
-            <li class="plan-card__feature">
-              <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M20 6 9 17l-5-5"/></svg>
-              Cancel anytime
-            </li>
-          </ul>
-          <button class="btn btn--ghost btn--full join-plan-btn" data-plan="Sedan Plan">Join Now</button>
-        </div>
+    updateBtn.addEventListener('mouseenter', initUpdateCard, { once: true });
+    updateBtn.addEventListener('click', async () => {
+      await initUpdateCard();
 
-        <div class="plan-card plan-card--featured">
-          <div class="plan-card__top-badge">SUV &amp; Truck</div>
-          <div class="plan-card__name">SUV / Truck Plan</div>
-          <div class="plan-card__price-row">
-            <span class="plan-card__price">$179</span>
-            <span class="plan-card__period">/month</span>
-          </div>
-          <ul class="plan-card__features">
-            <li class="plan-card__feature">
-              <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M20 6 9 17l-5-5"/></svg>
-              Monthly Signature Detail
-            </li>
-            <li class="plan-card__feature">
-              <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M20 6 9 17l-5-5"/></svg>
-              Priority 48-hour booking
-            </li>
-            <li class="plan-card__feature">
-              <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M20 6 9 17l-5-5"/></svg>
-              15% off add-on services
-            </li>
-            <li class="plan-card__feature">
-              <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M20 6 9 17l-5-5"/></svg>
-              Free quarterly odor treatment
-            </li>
-            <li class="plan-card__feature">
-              <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M20 6 9 17l-5-5"/></svg>
-              Cancel anytime
-            </li>
-          </ul>
-          <button class="btn btn--primary btn--full join-plan-btn" data-plan="SUV / Truck Plan">Join Now</button>
-        </div>
+      const errEl     = document.getElementById('updateCardError');
+      const successEl = document.getElementById('updateCardSuccess');
+      errEl.classList.remove('visible');
+      successEl.classList.remove('visible');
 
-      </div>`;
+      if (!updateCard) {
+        errEl.textContent = 'Card field not ready. Please try again.';
+        errEl.classList.add('visible');
+        return;
+      }
 
-    document.querySelectorAll('.join-plan-btn').forEach(btn => {
-      btn.addEventListener('click', () => {
-        document.getElementById('joinPlanName').textContent = `Join — ${btn.dataset.plan}`;
-        document.getElementById('joinInfoOverlay').classList.add('open');
-      });
+      updateBtn.disabled = true;
+      updateBtn.innerHTML = '<span class="spinner"></span>';
+
+      try {
+        const result = await updateCard.tokenize();
+        if (result.status !== 'OK') throw new Error(result.errors?.[0]?.message || 'Card error');
+        // Token captured — production would update Square subscription here
+        console.log('Update card token:', result.token);
+        successEl.classList.add('visible');
+      } catch (e) {
+        errEl.textContent = e.message || 'Could not update card. Please try again.';
+        errEl.classList.add('visible');
+      } finally {
+        updateBtn.disabled = false;
+        updateBtn.textContent = 'Update Card';
+      }
     });
   }
 
-  // ── Cancel membership dialog ───────────────────────────────
+  // ── Cancel membership dialog ────────────────────────────────
   function closeCancelMember() {
     document.getElementById('cancelMemberOverlay').classList.remove('open');
   }
@@ -346,30 +718,25 @@
   });
 
   document.getElementById('cancelMemberYes').addEventListener('click', async () => {
-    document.getElementById('cancelMemberBtnText').style.display = 'none';
-    document.getElementById('cancelMemberSpinner').style.display = 'inline-block';
-    document.getElementById('cancelMemberYes').disabled = true;
+    const btnText  = document.getElementById('cancelMemberBtnText');
+    const spinner  = document.getElementById('cancelMemberSpinner');
+    const yesBtn   = document.getElementById('cancelMemberYes');
+
+    btnText.style.display  = 'none';
+    spinner.style.display  = 'inline-block';
+    yesBtn.disabled        = true;
 
     const { error: updateErr } = await _supabase
       .from('memberships')
-      .update({ status: 'cancelled' })
+      .update({ status: 'cancelled', cancelled_at: new Date().toISOString() })
       .eq('user_id', profile.id);
 
-    document.getElementById('cancelMemberBtnText').style.display = '';
-    document.getElementById('cancelMemberSpinner').style.display = 'none';
-    document.getElementById('cancelMemberYes').disabled = false;
+    btnText.style.display  = '';
+    spinner.style.display  = 'none';
+    yesBtn.disabled        = false;
     closeCancelMember();
 
     if (!updateErr) window.location.reload();
-  });
-
-  // ── Join info dialog ───────────────────────────────────────
-  document.getElementById('joinInfoClose').addEventListener('click', () => {
-    document.getElementById('joinInfoOverlay').classList.remove('open');
-  });
-  document.getElementById('joinInfoOverlay').addEventListener('click', (e) => {
-    if (e.target === document.getElementById('joinInfoOverlay'))
-      document.getElementById('joinInfoOverlay').classList.remove('open');
   });
 })();
 </script>

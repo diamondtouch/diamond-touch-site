@@ -82,10 +82,13 @@
           <div class="stat-card__value" id="statVisits">0</div>
           <div class="stat-card__sub">Completed details</div>
         </div>
-        <div class="stat-card">
+        <div class="stat-card" id="membershipStatCard" style="cursor:pointer" onclick="window.location.href='membership.html'">
           <div class="stat-card__label">Membership</div>
           <div class="stat-card__value" id="statMembership" style="font-size:1.125rem;line-height:1.4;padding-top:0.125rem">Not a member</div>
           <div class="stat-card__sub" id="statMembershipSub"></div>
+          <div id="membershipCta" style="display:none;margin-top:0.875rem">
+            <span style="font-size:0.8125rem;color:var(--clr-pink);font-weight:500">Join Diamond Club →</span>
+          </div>
         </div>
       </div>
 
@@ -212,9 +215,18 @@
   }
 
   // Stat: Membership
+  const memberCard = document.getElementById('membershipStatCard');
   if (membership && membership.status === 'active') {
-    document.getElementById('statMembership').innerHTML = `Diamond Club <span style="color:var(--clr-pink)">✓</span>`;
-    document.getElementById('statMembershipSub').textContent = membership.plan ? capitalize(membership.plan) + ' Plan' : 'Active';
+    const planName = membership.plan === 'suv' ? 'SUV / Truck Plan' : 'Sedan Plan';
+    document.getElementById('statMembership').innerHTML = `Diamond Club ◆ <span class="badge badge--active" style="font-size:0.65rem;vertical-align:middle;margin-left:4px">Active</span>`;
+    document.getElementById('statMembershipSub').textContent = planName + (membership.next_billing_date ? ' · Next billing ' + formatDate(membership.next_billing_date) : '');
+    memberCard.style.background = 'linear-gradient(135deg, var(--clr-surface) 0%, rgba(233,30,140,0.06) 100%)';
+    memberCard.style.borderColor = 'rgba(233,30,140,0.3)';
+    memberCard.style.boxShadow = '0 0 20px rgba(233,30,140,0.08)';
+  } else {
+    document.getElementById('statMembership').textContent = 'Not a member';
+    document.getElementById('statMembershipSub').textContent = 'Unlock priority booking';
+    document.getElementById('membershipCta').style.display = 'block';
   }
 
   // ── Upcoming appointments list ─────────────────────────────
