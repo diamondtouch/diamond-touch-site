@@ -134,66 +134,6 @@
     </div>
   </section>
 
-  <!-- ========== STANDALONE OPTIONS ========== -->
-  <section class="section standalone-options" id="standalone">
-    <div class="container">
-      <div class="section__header" data-animate="fade-up">
-        <p class="section__eyebrow">À La Carte</p>
-        <h2 class="section__title">Just What You Need</h2>
-        <p class="section__sub">Not every car needs everything. Pick exactly what works for you.</p>
-      </div>
-      <div class="standalone-grid" data-animate="fade-up" style="--delay:0.1s">
-
-        <!-- EXTERIOR ONLY -->
-        <div class="standalone-card">
-          <div class="standalone-card__tag">Exterior Only</div>
-          <div class="standalone-card__photo" style="background-image:url('assets/services/signature.jpg')"></div>
-          <div class="standalone-card__body">
-            <h3 class="standalone-card__name">The Outside Job</h3>
-            <p class="standalone-card__pitch">You keep a clean interior — we handle the outside. Professional wash, shine, and protection without the full detail price.</p>
-            <div class="standalone-card__price">
-              <span>Sedan <strong>$99</strong></span>
-              <span>SUV <strong>$119</strong></span>
-            </div>
-            <ul class="standalone-card__list">
-              <li>Foam pre-wash + safe contact hand wash</li>
-              <li>Wheels &amp; tires deep cleaned</li>
-              <li>Tire shine application</li>
-              <li>Exterior glass (streak-free)</li>
-              <li>Bug &amp; tar removal</li>
-              <li>Spray paint sealant</li>
-            </ul>
-            <a href="book.html" class="btn btn--outline standalone-card__btn">Book Exterior Only</a>
-          </div>
-        </div>
-
-        <!-- INTERIOR ONLY -->
-        <div class="standalone-card">
-          <div class="standalone-card__tag">Interior Only</div>
-          <div class="standalone-card__photo" style="background-image:url('assets/services/refresh.jpg')"></div>
-          <div class="standalone-card__body">
-            <h3 class="standalone-card__name">The Inside Clean</h3>
-            <p class="standalone-card__pitch">You wash your own car — no problem. We specialize in making the inside spotless. No judgment on the outside.</p>
-            <div class="standalone-card__price">
-              <span>Sedan <strong>$99</strong></span>
-              <span>SUV <strong>$119</strong></span>
-            </div>
-            <ul class="standalone-card__list">
-              <li>Full vacuum (seats, carpet, trunk, mats)</li>
-              <li>Interior wipe-down (dash, doors, console, trim)</li>
-              <li>Crevice &amp; vent detailing</li>
-              <li>Interior glass cleaning</li>
-              <li>Door jambs</li>
-              <li>Surface protectant on dash &amp; trim</li>
-            </ul>
-            <a href="book.html" class="btn btn--outline standalone-card__btn">Book Interior Only</a>
-          </div>
-        </div>
-
-      </div>
-    </div>
-  </section>
-
   <!-- ========== PACKAGES TABLE ========== -->
   <section class="section packages" id="packages">
     <div class="container">
@@ -203,6 +143,50 @@
         <p class="section__sub">From a quick refresh to the ultimate transformation — find your perfect detail.</p>
       </div>
       <div class="packages__table" data-animate="fade-up" style="--delay:0.1s">
+
+        <div class="pkg-group-label">
+          <span>Quick Cleans</span>
+        </div>
+
+        <!-- EXTERIOR ONLY -->
+        <div class="pkg-col pkg-col--standalone">
+          <div class="pkg-col__solo-tag">Exterior Only</div>
+          <div class="pkg-col__photo" style="background-image:url('assets/services/signature.jpg')"></div>
+          <div class="pkg-col__header">
+            <h3 class="pkg-col__name">The Outside Job</h3>
+            <p class="pkg-col__price">Sedan <strong>$99</strong> · SUV <strong>$119</strong></p>
+            <p class="pkg-col__time">1–1.5 hrs · Exterior only</p>
+          </div>
+          <ul class="pkg-col__features" role="list">
+            <li class="yes">Foam pre-wash + hand wash</li>
+            <li class="yes">Wheels &amp; tires deep cleaned</li>
+            <li class="yes">Tire shine application</li>
+            <li class="yes">Exterior glass (streak-free)</li>
+            <li class="yes">Bug &amp; tar removal</li>
+            <li class="yes">Spray paint sealant</li>
+          </ul>
+          <a href="book.html" class="btn btn--outline">Book This</a>
+        </div>
+
+        <!-- INTERIOR ONLY -->
+        <div class="pkg-col pkg-col--standalone">
+          <div class="pkg-col__solo-tag">Interior Only</div>
+          <div class="pkg-col__photo" style="background-image:url('assets/services/refresh.jpg')"></div>
+          <div class="pkg-col__header">
+            <h3 class="pkg-col__name">The Inside Clean</h3>
+            <p class="pkg-col__price">Sedan <strong>$99</strong> · SUV <strong>$119</strong></p>
+            <p class="pkg-col__time">1–1.5 hrs · Interior only</p>
+          </div>
+          <ul class="pkg-col__features" role="list">
+            <li class="yes">Full vacuum (seats, carpet, trunk)</li>
+            <li class="yes">Interior wipe-down</li>
+            <li class="yes">Crevice &amp; vent detailing</li>
+            <li class="yes">Interior glass cleaning</li>
+            <li class="yes">Door jambs</li>
+            <li class="yes">Surface protectant</li>
+          </ul>
+          <a href="book.html" class="btn btn--outline">Book This</a>
+        </div>
 
         <div class="pkg-col">
           <div class="pkg-col__photo" style="background-image:url('assets/services/refresh.jpg')"></div>
@@ -226,6 +210,10 @@
             <li class="no">Ceramic Coating</li>
           </ul>
           <a href="book.html" class="btn btn--outline">Book This</a>
+        </div>
+
+        <div class="pkg-group-label pkg-group-label--full">
+          <span>Full Details</span>
         </div>
 
         <div class="pkg-col pkg-col--featured">
