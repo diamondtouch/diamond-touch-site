@@ -38,7 +38,7 @@
       <ul class="nav__links" role="list">
         <li><a href="#services" class="nav__link">Services</a></li>
         <li><a href="#packages" class="nav__link">Packages</a></li>
-        <li><a href="#booking" class="nav__link">Booking</a></li>
+        <li><a href="book.html" class="nav__link">Booking</a></li>
         <li><a href="#contact" class="nav__link">Contact</a></li>
         <li><a href="portal/login.html" class="nav__link" id="nav-account-link">My Account</a></li>
         <li><a href="portal/dashboard.html" class="nav__link" id="nav-dash-link" style="display:none">Dashboard</a></li>
@@ -64,7 +64,7 @@
       <ul class="mobile-menu__links" role="list">
         <li><a href="#services" class="mobile-menu__link">Services</a></li>
         <li><a href="#packages" class="mobile-menu__link">Packages</a></li>
-        <li><a href="#booking" class="mobile-menu__link">Booking</a></li>
+        <li><a href="book.html" class="mobile-menu__link">Booking</a></li>
         <li><a href="#contact" class="mobile-menu__link">Contact</a></li>
         <li><a href="portal/login.html" class="mobile-menu__link" id="mobile-account-link">My Account</a></li>
         <li><a href="portal/dashboard.html" class="mobile-menu__link" id="mobile-dash-link" style="display:none">Dashboard</a></li>
@@ -134,35 +134,96 @@
     </div>
   </section>
 
-    <!-- ========== PACKAGES TABLE ========== -->
+  <!-- ========== STANDALONE OPTIONS ========== -->
+  <section class="section standalone-options" id="standalone">
+    <div class="container">
+      <div class="section__header" data-animate="fade-up">
+        <p class="section__eyebrow">À La Carte</p>
+        <h2 class="section__title">Just What You Need</h2>
+        <p class="section__sub">Not every car needs everything. Pick exactly what works for you.</p>
+      </div>
+      <div class="standalone-grid" data-animate="fade-up" style="--delay:0.1s">
+
+        <!-- EXTERIOR ONLY -->
+        <div class="standalone-card">
+          <div class="standalone-card__tag">Exterior Only</div>
+          <div class="standalone-card__photo" style="background-image:url('assets/services/signature.jpg')"></div>
+          <div class="standalone-card__body">
+            <h3 class="standalone-card__name">The Outside Job</h3>
+            <p class="standalone-card__pitch">You keep a clean interior — we handle the outside. Professional wash, shine, and protection without the full detail price.</p>
+            <div class="standalone-card__price">
+              <span>Sedan <strong>$99</strong></span>
+              <span>SUV <strong>$119</strong></span>
+            </div>
+            <ul class="standalone-card__list">
+              <li>Foam pre-wash + safe contact hand wash</li>
+              <li>Wheels &amp; tires deep cleaned</li>
+              <li>Tire shine application</li>
+              <li>Exterior glass (streak-free)</li>
+              <li>Bug &amp; tar removal</li>
+              <li>Spray paint sealant</li>
+            </ul>
+            <a href="book.html" class="btn btn--outline standalone-card__btn">Book Exterior Only</a>
+          </div>
+        </div>
+
+        <!-- INTERIOR ONLY -->
+        <div class="standalone-card">
+          <div class="standalone-card__tag">Interior Only</div>
+          <div class="standalone-card__photo" style="background-image:url('assets/services/refresh.jpg')"></div>
+          <div class="standalone-card__body">
+            <h3 class="standalone-card__name">The Inside Clean</h3>
+            <p class="standalone-card__pitch">You wash your own car — no problem. We specialize in making the inside spotless. No judgment on the outside.</p>
+            <div class="standalone-card__price">
+              <span>Sedan <strong>$99</strong></span>
+              <span>SUV <strong>$119</strong></span>
+            </div>
+            <ul class="standalone-card__list">
+              <li>Full vacuum (seats, carpet, trunk, mats)</li>
+              <li>Interior wipe-down (dash, doors, console, trim)</li>
+              <li>Crevice &amp; vent detailing</li>
+              <li>Interior glass cleaning</li>
+              <li>Door jambs</li>
+              <li>Surface protectant on dash &amp; trim</li>
+            </ul>
+            <a href="book.html" class="btn btn--outline standalone-card__btn">Book Interior Only</a>
+          </div>
+        </div>
+
+      </div>
+    </div>
+  </section>
+
+  <!-- ========== PACKAGES TABLE ========== -->
   <section class="section packages" id="packages">
     <div class="container">
       <div class="section__header" data-animate="fade-up">
-        <p class="section__eyebrow">Compare</p>
-        <h2 class="section__title">Choose Your Package</h2>
-        <p class="section__sub">Every package includes our satisfaction guarantee and mobile convenience.</p>
+        <p class="section__eyebrow">Choose Your Detail</p>
+        <h2 class="section__title">Our Packages</h2>
+        <p class="section__sub">From a quick refresh to the ultimate transformation — find your perfect detail.</p>
       </div>
       <div class="packages__table" data-animate="fade-up" style="--delay:0.1s">
 
         <div class="pkg-col">
           <div class="pkg-col__photo" style="background-image:url('assets/services/refresh.jpg')"></div>
           <div class="pkg-col__header">
-            <h3 class="pkg-col__name">The Refresh</h3>
+            <h3 class="pkg-col__name">The Quick Shine</h3>
             <p class="pkg-col__price">Sedan <strong>$149</strong> · SUV <strong>$179</strong></p>
+            <p class="pkg-col__time">1.5–2 hrs · Interior + exterior essentials</p>
           </div>
           <ul class="pkg-col__features" role="list">
             <li class="yes">Full Vacuum</li>
             <li class="yes">Interior Wipe-Down</li>
-            <li class="yes">Crevice &amp; Vent Detailing</li>
-            <li class="yes">Interior Glass</li>
-            <li class="yes">Door Jambs</li>
-            <li class="yes">Surface Protectant</li>
-            <li class="no">Exterior Wash</li>
+            <li class="yes">Interior Glass &amp; Door Jambs</li>
+            <li class="yes">Safe Hand Wash (foam + contact)</li>
+            <li class="yes">Wheels &amp; Tires Cleaned</li>
+            <li class="yes">Tire Shine</li>
+            <li class="yes">Exterior Glass</li>
+            <li class="yes">Spray Wax Protection</li>
             <li class="no">Deep Shampoo</li>
             <li class="no">Clay Bar</li>
             <li class="no">Paint Correction</li>
             <li class="no">Ceramic Coating</li>
-            <li class="no">Engine Bay</li>
           </ul>
           <a href="book.html" class="btn btn--outline">Book This</a>
         </div>
@@ -173,16 +234,15 @@
           <div class="pkg-col__header">
             <h3 class="pkg-col__name">The Signature</h3>
             <p class="pkg-col__price">Sedan <strong>$249</strong> · SUV <strong>$299</strong></p>
+            <p class="pkg-col__time">2–3 hrs · Our most popular full detail</p>
           </div>
           <ul class="pkg-col__features" role="list">
-            <li class="yes">Full Vacuum</li>
-            <li class="yes">Interior Wipe-Down</li>
-            <li class="yes">Crevice &amp; Vent Detailing</li>
-            <li class="yes">Interior &amp; Exterior Glass</li>
-            <li class="yes">Door Jambs</li>
-            <li class="yes">Foam Pre-Wash &amp; Hand Wash</li>
-            <li class="yes">Wheels &amp; Tires + Tire Shine</li>
-            <li class="yes">Bug/Tar Removal &amp; Spray Sealant</li>
+            <li class="yes">Everything in The Quick Shine</li>
+            <li class="yes">Foam Pre-Wash (extra decontamination step)</li>
+            <li class="yes">Crevice &amp; Vent Deep Detail</li>
+            <li class="yes">Bug &amp; Tar Removal</li>
+            <li class="yes">Paint Sealant Protection (longer lasting than spray wax)</li>
+            <li class="yes">Tire Dressing</li>
             <li class="no">Deep Shampoo</li>
             <li class="no">Clay Bar</li>
             <li class="no">Paint Correction</li>
@@ -194,17 +254,18 @@
         <div class="pkg-col">
           <div class="pkg-col__photo" style="background-image:url('assets/services/diamond.jpg')"></div>
           <div class="pkg-col__header">
-            <h3 class="pkg-col__name">The Diamond</h3>
+            <h3 class="pkg-col__name">◆ The Diamond</h3>
             <p class="pkg-col__price">Sedan <strong>$399</strong> · SUV <strong>$449</strong></p>
+            <p class="pkg-col__time">4–6 hrs · The best detail you've ever had</p>
           </div>
           <ul class="pkg-col__features" role="list">
-            <li class="yes">Everything in Signature</li>
+            <li class="yes">Everything in The Signature</li>
             <li class="yes">Deep Seat &amp; Carpet Shampoo</li>
             <li class="yes">Hot Water Extraction</li>
-            <li class="yes">Clay Bar Decontamination</li>
+            <li class="yes">Clay Bar Paint Decontamination</li>
             <li class="yes">6-Month Paint Sealant</li>
-            <li class="yes">Leather Conditioning</li>
-            <li class="yes">Odor Elimination</li>
+            <li class="yes">Leather Cleaning &amp; Conditioning</li>
+            <li class="yes">Odor Elimination Treatment</li>
             <li class="no">Machine Paint Correction</li>
             <li class="no">Ceramic Coating</li>
             <li class="no">Engine Bay</li>
@@ -438,8 +499,8 @@
               <label class="form-label" for="service">Service <span class="required" aria-hidden="true">*</span></label>
               <select class="form-input form-select" id="service" name="service" required>
                 <option value="" disabled selected>Select a service</option>
-                <option value="the-refresh-sedan">Tier 1: The Refresh — Sedan ($149)</option>
-                <option value="the-refresh-suv">Tier 1: The Refresh — SUV/Truck ($179)</option>
+                <option value="the-quick-shine-sedan">Tier 1: The Quick Shine — Sedan ($149)</option>
+                <option value="the-quick-shine-suv">Tier 1: The Quick Shine — SUV/Truck ($179)</option>
                 <option value="the-signature-sedan">Tier 2: The Signature — Sedan ($249)</option>
                 <option value="the-signature-suv">Tier 2: The Signature — SUV/Truck ($299)</option>
                 <option value="the-diamond-sedan">Tier 3: The Diamond — Sedan ($399)</option>
