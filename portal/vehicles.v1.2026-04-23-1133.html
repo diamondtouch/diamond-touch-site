@@ -99,11 +99,11 @@
           <div class="form-group">
             <label class="form-label">Type</label>
             <div class="type-toggle-group" id="addTypeGroup">
-              <button type="button" class="type-toggle-btn active" data-value="sedan">Sedan</button>
-              <button type="button" class="type-toggle-btn" data-value="suv">SUV</button>
-              <button type="button" class="type-toggle-btn" data-value="truck">Truck</button>
+              <button type="button" class="type-toggle-btn active" data-value="Sedan">Sedan</button>
+              <button type="button" class="type-toggle-btn" data-value="SUV">SUV</button>
+              <button type="button" class="type-toggle-btn" data-value="Truck">Truck</button>
             </div>
-            <input type="hidden" id="addType" value="sedan" />
+            <input type="hidden" id="addType" value="Sedan" />
           </div>
           <div class="form-group">
             <label class="form-label" for="addNotes">Notes <span style="color:var(--clr-muted-2);font-weight:400">(optional)</span></label>
@@ -253,9 +253,9 @@
             <div class="form-group" style="margin-bottom:0.875rem">
               <label class="form-label">Type</label>
               <div class="type-toggle-group" id="editTypeGroup-${v.id}">
-                <button type="button" class="type-toggle-btn ${v.type === 'sedan' ? 'active' : ''}" data-value="sedan">Sedan</button>
-                <button type="button" class="type-toggle-btn ${v.type === 'suv' ? 'active' : ''}" data-value="suv">SUV</button>
-                <button type="button" class="type-toggle-btn ${v.type === 'truck' ? 'active' : ''}" data-value="truck">Truck</button>
+                <button type="button" class="type-toggle-btn ${v.type === 'Sedan' ? 'active' : ''}" data-value="Sedan">Sedan</button>
+                <button type="button" class="type-toggle-btn ${v.type === 'SUV' ? 'active' : ''}" data-value="SUV">SUV</button>
+                <button type="button" class="type-toggle-btn ${v.type === 'Truck' ? 'active' : ''}" data-value="Truck">Truck</button>
               </div>
               <input type="hidden" id="editType-${v.id}" value="${v.type || 'Sedan'}" />
             </div>
@@ -373,7 +373,7 @@
     // Reset form
     document.getElementById('addVehicleForm').reset();
     document.querySelectorAll('#addTypeGroup .type-toggle-btn').forEach(b => b.classList.remove('active'));
-    document.querySelector('#addTypeGroup [data-value="sedan"]').classList.add('active');
+    document.querySelector('#addTypeGroup [data-value="Sedan"]').classList.add('active');
     document.getElementById('addType').value = 'Sedan';
 
     addAlert.textContent = 'Vehicle saved successfully.';

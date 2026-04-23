@@ -120,7 +120,37 @@ serve(async (req: Request) => {
       );
     }
 
-    // 4. Send confirmation email via Resend
+    // 4. Auto-save vehicle to user's garage if logged in
+    if (userId && bookingData.vehicle_type) {
+      try {
+        // Parse vehicle details from notes (e.g. "Vehicle: 2022 Toyota Camry")
+        let vehicleNote = '';
+        if (bookingData.notes) {
+          const match = bookingData.notes.match(/Vehicle:\s*([^|]+)/);
+          if (match) vehicleNote = match[1].trim();
+        }
+        // Only auto-add if we have some vehicle info
+        if (vehicleNote || bookingData.vehicle_type) {
+          // Check if a similar vehicle already exists for this user
+          const { data: existing } = await supabase
+            .from('vehicles')
+            .select('id')
+            .eq('user_id', userId)
+            .eq('type', bookingData.vehicle_type)
+            .limit(1);
+
+          if (!existing || existing.length === 0) {
+            await supabase.from('vehicles').insert({
+              user_id: userId,
+              type: bookingData.vehicle_type,
+              notes: vehicleNote || null,
+            });
+          }
+        }
+      } catch (_) { /* don't fail booking over vehicle save */ }
+    }
+
+    // 5. Send confirmation email via Resend
     try {
       await fetch("https://api.resend.com/emails", {
         method: "POST",
