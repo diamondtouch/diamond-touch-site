@@ -409,36 +409,24 @@
         </div>
         <p class="billing-info-text" id="billingInfoText"></p>
         <div style="background:#111;border:1px solid #2a2a2a;border-radius:8px;padding:1.25rem;margin:1.25rem 0;font-size:.875rem;line-height:1.7;color:#aaa">
-          <div style="color:#f5f5f5;font-weight:600;margin-bottom:.75rem">Diamond Club Membership Agreement <span style="font-size:.75rem;color:#555;font-weight:400">Version DTD-MEMBERSHIP-v1.0</span></div>
-          <div style="max-height:200px;overflow-y:auto;padding-right:.5rem">
+          <div style="color:#f5f5f5;font-weight:600;margin-bottom:.75rem">Diamond Club Membership Agreement</div>
           <ul style="padding-left:1.25rem;margin:.25rem 0">
             <li>Minimum commitment: <strong style="color:#f5f5f5">6 months</strong> from your start date</li>
             <li>Monthly plans: billed on the same date each month for 6 months, then month-to-month</li>
             <li>Prepay plans: full amount charged today, services valid for the selected term</li>
-            <li>Early cancellation within the 6-month commitment forfeits remaining prepaid services; monthly members owe the balance of remaining months at the agreed monthly rate</li>
-            <li>After the commitment period, cancel anytime with 30 days\' written notice to sales@diamondtouchdetails.com</li>
+            <li>Early cancellation within the 6-month commitment forfeits remaining prepaid services; monthly members owe the balance of remaining months</li>
+            <li>After the commitment period, cancel anytime with 30 days\' notice</li>
             <li>Missed or skipped months do not roll over</li>
-            <li>Diamond Touch Detailing reserves the right to adjust pricing with 30 days\' notice</li>
-            <li>Services performed within the Murrieta, CA service area (25-mile radius)</li>
-            <li>Company is not liable for pre-existing vehicle damage; photo/video documentation taken before and after each service</li>
-            <li>Governed by the laws of the State of California; disputes resolved in Riverside County</li>
           </ul>
-          </div>
-        </div>
-        <div style="margin:1.25rem 0">
-          <label style="display:block;font-size:.8rem;color:#888;margin-bottom:.4rem;text-transform:uppercase;letter-spacing:.05em">Electronic Signature — Type your full legal name to sign</label>
-          <input type="text" id="contractSignedName" placeholder="Jane Smith" autocomplete="name"
-            style="width:100%;background:#1a1a1a;border:1px solid #333;border-radius:6px;padding:.6rem .875rem;color:#f5f5f5;font-size:.9375rem;font-family:\'Cormorant Garamond\',serif;font-style:italic;letter-spacing:.03em;box-sizing:border-box" />
-          <div style="font-size:.75rem;color:#555;margin-top:.3rem">By typing your name above you are signing this agreement electronically. This signature is legally binding under the E-SIGN Act (15 U.S.C. § 7001).</div>
         </div>
         <label style="display:flex;align-items:flex-start;gap:.75rem;margin:1rem 0;cursor:pointer;font-size:.875rem;color:#aaa">
           <input type="checkbox" id="contractCheck" style="margin-top:3px;accent-color:#e91e8c;flex-shrink:0" />
-          <span>I have read, understand, and agree to the Diamond Club Membership Agreement above, including the 6-month minimum commitment. I understand this constitutes a legally binding contract.</span>
+          <span>I have read and agree to the Diamond Club Membership Agreement, including the 6-month minimum commitment.</span>
         </label>
         <div id="membership-card-container" style="margin:1.25rem 0"></div>
         <div class="inline-alert inline-alert--error" id="membershipError" role="alert"></div>
-        <button class="btn btn--primary btn--full" id="startMembershipBtn" disabled>Sign &amp; Start My Membership</button>
-        <p class="fine-print" style="margin-top:.75rem;color:#555;font-size:.8rem">A signed copy of this agreement will be emailed to you. After the 6-month commitment, cancel anytime with 30 days\' written notice.</p>
+        <button class="btn btn--primary btn--full" id="startMembershipBtn" disabled>Start My Membership</button>
+        <p class="fine-print" style="margin-top:.75rem;color:#555;font-size:.8rem">After the 6-month commitment, cancel anytime with 30 days\' notice.</p>
       </div>`;
 
     renderPlanCards();
@@ -457,14 +445,9 @@
       });
     });
 
-    function updateStartBtn() {
-      const name = document.getElementById('contractSignedName')?.value.trim();
-      const checked = document.getElementById('contractCheck')?.checked;
-      document.getElementById('startMembershipBtn').disabled = !(name && name.length >= 2 && checked);
-    }
-    document.getElementById('contractCheck').addEventListener('change', updateStartBtn);
-    // Name input listener added after render via event delegation below
-    document.addEventListener('input', e => { if (e.target.id === 'contractSignedName') updateStartBtn(); });
+    document.getElementById('contractCheck').addEventListener('change', function() {
+      document.getElementById('startMembershipBtn').disabled = !this.checked;
+    });
 
     document.getElementById('changePlanBtn').addEventListener('click', () => {
       selectedPlanKey = null;
@@ -559,58 +542,25 @@
   async function startMembership() {
     const plan = PLANS[selectedPlanKey];
     if (!membershipCard || !plan) return;
-
-    const signedName = document.getElementById('contractSignedName')?.value.trim();
-    if (!signedName || signedName.length < 2) {
-      document.getElementById('membershipError').textContent = 'Please type your full legal name to sign the agreement.';
-      document.getElementById('membershipError').classList.add('visible');
-      return;
-    }
     if (!document.getElementById('contractCheck').checked) return;
 
     const btn   = document.getElementById('startMembershipBtn');
     const errEl = document.getElementById('membershipError');
     errEl.classList.remove('visible');
     btn.disabled = true;
-    btn.innerHTML = '<span class="spinner"></span> Signing agreement…';
+    btn.innerHTML = '<span class="spinner"></span> Processing…';
 
     try {
-      const { data: { session } } = await _supabase.auth.getSession();
-      const userToken = session?.access_token ?? null;
-      const userEmail = session?.user?.email ?? '';
-
-      // Step 1: Record legally binding e-signature
-      btn.innerHTML = '<span class="spinner"></span> Recording signature…';
-      const billingTypeLabel = plan.billing === 'prepay_6' ? '6-Month Prepay' : plan.billing === 'prepay_12' ? '12-Month Prepay' : 'Monthly';
-      const sigRes = await fetch('https://fjafmptbzydqizafuaru.supabase.co/functions/v1/sign-contract', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json', 'Authorization': 'Bearer ' + SUPABASE_ANON_KEY },
-        body: JSON.stringify({
-          signedName,
-          signedEmail:      userEmail,
-          userToken,
-          plan:             selectedPlanKey,
-          planLabel:        plan.label,
-          priceCents:       plan.price,
-          commitmentMonths: plan.months,
-          billingType:      billingTypeLabel,
-        })
-      });
-      const sigData = await sigRes.json();
-      if (!sigData.success) throw new Error(sigData.error || 'Failed to record signature.');
-
-      // Step 2: Tokenize card
-      btn.innerHTML = '<span class="spinner"></span> Processing payment…';
       const result = await membershipCard.tokenize();
       if (result.status !== 'OK') throw new Error(result.errors?.[0]?.message || 'Card error');
 
-      // Step 3: Save membership record
+      const { data: { user } } = await _supabase.auth.getUser();
       const now = new Date();
       const endDate = new Date(now);
       endDate.setMonth(now.getMonth() + plan.months);
 
       const { error } = await _supabase.from('memberships').upsert({
-        user_id:                session?.user?.id,
+        user_id:                user.id,
         plan:                   selectedPlanKey,
         vehicle_type:           plan.vehicle,
         status:                 'active',
@@ -631,7 +581,7 @@
       errEl.textContent = e.message || 'Something went wrong. Please try again.';
       errEl.classList.add('visible');
       btn.disabled = false;
-      btn.textContent = 'Sign & Start My Membership';
+      btn.textContent = 'Start My Membership';
     }
   }
 
