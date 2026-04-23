@@ -1,0 +1,315 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <meta name="description" content="Diamond Touch Detailing — Terms of Service, deposit policy, cancellation policy, and liability waiver." />
+  <title>Terms of Service — Diamond Touch Detailing</title>
+
+  <!-- Fonts -->
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300;0,400;0,500;0,600;1,300;1,400&family=DM+Sans:ital,opsz,wght@0,9..40,300;0,9..40,400;0,9..40,500;0,9..40,600;1,9..40,300&display=swap" rel="stylesheet" />
+
+  <!-- Styles -->
+  <link rel="stylesheet" href="css/styles.css" />
+
+  <link rel="apple-touch-icon" sizes="180x180" href="/apple-touch-icon.png">
+  <link rel="icon" type="image/png" sizes="32x32" href="/favicon-32x32.png">
+  <link rel="icon" type="image/png" sizes="16x16" href="/favicon-16x16.png">
+
+  <style>
+    .terms-page {
+      max-width: 760px;
+      margin: 0 auto;
+      padding: 4rem 1.5rem 6rem;
+    }
+
+    .terms-header {
+      text-align: center;
+      margin-bottom: 3rem;
+      padding-bottom: 2rem;
+      border-bottom: 1px solid var(--clr-border);
+    }
+
+    .terms-header__logo {
+      display: inline-block;
+      margin-bottom: 1.5rem;
+    }
+
+    .terms-header__title {
+      font-family: 'Cormorant Garamond', serif;
+      font-size: clamp(1.75rem, 4vw, 2.5rem);
+      font-weight: 500;
+      color: var(--clr-text);
+      margin-bottom: 0.5rem;
+    }
+
+    .terms-header__sub {
+      font-size: 0.875rem;
+      color: var(--clr-muted);
+    }
+
+    .terms-section {
+      margin-bottom: 2.5rem;
+    }
+
+    .terms-section__num {
+      font-size: 0.75rem;
+      font-weight: 600;
+      letter-spacing: 0.1em;
+      text-transform: uppercase;
+      color: var(--clr-pink);
+      margin-bottom: 0.375rem;
+    }
+
+    .terms-section__title {
+      font-size: 1.125rem;
+      font-weight: 600;
+      color: var(--clr-text);
+      margin-bottom: 1rem;
+    }
+
+    .terms-section__body {
+      list-style: none;
+      display: flex;
+      flex-direction: column;
+      gap: 0.625rem;
+    }
+
+    .terms-section__body li {
+      font-size: 0.9375rem;
+      color: var(--clr-muted);
+      line-height: 1.65;
+      padding-left: 1.25rem;
+      position: relative;
+    }
+
+    .terms-section__body li::before {
+      content: "◆";
+      position: absolute;
+      left: 0;
+      color: var(--clr-pink);
+      font-size: 0.45rem;
+      top: 0.55rem;
+    }
+
+    .terms-section__body li strong {
+      color: var(--clr-text);
+    }
+
+    .terms-divider {
+      height: 1px;
+      background: var(--clr-border);
+      margin: 2.5rem 0;
+    }
+
+    .terms-contact {
+      background: var(--clr-surface);
+      border: 1px solid var(--clr-border);
+      border-radius: 12px;
+      padding: 1.5rem;
+      margin-top: 2rem;
+    }
+
+    .terms-contact__title {
+      font-size: 1rem;
+      font-weight: 600;
+      color: var(--clr-text);
+      margin-bottom: 0.75rem;
+    }
+
+    .terms-contact__list {
+      list-style: none;
+      display: flex;
+      flex-direction: column;
+      gap: 0.5rem;
+    }
+
+    .terms-contact__list li {
+      font-size: 0.9375rem;
+      color: var(--clr-muted);
+    }
+
+    .terms-contact__list a {
+      color: var(--clr-pink);
+      text-decoration: none;
+    }
+
+    .terms-contact__list a:hover {
+      text-decoration: underline;
+    }
+
+    .terms-footer-note {
+      margin-top: 3rem;
+      padding: 1.5rem;
+      background: rgba(233, 30, 140, 0.06);
+      border: 1px solid rgba(233, 30, 140, 0.2);
+      border-radius: 12px;
+      font-size: 0.9375rem;
+      color: var(--clr-muted);
+      line-height: 1.6;
+      text-align: center;
+    }
+
+    .terms-back-link {
+      display: inline-flex;
+      align-items: center;
+      gap: 0.5rem;
+      color: var(--clr-pink);
+      text-decoration: none;
+      font-size: 0.875rem;
+      font-weight: 500;
+      margin-top: 2rem;
+      transition: opacity 0.2s;
+    }
+
+    .terms-back-link:hover {
+      opacity: 0.8;
+    }
+
+    .terms-nav {
+      padding: 1.25rem 1.5rem;
+      border-bottom: 1px solid var(--clr-border);
+      background: var(--clr-surface);
+    }
+
+    .terms-nav__inner {
+      max-width: 760px;
+      margin: 0 auto;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+    }
+  </style>
+</head>
+<body>
+
+  <nav class="terms-nav">
+    <div class="terms-nav__inner">
+      <a href="index.html" aria-label="Diamond Touch Detailing — Home">
+        <img src="assets/logo-square.png" alt="Diamond Touch Detailing" style="height:48px;width:auto;mix-blend-mode:lighten;" />
+      </a>
+      <a href="index.html" class="terms-back-link">← Back to Home</a>
+    </div>
+  </nav>
+
+  <main class="terms-page">
+
+    <header class="terms-header">
+      <h1 class="terms-header__title">Service Agreement &amp; Terms of Service</h1>
+      <p class="terms-header__sub">Diamond Touch Detailing &nbsp;·&nbsp; Murrieta, CA &nbsp;·&nbsp; Effective immediately</p>
+    </header>
+
+    <!-- 1. Deposit Policy -->
+    <section class="terms-section">
+      <div class="terms-section__num">Section 1</div>
+      <h2 class="terms-section__title">Deposit Policy</h2>
+      <ul class="terms-section__body">
+        <li>A <strong>non-refundable $50 deposit</strong> is required to secure all appointments.</li>
+        <li>The deposit is applied toward the total service cost.</li>
+        <li>The deposit covers the cost of the reserved time slot.</li>
+        <li>Deposits are <strong>NON-REFUNDABLE under any circumstances</strong> — including cancellations, rescheduling within 24 hours, or no-shows.</li>
+        <li>Cancellations made more than 24 hours in advance: the deposit may be applied as a credit toward a future booking at our discretion.</li>
+      </ul>
+    </section>
+
+    <div class="terms-divider"></div>
+
+    <!-- 2. Pricing & Additional Charges -->
+    <section class="terms-section">
+      <div class="terms-section__num">Section 2</div>
+      <h2 class="terms-section__title">Pricing &amp; Additional Charges</h2>
+      <ul class="terms-section__body">
+        <li>All quoted prices are <strong>starting prices</strong> and may vary based on vehicle size, condition, and level of contamination.</li>
+        <li>Heavily soiled, pet hair-filled, or excessively dirty vehicles may incur additional charges.</li>
+        <li>Additional charges will be communicated before work begins when possible.</li>
+        <li>By booking, the client agrees to pay the final amount as assessed by Diamond Touch Detailing upon completion of service.</li>
+        <li>Final pricing is determined at time of service.</li>
+      </ul>
+    </section>
+
+    <div class="terms-divider"></div>
+
+    <!-- 3. Cancellation & Rescheduling -->
+    <section class="terms-section">
+      <div class="terms-section__num">Section 3</div>
+      <h2 class="terms-section__title">Cancellation &amp; Rescheduling Policy</h2>
+      <ul class="terms-section__body">
+        <li>Cancellations must be made <strong>at least 24 hours</strong> before the scheduled appointment.</li>
+        <li>Cancellations within 24 hours forfeit the full deposit with no exceptions.</li>
+        <li>No-shows forfeit the full deposit and may be subject to a rebooking fee.</li>
+        <li>We reserve the right to cancel or reschedule appointments due to weather, equipment issues, or other circumstances beyond our control — in such cases a full refund or credit will be issued.</li>
+      </ul>
+    </section>
+
+    <div class="terms-divider"></div>
+
+    <!-- 4. Liability Waiver -->
+    <section class="terms-section">
+      <div class="terms-section__num">Section 4</div>
+      <h2 class="terms-section__title">Liability Waiver</h2>
+      <ul class="terms-section__body">
+        <li>Diamond Touch Detailing is <strong>not liable</strong> for any pre-existing damage, scratches, paint chips, dents, or other imperfections present on the vehicle prior to service.</li>
+        <li>We are not responsible for items left in the vehicle during service.</li>
+        <li>We are not liable for any damage caused by pre-existing conditions including but not limited to: loose trim, worn paint, damaged seals, or oxidized surfaces.</li>
+        <li>We use professional-grade products and techniques, but results may vary based on vehicle condition.</li>
+        <li>The client acknowledges their vehicle is in acceptable condition for detailing services at the time of booking.</li>
+      </ul>
+    </section>
+
+    <div class="terms-divider"></div>
+
+    <!-- 5. Photo & Video Release -->
+    <section class="terms-section">
+      <div class="terms-section__num">Section 5</div>
+      <h2 class="terms-section__title">Photo &amp; Video Release</h2>
+      <ul class="terms-section__body">
+        <li>Diamond Touch Detailing reserves the right to photograph and/or video record the vehicle before, during, and after service.</li>
+        <li>These images may be used for quality control, liability documentation, and marketing/promotional purposes including social media.</li>
+        <li>By booking a service, the client grants Diamond Touch Detailing full rights to use these images and videos for any business purpose.</li>
+        <li>If you do not consent to your vehicle being photographed for marketing, you must <strong>notify us in writing before your appointment</strong>.</li>
+      </ul>
+    </section>
+
+    <div class="terms-divider"></div>
+
+    <!-- 6. Service Area -->
+    <section class="terms-section">
+      <div class="terms-section__num">Section 6</div>
+      <h2 class="terms-section__title">Service Area</h2>
+      <ul class="terms-section__body">
+        <li>We are a mobile service operating within approximately <strong>25 miles of Murrieta, CA</strong>.</li>
+        <li>Travel fees may apply for locations outside our standard service zone.</li>
+      </ul>
+    </section>
+
+    <div class="terms-divider"></div>
+
+    <!-- 7. Contact -->
+    <section class="terms-section">
+      <div class="terms-section__num">Section 7</div>
+      <h2 class="terms-section__title">Contact</h2>
+      <div class="terms-contact">
+        <p class="terms-contact__title">Questions about these terms?</p>
+        <ul class="terms-contact__list">
+          <li>Phone / Text: <a href="tel:+19512930214">(951) 293-0214</a></li>
+          <li>Email: <a href="mailto:sales@diamondtouchdetails.com">sales@diamondtouchdetails.com</a></li>
+        </ul>
+      </div>
+    </section>
+
+    <div class="terms-footer-note">
+      By booking any service with Diamond Touch Detailing, you agree to all terms and conditions outlined above.
+    </div>
+
+    <a href="index.html" class="terms-back-link">← Back to Homepage</a>
+
+  </main>
+
+  <footer style="border-top:1px solid var(--clr-border);padding:2rem 1.5rem;text-align:center;">
+    <p style="font-size:0.8125rem;color:var(--clr-muted-2);">&copy; <script>document.write(new Date().getFullYear())</script> Diamond Touch Detailing. All rights reserved. &nbsp;·&nbsp; Murrieta, CA</p>
+  </footer>
+
+</body>
+</html>

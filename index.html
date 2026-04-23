@@ -658,12 +658,28 @@
         <!-- STEP 4: REVIEW & PAY -->
         <div class="booking-panel" id="embed-step4">
           <div class="embed-summary" id="embed-summary"></div>
+          <div class="booking-terms-box">
+            <h4 class="booking-terms-box__title">Before You Pay</h4>
+            <ul class="booking-terms-box__list">
+              <li>Your <strong>$50 deposit is non-refundable</strong> — it secures your time slot</li>
+              <li>Final price may vary based on vehicle condition — you will be informed of any changes before we begin</li>
+              <li>We photograph/video your vehicle before and after for quality control and marketing</li>
+              <li>Diamond Touch Detailing is not liable for pre-existing vehicle damage</li>
+            </ul>
+            <a href="terms.html" target="_blank" class="booking-terms-box__link">Read full Terms of Service →</a>
+          </div>
           <div class="embed-payment-wrap">
             <h4 class="embed-payment__label">Card Details</h4>
             <div id="embed-card-container"></div>
             <div id="embed-payment-status"></div>
           </div>
-          <div class="embed-deposit-note">$50 deposit secures your appointment · Balance due at time of service · Non-refundable within 24hrs of appointment</div>
+          <div class="embed-deposit-note">$50 NON-REFUNDABLE deposit secures your time slot · Balance due at service · Cancellations within 24hrs forfeit deposit</div>
+          <div class="booking-agree">
+            <label class="booking-agree__label">
+              <input type="checkbox" id="embed-terms-agree" />
+              <span>I agree to the <a href="terms.html" target="_blank">Terms of Service</a> including the non-refundable deposit policy, pricing terms, photo release, and liability waiver</span>
+            </label>
+          </div>
           <div class="embed-actions">
             <button class="btn btn--ghost" id="embed-step4-back">← Back</button>
             <button class="btn btn--primary" id="embed-confirm-btn">Confirm & Pay $50 Deposit</button>
@@ -884,7 +900,7 @@
       </div>
 
       <div class="footer__bottom">
-        <p>&copy; <span id="copyrightYear"></span> Diamond Touch Detailing. All rights reserved.</p>
+        <p>&copy; <span id="copyrightYear"></span> Diamond Touch Detailing. All rights reserved. &nbsp;·&nbsp; <a href="terms.html" style="color:var(--clr-muted-2);text-decoration:none;" onmouseover="this.style.color='var(--clr-pink)'" onmouseout="this.style.color='var(--clr-muted-2)'">Terms of Service</a></p>
         <p class="footer__bottom-right">Murrieta, CA · Mobile Auto Detailing</p>
       </div>
     </div>
@@ -1090,6 +1106,11 @@
       await squareCard.attach("#embed-card-container");
     } catch(e) { document.getElementById("embed-payment-status").textContent = "Payment loading error. Please refresh."; }
   }
+
+  document.getElementById("embed-confirm-btn").disabled = true;
+  document.getElementById("embed-terms-agree").addEventListener("change", function() {
+    document.getElementById("embed-confirm-btn").disabled = !this.checked;
+  });
 
   document.getElementById("embed-confirm-btn").addEventListener("click", async () => {
     const btn = document.getElementById("embed-confirm-btn");

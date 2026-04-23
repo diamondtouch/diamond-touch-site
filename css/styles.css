@@ -2522,3 +2522,77 @@ input[type="date"]::-webkit-calendar-picker-indicator {
 @media (max-width: 640px) {
   .top-bar__left { display: none; }
 }
+
+/* ========== BOOKING TERMS BOX & AGREE ========== */
+
+.booking-terms-box {
+  background: rgba(233,30,140,0.04);
+  border: 1px solid rgba(233,30,140,0.2);
+  border-radius: 12px;
+  padding: 1.25rem 1.5rem;
+  margin-bottom: 1.25rem;
+}
+
+.booking-terms-box__title {
+  font-size: 0.9375rem;
+  font-weight: 600;
+  margin-bottom: 0.75rem;
+  color: var(--clr-text);
+}
+
+.booking-terms-box__list {
+  list-style: none;
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+  margin-bottom: 0.875rem;
+}
+
+.booking-terms-box__list li {
+  font-size: 0.875rem;
+  color: var(--clr-muted);
+  padding-left: 1rem;
+  position: relative;
+}
+
+.booking-terms-box__list li::before {
+  content: "◆";
+  position: absolute;
+  left: 0;
+  color: var(--clr-pink);
+  font-size: 0.5rem;
+  top: 0.4rem;
+}
+
+.booking-terms-box__link {
+  font-size: 0.8125rem;
+  color: var(--clr-pink);
+  text-decoration: none;
+}
+
+.booking-terms-box__link:hover { text-decoration: underline; }
+
+.booking-agree {
+  margin-bottom: 1.25rem;
+}
+
+.booking-agree__label {
+  display: flex;
+  align-items: flex-start;
+  gap: 0.75rem;
+  cursor: pointer;
+  font-size: 0.875rem;
+  color: var(--clr-muted);
+  line-height: 1.5;
+}
+
+.booking-agree__label input {
+  width: 18px;
+  height: 18px;
+  accent-color: var(--clr-pink);
+  flex-shrink: 0;
+  margin-top: 0.1rem;
+  cursor: pointer;
+}
+
+.booking-agree__label a { color: var(--clr-pink); }
