@@ -2735,3 +2735,8 @@ input[type="date"]::-webkit-calendar-picker-indicator {
   border-color: #FF1A1A !important;
   background: rgba(255,26,26,0.06) !important;
 }
+
+.testimonial-card__location {
+  font-size: 0.8125rem;
+  color: var(--clr-muted);
+}
