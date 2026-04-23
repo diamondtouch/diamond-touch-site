@@ -2678,28 +2678,45 @@ input[type="date"]::-webkit-calendar-picker-indicator {
 /* ─── REVIEW PLATFORMS ───────────────────────────────────── */
 .review-platforms {
   display: flex;
-  gap: 0.75rem;
+  gap: 1rem;
   justify-content: center;
-  margin-top: 1.25rem;
+  margin-top: 2rem;
   flex-wrap: wrap;
 }
 
 .review-platform-btn {
   display: inline-flex;
   align-items: center;
-  gap: 0.5rem;
-  padding: 0.5rem 1.25rem;
-  border: 1px solid var(--clr-border);
-  border-radius: 999px;
-  font-size: 0.875rem;
-  color: var(--clr-muted);
+  gap: 0.625rem;
+  padding: 0.875rem 2rem;
+  border: 1.5px solid var(--clr-border);
+  border-radius: 12px;
+  font-size: 1rem;
+  font-weight: 600;
+  color: var(--clr-text);
   text-decoration: none;
-  transition: all 0.2s;
+  transition: all 0.25s;
   background: var(--clr-surface);
+  letter-spacing: 0.02em;
 }
 
 .review-platform-btn:hover {
-  border-color: var(--clr-pink);
-  color: var(--clr-text);
-  background: rgba(233,30,140,0.05);
+  transform: translateY(-2px);
+  box-shadow: 0 8px 24px rgba(0,0,0,0.3);
+}
+
+.review-platform-btn:first-child:hover {
+  border-color: #4285F4;
+  background: rgba(66,133,244,0.06);
+}
+
+.review-platform-btn:last-child:hover {
+  border-color: #FF1A1A;
+  background: rgba(255,26,26,0.06);
+}
+
+.review-platform-btn svg {
+  width: 22px;
+  height: 22px;
+  flex-shrink: 0;
 }
