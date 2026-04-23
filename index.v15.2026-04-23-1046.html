@@ -1313,6 +1313,43 @@
   document.getElementById("embed-step3-next").addEventListener("click", () => {
     goStep(4);
     renderSummary();
+    // Attach Square card now that container is visible
+    if (!window._embedSquareInited) {
+      window._embedSquareInited = true;
+      window._embedSquareReady = false;
+      (async () => {
+        // Wait one frame to ensure the panel is painted and visible
+        await new Promise(r => requestAnimationFrame(r));
+        const statusEl = document.getElementById('embed-payment-status');
+        try {
+          if (!window.Square) throw new Error('Square.js failed to load.');
+          const payments = window.Square.payments(APP_ID, LOCATION_ID);
+          const card = await payments.card({
+            style: {
+              '.input-container': { borderColor: '#333333', borderRadius: '6px' },
+              '.input-container.is-focus': { borderColor: '#e91e8c' },
+              '.input-container.is-error': { borderColor: '#ff4444' },
+              '.message-text': { color: '#999999' },
+              '.message-icon': { color: '#999999' },
+              '.message-text.is-error': { color: '#e91e8c' },
+              '.message-icon.is-error': { color: '#e91e8c' },
+              input: { backgroundColor: '#1a1a1a', color: '#f5f5f5', fontFamily: 'DM Sans, sans-serif' },
+              'input::placeholder': { color: '#666666' },
+              'input.is-error': { color: '#e91e8c' },
+            }
+          });
+          await card.attach('#embed-card-container');
+          window._embedSquareCard = card;
+          window._embedSquareReady = true;
+          console.log('Square card attached');
+        } catch(err) {
+          console.error('Square init failed:', err);
+          statusEl.textContent = 'Payment form error: ' + err.message;
+          statusEl.style.color = '#e91e8c';
+          window._embedSquareInited = false;
+        }
+      })();
+    }
   });
 
   function renderSummary() {
@@ -1426,61 +1463,6 @@
     }
   });
 })();
-</script>
-
-<script>
-// ─── Square Web Payments SDK Init ────────────────────────────────────────────
-// Runs on DOMContentLoaded. Pre-attaches card form so it's ready when step 4 shows.
-document.addEventListener('DOMContentLoaded', async function() {
-  const statusEl = document.getElementById('embed-payment-status');
-
-  if (!window.Square) {
-    console.error('Square.js failed to load');
-    if (statusEl) { statusEl.textContent = 'Payment form unavailable. Please refresh.'; statusEl.style.color = '#e91e8c'; }
-    return;
-  }
-
-  let payments;
-  try {
-    payments = window.Square.payments('sandbox-sq0idb-e4hfCqcraP5ssqJLEEJcoA', 'L89Y31ZYTJZ40');
-  } catch(err) {
-    console.error('Square.payments() failed:', err);
-    if (statusEl) { statusEl.textContent = 'Payment init error: ' + err.message; statusEl.style.color = '#e91e8c'; }
-    return;
-  }
-
-  let card;
-  try {
-    card = await payments.card({
-      style: {
-        '.input-container': { borderColor: '#333333', borderRadius: '6px' },
-        '.input-container.is-focus': { borderColor: '#e91e8c' },
-        '.input-container.is-error': { borderColor: '#ff1600' },
-        '.message-text': { color: '#999999' },
-        '.message-icon': { color: '#999999' },
-        '.message-text.is-error': { color: '#ff1600' },
-        '.message-icon.is-error': { color: '#ff1600' },
-        input: { backgroundColor: '#1a1a1a', color: '#f5f5f5' },
-        'input::placeholder': { color: '#666666' },
-        'input.is-error': { color: '#ff1600' },
-      }
-    });
-  } catch(err) {
-    console.error('payments.card() failed:', err);
-    if (statusEl) { statusEl.textContent = 'Card form error: ' + err.message; statusEl.style.color = '#e91e8c'; }
-    return;
-  }
-
-  try {
-    await card.attach('#embed-card-container');
-    window._embedSquareCard = card;
-    window._embedSquareReady = true;
-    console.log('Square card ready ✓');
-  } catch(err) {
-    console.error('card.attach() failed:', err);
-    if (statusEl) { statusEl.textContent = 'Card attach error: ' + err.message; statusEl.style.color = '#e91e8c'; }
-  }
-});
 </script>
 
 
