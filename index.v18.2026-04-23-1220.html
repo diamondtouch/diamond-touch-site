@@ -1114,11 +1114,6 @@
             firstCard.classList.add("selected");
             state.vehicle = `${firstCard.dataset.year} ${firstCard.dataset.make} ${firstCard.dataset.model}`;
             state.vehicleType = firstCard.dataset.type || "sedan";
-            // Fill form fields
-            const yEl = document.getElementById('embed-year');  if (yEl) yEl.value = firstCard.dataset.year || '';
-            const mkEl = document.getElementById('embed-make'); if (mkEl) mkEl.value = firstCard.dataset.make || '';
-            const mdEl = document.getElementById('embed-model');if (mdEl) mdEl.value = firstCard.dataset.model || '';
-            const cEl = document.getElementById('embed-color'); if (cEl) cEl.value = firstCard.dataset.color || '';
             // Update sedan/SUV toggle
             document.querySelectorAll(".embed-vehicle-btn").forEach(b => b.classList.remove("active"));
             const matchBtn = document.querySelector(`.embed-vehicle-btn[data-type="${state.vehicleType}"]`);
@@ -1132,11 +1127,6 @@
               card.classList.add("selected");
               state.vehicle = `${card.dataset.year} ${card.dataset.make} ${card.dataset.model}`;
               state.vehicleType = card.dataset.type || "sedan";
-              // Fill in hidden form fields so payload captures them
-              const yEl = document.getElementById('embed-year');  if (yEl) yEl.value = card.dataset.year || '';
-              const mkEl = document.getElementById('embed-make'); if (mkEl) mkEl.value = card.dataset.make || '';
-              const mdEl = document.getElementById('embed-model');if (mdEl) mdEl.value = card.dataset.model || '';
-              const cEl = document.getElementById('embed-color'); if (cEl) cEl.value = card.dataset.color || '';
               // Update price display for vehicle type
               document.querySelectorAll(".embed-vehicle-btn").forEach(b => b.classList.remove("active"));
               const matchBtn = document.querySelector(`.embed-vehicle-btn[data-type="${state.vehicleType}"]`);
@@ -1400,26 +1390,16 @@
         userToken = session?.access_token ?? null;
       } catch(_) {}
 
-      // Grab individual vehicle fields from form
-      const vYear  = document.getElementById('embed-year')?.value.trim() || '';
-      const vMake  = document.getElementById('embed-make')?.value.trim() || '';
-      const vModel = document.getElementById('embed-model')?.value.trim() || '';
-      const vColor = document.getElementById('embed-color')?.value.trim() || '';
-
       const bookingPayload = {
         name: state.name,
         email: state.email,
         phone: state.phone,
         service: state.serviceName,
         vehicle_type: state.vehicleType,
-        vehicle_year:  vYear  || null,
-        vehicle_make:  vMake  || null,
-        vehicle_model: vModel || null,
-        vehicle_color: vColor || null,
         preferred_date: state.date ? state.date.toISOString().split('T')[0] : null,
         preferred_time: state.time ?? null,
         total_amount: (state.servicePrice + state.addonTotal) * 100,
-        notes: ['Vehicle: ' + [vYear, vMake, vModel, vColor].filter(Boolean).join(' '), state.address ? 'Address: ' + state.address : '', state.addons.length ? 'Addons: ' + state.addons.map(a=>a.name).join(', ') : ''].filter(Boolean).join(' | ')
+        notes: ['Vehicle: ' + state.vehicle, state.address ? 'Address: ' + state.address : '', state.addons.length ? 'Addons: ' + state.addons.map(a=>a.name).join(', ') : ''].filter(Boolean).join(' | ')
       };
 
       const res = await fetch(EDGE_FN_URL, {

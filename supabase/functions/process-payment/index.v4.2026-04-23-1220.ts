@@ -120,43 +120,34 @@ serve(async (req: Request) => {
       );
     }
 
-    // 4. Auto-save phone + vehicle to user profile/garage if logged in
-    if (userId) {
+    // 4. Auto-save vehicle to user's garage if logged in
+    if (userId && bookingData.vehicle_type) {
       try {
-        // Save phone to profile if missing
-        if (bookingData.phone) {
-          const { data: prof } = await supabase.from('profiles').select('phone').eq('id', userId).single();
-          if (prof && !prof.phone) {
-            await supabase.from('profiles').update({ phone: bookingData.phone }).eq('id', userId);
-          }
+        // Parse vehicle details from notes (e.g. "Vehicle: 2022 Toyota Camry")
+        let vehicleNote = '';
+        if (bookingData.notes) {
+          const match = bookingData.notes.match(/Vehicle:\s*([^|]+)/);
+          if (match) vehicleNote = match[1].trim();
         }
-
-        // Auto-save vehicle if user filled in vehicle details
-        const vYear  = bookingData.vehicle_year  || null;
-        const vMake  = bookingData.vehicle_make  || null;
-        const vModel = bookingData.vehicle_model || null;
-        const vColor = bookingData.vehicle_color || null;
-        const vType  = bookingData.vehicle_type  || null;
-
-        if (vMake || vType) {
-          // Check for existing identical vehicle
-          let query = supabase.from('vehicles').select('id').eq('user_id', userId).eq('type', vType || 'sedan');
-          if (vMake)  query = query.eq('make', vMake);
-          if (vModel) query = query.eq('model', vModel);
-          const { data: existing } = await query.limit(1);
+        // Only auto-add if we have some vehicle info
+        if (vehicleNote || bookingData.vehicle_type) {
+          // Check if a similar vehicle already exists for this user
+          const { data: existing } = await supabase
+            .from('vehicles')
+            .select('id')
+            .eq('user_id', userId)
+            .eq('type', bookingData.vehicle_type)
+            .limit(1);
 
           if (!existing || existing.length === 0) {
             await supabase.from('vehicles').insert({
               user_id: userId,
-              year:  vYear,
-              make:  vMake,
-              model: vModel,
-              color: vColor,
-              type:  vType || 'sedan',
+              type: bookingData.vehicle_type,
+              notes: vehicleNote || null,
             });
           }
         }
-      } catch (_) { /* don't fail booking */ }
+      } catch (_) { /* don't fail booking over vehicle save */ }
     }
 
     // 5. Send confirmation email via Resend
