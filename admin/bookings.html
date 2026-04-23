@@ -1,0 +1,344 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Bookings — Diamond Touch Admin</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300;0,400;0,500;0,600;1,300;1,400&family=DM+Sans:ital,opsz,wght@0,9..40,300;0,9..40,400;0,9..40,500;0,9..40,600;1,9..40,300&display=swap" rel="stylesheet" />
+  <link rel="stylesheet" href="../css/portal.css" />
+</head>
+<body>
+
+<div class="portal-layout">
+
+  <!-- ========== SIDEBAR ========== -->
+  <aside class="sidebar">
+    <div class="sidebar__logo">
+      <a href="/"><img src="../assets/logo-horizontal.png" alt="Diamond Touch Detailing" /></a>
+      <div class="sidebar__badge">Admin</div>
+    </div>
+
+    <nav class="sidebar__nav" aria-label="Admin navigation">
+      <a href="dashboard.html" class="sidebar__link">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><rect x="3" y="3" width="7" height="7" rx="1"/><rect x="14" y="3" width="7" height="7" rx="1"/><rect x="3" y="14" width="7" height="7" rx="1"/><rect x="14" y="14" width="7" height="7" rx="1"/></svg>
+        Dashboard
+      </a>
+      <a href="calendar.html" class="sidebar__link">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><rect x="3" y="4" width="18" height="18" rx="2"/><path d="M16 2v4M8 2v4M3 10h18"/></svg>
+        Calendar
+      </a>
+      <a href="bookings.html" class="sidebar__link active">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2"/></svg>
+        Bookings
+      </a>
+      <a href="clients.html" class="sidebar__link">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><circle cx="9" cy="7" r="4"/><path d="M3 21v-2a4 4 0 014-4h4a4 4 0 014 4v2"/><circle cx="19" cy="7" r="2"/><path d="M21 21v-1a2 2 0 00-2-2h-1"/></svg>
+        Clients
+      </a>
+      <a href="memberships.html" class="sidebar__link">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z"/></svg>
+        Memberships
+      </a>
+      <a href="availability.html" class="sidebar__link">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><circle cx="12" cy="12" r="10"/><path d="M12 6v6l4 2"/></svg>
+        Availability
+      </a>
+      <a href="revenue.html" class="sidebar__link">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M12 2v20M17 5H9.5a3.5 3.5 0 000 7h5a3.5 3.5 0 010 7H6"/></svg>
+        Revenue
+      </a>
+    </nav>
+
+    <div class="sidebar__footer">
+      <div class="sidebar__user">
+        <div class="sidebar__avatar" id="userAvatar">A</div>
+        <div class="sidebar__user-info">
+          <div class="sidebar__user-name" id="userName">Admin</div>
+          <div class="sidebar__user-email" id="userEmail"></div>
+        </div>
+      </div>
+      <button class="btn-signout" onclick="signOut()">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M17 16l4-4m0 0l-4-4m4 4H7m6 4v1a2 2 0 01-2 2H5a2 2 0 01-2-2V7a2 2 0 012-2h6a2 2 0 012 2v1"/></svg>
+        Sign out
+      </button>
+    </div>
+  </aside>
+
+  <!-- ========== MAIN ========== -->
+  <main class="portal-main">
+    <div class="portal-main__inner">
+
+      <div class="page-header">
+        <p class="page-header__eyebrow">Admin Panel</p>
+        <h1 class="page-header__title">All Bookings</h1>
+        <p class="page-header__sub" id="bookingsCount">Loading…</p>
+      </div>
+
+      <!-- Filter bar -->
+      <div class="filter-bar" role="group" aria-label="Filter bookings">
+        <button class="filter-pill active" data-filter="all"       onclick="setFilter('all',this)">All</button>
+        <button class="filter-pill"        data-filter="pending"   onclick="setFilter('pending',this)">Pending</button>
+        <button class="filter-pill"        data-filter="confirmed" onclick="setFilter('confirmed',this)">Confirmed</button>
+        <button class="filter-pill"        data-filter="completed" onclick="setFilter('completed',this)">Completed</button>
+        <button class="filter-pill"        data-filter="cancelled" onclick="setFilter('cancelled',this)">Cancelled</button>
+        <button class="filter-pill"        data-filter="today"     onclick="setFilter('today',this)">Today</button>
+        <button class="filter-pill"        data-filter="week"      onclick="setFilter('week',this)">This Week</button>
+      </div>
+
+      <!-- Search -->
+      <div class="search-row">
+        <input
+          class="search-input"
+          type="search"
+          id="searchInput"
+          placeholder="Search by client name or phone…"
+          oninput="onSearch(this.value)"
+        />
+      </div>
+
+      <!-- Bookings table -->
+      <div id="bookingsWrap">
+        <div class="empty-state" style="border:1px solid var(--clr-border);border-radius:var(--radius-lg);padding:2.5rem">
+          <div class="empty-state__title">Loading bookings…</div>
+        </div>
+      </div>
+
+    </div>
+  </main>
+
+</div>
+
+<!-- ========== MOBILE TAB BAR ========== -->
+<nav class="tab-bar" aria-label="Admin mobile navigation">
+  <div class="tab-bar__inner">
+    <a href="dashboard.html" class="tab-bar__item">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><rect x="3" y="3" width="7" height="7" rx="1"/><rect x="14" y="3" width="7" height="7" rx="1"/><rect x="3" y="14" width="7" height="7" rx="1"/><rect x="14" y="14" width="7" height="7" rx="1"/></svg>
+      Home
+    </a>
+    <a href="calendar.html" class="tab-bar__item">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><rect x="3" y="4" width="18" height="18" rx="2"/><path d="M16 2v4M8 2v4M3 10h18"/></svg>
+      Calendar
+    </a>
+    <a href="bookings.html" class="tab-bar__item active">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2"/></svg>
+      Bookings
+    </a>
+    <a href="clients.html" class="tab-bar__item">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><circle cx="9" cy="7" r="4"/><path d="M3 21v-2a4 4 0 014-4h4a4 4 0 014 4v2"/></svg>
+      Clients
+    </a>
+    <a href="availability.html" class="tab-bar__item">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><circle cx="12" cy="12" r="10"/><path d="M12 6v6l4 2"/></svg>
+      Avail
+    </a>
+  </div>
+</nav>
+
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2/dist/umd/supabase.js"></script>
+<script src="../js/supabase-config.js"></script>
+<script src="../js/auth.js"></script>
+<script>
+/* ── State ──────────────────────────────────────────────────── */
+let allBookings    = [];
+let currentFilter  = 'all';
+let searchTerm     = '';
+
+/* ── Init ───────────────────────────────────────────────────── */
+(async () => {
+  const profile = await requireAdmin();
+  if (!profile) return;
+
+  document.getElementById('userName').textContent  = profile.full_name || 'Admin';
+  document.getElementById('userEmail').textContent = profile.email || '';
+  document.getElementById('userAvatar').textContent = (profile.full_name || 'A').charAt(0).toUpperCase();
+
+  await loadBookings();
+})();
+
+/* ── Data ───────────────────────────────────────────────────── */
+async function loadBookings() {
+  const { data } = await _supabase
+    .from('bookings')
+    .select('*, profiles(full_name, phone, email)')
+    .order('preferred_date', { ascending: false })
+    .order('preferred_time', { ascending: true });
+
+  allBookings = data || [];
+  renderTable();
+}
+
+/* ── Filter + search ────────────────────────────────────────── */
+function setFilter(filter, btn) {
+  currentFilter = filter;
+  document.querySelectorAll('.filter-pill').forEach(p => p.classList.remove('active'));
+  btn.classList.add('active');
+  renderTable();
+}
+
+function onSearch(val) {
+  searchTerm = val.toLowerCase().trim();
+  renderTable();
+}
+
+function getFiltered() {
+  const today = new Date().toISOString().split('T')[0];
+  const now   = new Date(); now.setHours(0,0,0,0);
+  const wStart = new Date(now); wStart.setDate(now.getDate() - now.getDay());
+  const wEnd   = new Date(wStart); wEnd.setDate(wStart.getDate() + 6);
+  const wStartStr = wStart.toISOString().split('T')[0];
+  const wEndStr   = wEnd.toISOString().split('T')[0];
+
+  let list = [...allBookings];
+
+  if      (currentFilter === 'today') list = list.filter(b => b.preferred_date === today);
+  else if (currentFilter === 'week')  list = list.filter(b => b.preferred_date >= wStartStr && b.preferred_date <= wEndStr);
+  else if (currentFilter !== 'all')   list = list.filter(b => b.status === currentFilter);
+
+  if (searchTerm) {
+    list = list.filter(b => {
+      const name  = (b.profiles?.full_name || '').toLowerCase();
+      const phone = (b.profiles?.phone || '').toLowerCase();
+      return name.includes(searchTerm) || phone.includes(searchTerm);
+    });
+  }
+
+  return list;
+}
+
+/* ── Render ─────────────────────────────────────────────────── */
+function renderTable() {
+  const list = getFiltered();
+  const wrap = document.getElementById('bookingsWrap');
+
+  document.getElementById('bookingsCount').textContent =
+    `${list.length} booking${list.length !== 1 ? 's' : ''}`;
+
+  if (list.length === 0) {
+    wrap.innerHTML = `
+      <div class="empty-state" style="border:1px solid var(--clr-border);border-radius:var(--radius-lg);padding:2.5rem">
+        <div class="empty-state__title">No bookings found</div>
+        <div class="empty-state__sub">Try adjusting your filters or search</div>
+      </div>`;
+    return;
+  }
+
+  const rows = list.map(b => {
+    const depositBadge = b.deposit_paid
+      ? `<span class="badge badge--deposit-paid">Paid $${((b.deposit_amount || 0) / 100).toFixed(0)}</span>`
+      : `<span class="badge badge--deposit-unpaid">Unpaid</span>`;
+
+    const rowActions = [];
+    if (b.status === 'pending')   rowActions.push(`<button class="btn btn--primary btn--sm" onclick="updateStatus('${b.id}','confirmed');event.stopPropagation()">Confirm</button>`);
+    if (b.status === 'confirmed') rowActions.push(`<button class="btn btn--primary btn--sm" onclick="updateStatus('${b.id}','completed');event.stopPropagation()">Complete</button>`);
+    if (['pending','confirmed'].includes(b.status)) rowActions.push(`<button class="btn btn--ghost btn--sm" onclick="cancelBooking('${b.id}');event.stopPropagation()">Cancel</button>`);
+
+    return `
+      <!-- Main row -->
+      <tr class="expandable-row" onclick="toggleDetail('${b.id}')">
+        <td>${formatDate(b.preferred_date)}</td>
+        <td>${formatTime(b.preferred_time)}</td>
+        <td style="font-weight:500">${b.profiles?.full_name || '—'}</td>
+        <td>${b.profiles?.phone || '—'}</td>
+        <td>${b.service_name || '—'}</td>
+        <td>${b.vehicle_type || '—'}</td>
+        <td><span class="badge badge--${b.status}">${b.status}</span></td>
+        <td>${depositBadge}</td>
+        <td>
+          <div class="row-actions">
+            ${rowActions.join('')}
+          </div>
+        </td>
+      </tr>
+      <!-- Expanded detail row -->
+      <tr class="row-detail" id="detail-${b.id}">
+        <td colspan="9">
+          <div class="row-detail-inner">
+            <div>
+              <div class="row-detail-field">
+                <label>Client Notes</label>
+                <p style="font-size:0.875rem;color:var(--clr-muted)">${b.notes || 'No notes from client'}</p>
+              </div>
+              <div class="row-detail-field" style="margin-top:0.875rem">
+                <label>Admin Notes</label>
+                <textarea id="admin-note-${b.id}" rows="3" onclick="event.stopPropagation()">${b.admin_notes || ''}</textarea>
+              </div>
+              <button class="btn btn--ghost btn--sm" style="margin-top:0.5rem"
+                onclick="saveNote('${b.id}');event.stopPropagation()">Save Note</button>
+            </div>
+            <div style="font-size:0.875rem;color:var(--clr-muted);display:flex;flex-direction:column;gap:0.5rem">
+              <div><strong style="color:var(--clr-text)">Booked on:</strong> ${formatDate(b.created_at?.split('T')[0])}</div>
+              <div><strong style="color:var(--clr-text)">Email:</strong> ${b.profiles?.email || '—'}</div>
+              <div><strong style="color:var(--clr-text)">Deposit:</strong> ${b.deposit_paid ? `Paid — $${((b.deposit_amount || 0) / 100).toFixed(0)}` : 'Not paid'}</div>
+              ${b.square_payment_id ? `<div><strong style="color:var(--clr-text)">Square ID:</strong><br><code style="font-size:0.75rem">${b.square_payment_id}</code></div>` : ''}
+            </div>
+          </div>
+        </td>
+      </tr>`;
+  }).join('');
+
+  wrap.innerHTML = `
+    <div class="table-wrap">
+      <table>
+        <thead>
+          <tr>
+            <th>Date</th>
+            <th>Time</th>
+            <th>Client</th>
+            <th>Phone</th>
+            <th>Service</th>
+            <th>Vehicle</th>
+            <th>Status</th>
+            <th>Deposit</th>
+            <th>Actions</th>
+          </tr>
+        </thead>
+        <tbody>${rows}</tbody>
+      </table>
+    </div>`;
+}
+
+/* ── Row toggle ─────────────────────────────────────────────── */
+function toggleDetail(id) {
+  const detail = document.getElementById(`detail-${id}`);
+  const wasOpen = detail.classList.contains('open');
+  document.querySelectorAll('.row-detail.open').forEach(r => r.classList.remove('open'));
+  if (!wasOpen) detail.classList.add('open');
+}
+
+/* ── Actions ────────────────────────────────────────────────── */
+async function updateStatus(id, status) {
+  const { error } = await _supabase.from('bookings').update({ status }).eq('id', id);
+  if (!error) await loadBookings();
+}
+
+async function cancelBooking(id) {
+  if (!confirm('Cancel this booking?')) return;
+  await updateStatus(id, 'cancelled');
+}
+
+async function saveNote(id) {
+  const textarea = document.getElementById(`admin-note-${id}`);
+  if (!textarea) return;
+  const admin_notes = textarea.value;
+  const { error } = await _supabase.from('bookings').update({ admin_notes }).eq('id', id);
+
+  const btn = event?.target;
+  if (btn) {
+    const orig = btn.textContent;
+    btn.textContent = error ? 'Error!' : 'Saved!';
+    setTimeout(() => { btn.textContent = orig; }, 1500);
+  }
+}
+
+/* ── Helpers ────────────────────────────────────────────────── */
+function formatTime(t) {
+  if (!t) return '—';
+  const [h, m] = t.split(':');
+  const hour = parseInt(h);
+  return `${hour > 12 ? hour - 12 : hour || 12}:${m} ${hour >= 12 ? 'PM' : 'AM'}`;
+}
+</script>
+</body>
+</html>

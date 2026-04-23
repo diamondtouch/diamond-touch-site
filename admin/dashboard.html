@@ -16,9 +16,7 @@
   <!-- ========== SIDEBAR ========== -->
   <aside class="sidebar">
     <div class="sidebar__logo">
-      <a href="/">
-        <img src="../assets/logo-horizontal.png" alt="Diamond Touch Detailing" />
-      </a>
+      <a href="/"><img src="../assets/logo-horizontal.png" alt="Diamond Touch Detailing" /></a>
       <div class="sidebar__badge">Admin</div>
     </div>
 
@@ -31,25 +29,25 @@
         <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><rect x="3" y="4" width="18" height="18" rx="2"/><path d="M16 2v4M8 2v4M3 10h18"/></svg>
         Calendar
       </a>
-      <a href="clients.html" class="sidebar__link">
-        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><circle cx="9" cy="7" r="4"/><path d="M3 21v-2a4 4 0 014-4h4a4 4 0 014 4v2"/><circle cx="19" cy="7" r="2"/><path d="M21 21v-1a2 2 0 00-2-2h-1"/></svg>
-        Clients
-      </a>
       <a href="bookings.html" class="sidebar__link">
         <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2"/></svg>
         Bookings
+      </a>
+      <a href="clients.html" class="sidebar__link">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><circle cx="9" cy="7" r="4"/><path d="M3 21v-2a4 4 0 014-4h4a4 4 0 014 4v2"/><circle cx="19" cy="7" r="2"/><path d="M21 21v-1a2 2 0 00-2-2h-1"/></svg>
+        Clients
       </a>
       <a href="memberships.html" class="sidebar__link">
         <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z"/></svg>
         Memberships
       </a>
+      <a href="availability.html" class="sidebar__link">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><circle cx="12" cy="12" r="10"/><path d="M12 6v6l4 2"/></svg>
+        Availability
+      </a>
       <a href="revenue.html" class="sidebar__link">
         <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M12 2v20M17 5H9.5a3.5 3.5 0 000 7h5a3.5 3.5 0 010 7H6"/></svg>
         Revenue
-      </a>
-      <a href="settings.html" class="sidebar__link">
-        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><circle cx="12" cy="12" r="3"/><path d="M19.4 15a1.65 1.65 0 00.33 1.82l.06.06a2 2 0 010 2.83 2 2 0 01-2.83 0l-.06-.06a1.65 1.65 0 00-1.82-.33 1.65 1.65 0 00-1 1.51V21a2 2 0 01-4 0v-.09A1.65 1.65 0 009 19.4a1.65 1.65 0 00-1.82.33l-.06.06a2 2 0 01-2.83-2.83l.06-.06A1.65 1.65 0 004.68 15a1.65 1.65 0 00-1.51-1H3a2 2 0 010-4h.09A1.65 1.65 0 004.6 9a1.65 1.65 0 00-.33-1.82l-.06-.06a2 2 0 012.83-2.83l.06.06A1.65 1.65 0 009 4.68a1.65 1.65 0 001-1.51V3a2 2 0 014 0v.09a1.65 1.65 0 001 1.51 1.65 1.65 0 001.82-.33l.06-.06a2 2 0 012.83 2.83l-.06.06A1.65 1.65 0 0019.4 9a1.65 1.65 0 001.51 1H21a2 2 0 010 4h-.09a1.65 1.65 0 00-1.51 1z"/></svg>
-        Settings
       </a>
     </nav>
 
@@ -75,30 +73,30 @@
       <div class="page-header">
         <p class="page-header__eyebrow">Admin Panel</p>
         <h1 class="page-header__title">Dashboard</h1>
-        <p class="page-header__sub" id="todayDate">Loading...</p>
+        <p class="page-header__sub" id="todayDate">Loading…</p>
       </div>
 
       <!-- Stat cards -->
       <div class="stat-grid">
         <div class="stat-card">
           <div class="stat-card__label">Today's Jobs</div>
-          <div class="stat-card__value" id="statToday">0</div>
+          <div class="stat-card__value" id="statToday">—</div>
           <div class="stat-card__sub">Scheduled today</div>
         </div>
         <div class="stat-card">
           <div class="stat-card__label">This Week Revenue</div>
-          <div class="stat-card__value" id="statRevenue">$0</div>
-          <div class="stat-card__sub">Completed payments</div>
-        </div>
-        <div class="stat-card">
-          <div class="stat-card__label">Active Members</div>
-          <div class="stat-card__value" id="statMembers">0</div>
-          <div class="stat-card__sub">Current subscriptions</div>
+          <div class="stat-card__value" id="statRevenue">—</div>
+          <div class="stat-card__sub">Deposit payments</div>
         </div>
         <div class="stat-card">
           <div class="stat-card__label">Pending Confirmations</div>
-          <div class="stat-card__value" id="statPending">0</div>
+          <div class="stat-card__value" id="statPending">—</div>
           <div class="stat-card__sub">Awaiting your review</div>
+        </div>
+        <div class="stat-card">
+          <div class="stat-card__label">Active Members</div>
+          <div class="stat-card__value" id="statMembers">—</div>
+          <div class="stat-card__sub">Current subscriptions</div>
         </div>
       </div>
 
@@ -106,32 +104,39 @@
       <div style="display:flex;gap:0.75rem;flex-wrap:wrap;margin-bottom:2rem">
         <a href="bookings.html" class="btn btn--primary btn--sm">View All Bookings</a>
         <a href="calendar.html" class="btn btn--ghost btn--sm">Open Calendar</a>
-        <a href="clients.html" class="btn btn--ghost btn--sm">View Clients</a>
+        <a href="availability.html" class="btn btn--ghost btn--sm">Manage Availability</a>
       </div>
 
-      <!-- Recent bookings -->
-      <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:1rem">
-        <h2 style="font-family:var(--font-display);font-size:1.5rem;font-weight:400">Recent Bookings</h2>
-        <a href="bookings.html" style="font-size:0.875rem;color:var(--clr-pink)">View all</a>
-      </div>
-
-      <div id="bookingsTable">
-        <div class="empty-state" style="border:1px solid var(--clr-border);border-radius:var(--radius-lg);padding:2.5rem">
-          <div class="empty-state__title">No bookings yet</div>
-          <div class="empty-state__sub">Bookings will appear here once clients start booking</div>
+      <!-- Today's bookings -->
+      <div style="margin-bottom:2rem">
+        <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:1rem">
+          <h2 style="font-family:var(--font-display);font-size:1.5rem;font-weight:400">Today's Bookings</h2>
+          <a href="calendar.html" style="font-size:0.875rem;color:var(--clr-pink)">Open calendar</a>
+        </div>
+        <div id="todayBookings">
+          <div style="font-size:0.875rem;color:var(--clr-muted-2)">Loading…</div>
         </div>
       </div>
 
       <!-- Pending confirmations -->
-      <div style="margin-top:2rem">
+      <div style="margin-bottom:2rem">
         <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:1rem">
           <h2 style="font-family:var(--font-display);font-size:1.5rem;font-weight:400">Pending Confirmations</h2>
+          <a href="bookings.html?filter=pending" style="font-size:0.875rem;color:var(--clr-pink)">View all</a>
         </div>
-        <div id="pendingTable">
-          <div class="empty-state" style="border:1px solid var(--clr-border);border-radius:var(--radius-lg);padding:2.5rem">
-            <div class="empty-state__title">No pending bookings</div>
-            <div class="empty-state__sub">All bookings have been reviewed</div>
-          </div>
+        <div id="pendingList">
+          <div style="font-size:0.875rem;color:var(--clr-muted-2)">Loading…</div>
+        </div>
+      </div>
+
+      <!-- Recent bookings table -->
+      <div>
+        <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:1rem">
+          <h2 style="font-family:var(--font-display);font-size:1.5rem;font-weight:400">Recent Bookings</h2>
+          <a href="bookings.html" style="font-size:0.875rem;color:var(--clr-pink)">View all</a>
+        </div>
+        <div id="recentTable">
+          <div style="font-size:0.875rem;color:var(--clr-muted-2)">Loading…</div>
         </div>
       </div>
 
@@ -159,9 +164,9 @@
       <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><circle cx="9" cy="7" r="4"/><path d="M3 21v-2a4 4 0 014-4h4a4 4 0 014 4v2"/></svg>
       Clients
     </a>
-    <a href="settings.html" class="tab-bar__item">
-      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><circle cx="12" cy="12" r="3"/><path d="M19.4 15a1.65 1.65 0 00.33 1.82l.06.06a2 2 0 010 2.83 2 2 0 01-2.83 0l-.06-.06a1.65 1.65 0 00-1.82-.33 1.65 1.65 0 00-1 1.51V21a2 2 0 01-4 0v-.09A1.65 1.65 0 009 19.4a1.65 1.65 0 00-1.82.33l-.06.06a2 2 0 01-2.83-2.83l.06-.06A1.65 1.65 0 004.68 15a1.65 1.65 0 00-1.51-1H3a2 2 0 010-4h.09A1.65 1.65 0 004.6 9a1.65 1.65 0 00-.33-1.82l-.06-.06a2 2 0 012.83-2.83l.06.06A1.65 1.65 0 009 4.68a1.65 1.65 0 001-1.51V3a2 2 0 014 0v.09a1.65 1.65 0 001 1.51 1.65 1.65 0 001.82-.33l.06-.06a2 2 0 012.83 2.83l-.06.06A1.65 1.65 0 0019.4 9a1.65 1.65 0 001.51 1H21a2 2 0 010 4h-.09a1.65 1.65 0 00-1.51 1z"/></svg>
-      Settings
+    <a href="availability.html" class="tab-bar__item">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><circle cx="12" cy="12" r="10"/><path d="M12 6v6l4 2"/></svg>
+      Avail
     </a>
   </div>
 </nav>
@@ -174,12 +179,10 @@
   const profile = await requireAdmin();
   if (!profile) return;
 
-  // User info
-  document.getElementById('userName').textContent = profile.full_name || 'Admin';
+  document.getElementById('userName').textContent  = profile.full_name || 'Admin';
   document.getElementById('userEmail').textContent = profile.email || '';
   document.getElementById('userAvatar').textContent = (profile.full_name || 'A').charAt(0).toUpperCase();
 
-  // Today's date
   const today = new Date();
   document.getElementById('todayDate').textContent = today.toLocaleDateString('en-US', {
     weekday: 'long', year: 'numeric', month: 'long', day: 'numeric'
@@ -187,69 +190,83 @@
 
   const todayStr = today.toISOString().split('T')[0];
 
-  // Fetch all bookings
+  /* ── Fetch bookings ────────────────────────────────────────── */
   const { data: allBookings } = await _supabase
     .from('bookings')
-    .select('*, profiles(full_name, email)')
-    .order('created_at', { ascending: false });
+    .select('*, profiles(full_name, phone, email)')
+    .order('preferred_date', { ascending: false })
+    .order('preferred_time', { ascending: true });
 
   if (allBookings) {
-    // Today's jobs
     const todayJobs = allBookings.filter(b => b.preferred_date === todayStr);
-    document.getElementById('statToday').textContent = todayJobs.length;
+    const pending   = allBookings.filter(b => b.status === 'pending');
 
-    // Pending
-    const pending = allBookings.filter(b => b.status === 'pending');
+    /* Stats */
+    document.getElementById('statToday').textContent   = todayJobs.length;
     document.getElementById('statPending').textContent = pending.length;
 
-    // Recent bookings table
+    /* Today's bookings list */
+    const todayEl = document.getElementById('todayBookings');
+    if (todayJobs.length === 0) {
+      todayEl.innerHTML = `
+        <div class="empty-state" style="border:1px solid var(--clr-border);border-radius:var(--radius-lg);padding:2rem">
+          <div class="empty-state__title">No bookings today</div>
+          <div class="empty-state__sub">Enjoy your day — nothing scheduled</div>
+        </div>`;
+    } else {
+      todayEl.innerHTML = todayJobs.map(b => `
+        <div class="today-booking-item">
+          <div class="today-booking-item__time">${formatTime(b.preferred_time)}</div>
+          <div class="today-booking-item__info">
+            <div class="today-booking-item__name">${b.profiles?.full_name || '—'}</div>
+            <div class="today-booking-item__service">${b.service_name || '—'} · ${b.vehicle_type || '—'}</div>
+          </div>
+          <div class="today-booking-item__right">
+            <span class="badge badge--${b.status}">${b.status}</span>
+            ${b.status === 'pending' ? `<button class="btn btn--primary btn--sm" onclick="confirmBooking('${b.id}')">Confirm</button>` : ''}
+          </div>
+        </div>
+      `).join('');
+    }
+
+    /* Pending list */
+    const pendingEl = document.getElementById('pendingList');
+    if (pending.length === 0) {
+      pendingEl.innerHTML = `
+        <div class="empty-state" style="border:1px solid var(--clr-border);border-radius:var(--radius-lg);padding:2rem">
+          <div class="empty-state__title">All caught up</div>
+          <div class="empty-state__sub">No bookings awaiting confirmation</div>
+        </div>`;
+    } else {
+      pendingEl.innerHTML = pending.slice(0, 5).map(b => `
+        <div class="today-booking-item">
+          <div class="today-booking-item__time" style="min-width:90px;font-size:0.75rem;color:var(--clr-muted)">${formatDate(b.preferred_date)}</div>
+          <div class="today-booking-item__info">
+            <div class="today-booking-item__name">${b.profiles?.full_name || '—'}</div>
+            <div class="today-booking-item__service">${b.service_name || '—'} · ${formatTime(b.preferred_time)}</div>
+          </div>
+          <div class="today-booking-item__right">
+            <button class="btn btn--primary btn--sm" onclick="confirmBooking('${b.id}')">Confirm</button>
+            <button class="btn btn--ghost btn--sm"   onclick="cancelBooking('${b.id}')">Cancel</button>
+          </div>
+        </div>
+      `).join('');
+    }
+
+    /* Recent bookings table */
     if (allBookings.length > 0) {
-      const rows = allBookings.slice(0, 8).map(b => `
+      const rows = allBookings.slice(0, 10).map(b => `
         <tr>
-          <td>${b.profiles?.full_name || '—'}</td>
+          <td style="font-weight:500">${b.profiles?.full_name || '—'}</td>
           <td>${b.service_name || '—'}</td>
           <td>${formatDate(b.preferred_date)}</td>
+          <td>${formatTime(b.preferred_time)}</td>
           <td>${b.vehicle_type || '—'}</td>
           <td><span class="badge badge--${b.status}">${b.status}</span></td>
         </tr>
       `).join('');
 
-      document.getElementById('bookingsTable').innerHTML = `
-        <div class="table-wrap">
-          <table>
-            <thead>
-              <tr>
-                <th>Client</th>
-                <th>Service</th>
-                <th>Date</th>
-                <th>Vehicle</th>
-                <th>Status</th>
-              </tr>
-            </thead>
-            <tbody>${rows}</tbody>
-          </table>
-        </div>
-      `;
-    }
-
-    // Pending confirmations table
-    if (pending.length > 0) {
-      const pendingRows = pending.map(b => `
-        <tr>
-          <td>${b.profiles?.full_name || '—'}</td>
-          <td>${b.service_name || '—'}</td>
-          <td>${formatDate(b.preferred_date)}</td>
-          <td>${b.preferred_time || '—'}</td>
-          <td>
-            <div style="display:flex;gap:0.5rem">
-              <button onclick="confirmBooking('${b.id}')" class="btn btn--primary btn--sm">Confirm</button>
-              <button onclick="cancelBooking('${b.id}')" class="btn btn--ghost btn--sm">Cancel</button>
-            </div>
-          </td>
-        </tr>
-      `).join('');
-
-      document.getElementById('pendingTable').innerHTML = `
+      document.getElementById('recentTable').innerHTML = `
         <div class="table-wrap">
           <table>
             <thead>
@@ -258,37 +275,47 @@
                 <th>Service</th>
                 <th>Date</th>
                 <th>Time</th>
-                <th>Actions</th>
+                <th>Vehicle</th>
+                <th>Status</th>
               </tr>
             </thead>
-            <tbody>${pendingRows}</tbody>
+            <tbody>${rows}</tbody>
           </table>
-        </div>
-      `;
+        </div>`;
+    } else {
+      document.getElementById('recentTable').innerHTML = `
+        <div class="empty-state" style="border:1px solid var(--clr-border);border-radius:var(--radius-lg);padding:2.5rem">
+          <div class="empty-state__title">No bookings yet</div>
+          <div class="empty-state__sub">Bookings will appear here once clients start booking</div>
+        </div>`;
     }
   }
 
-  // Revenue (completed payments this week)
+  /* ── Revenue (deposit payments this week) ──────────────────── */
   const weekStart = new Date(today);
   weekStart.setDate(today.getDate() - today.getDay());
+  weekStart.setHours(0,0,0,0);
+
   const { data: payments } = await _supabase
-    .from('payments')
-    .select('amount')
-    .eq('status', 'completed')
+    .from('bookings')
+    .select('deposit_amount')
+    .eq('deposit_paid', true)
     .gte('created_at', weekStart.toISOString());
 
   if (payments) {
-    const total = payments.reduce((sum, p) => sum + (p.amount || 0), 0);
+    const total = payments.reduce((sum, p) => sum + (p.deposit_amount || 0), 0);
     document.getElementById('statRevenue').textContent = formatPrice(total);
+  } else {
+    document.getElementById('statRevenue').textContent = '$0';
   }
 
-  // Active members
+  /* ── Active members ────────────────────────────────────────── */
   const { count: memberCount } = await _supabase
     .from('memberships')
     .select('id', { count: 'exact', head: true })
     .eq('status', 'active');
 
-  document.getElementById('statMembers').textContent = memberCount || 0;
+  document.getElementById('statMembers').textContent = memberCount ?? 0;
 })();
 
 async function confirmBooking(id) {
@@ -300,6 +327,13 @@ async function cancelBooking(id) {
   if (!confirm('Cancel this booking?')) return;
   await _supabase.from('bookings').update({ status: 'cancelled' }).eq('id', id);
   window.location.reload();
+}
+
+function formatTime(t) {
+  if (!t) return '—';
+  const [h, m] = t.split(':');
+  const hour = parseInt(h);
+  return `${hour > 12 ? hour - 12 : hour || 12}:${m} ${hour >= 12 ? 'PM' : 'AM'}`;
 }
 </script>
 

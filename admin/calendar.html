@@ -1,0 +1,528 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Calendar — Diamond Touch Admin</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300;0,400;0,500;0,600;1,300;1,400&family=DM+Sans:ital,opsz,wght@0,9..40,300;0,9..40,400;0,9..40,500;0,9..40,600;1,9..40,300&display=swap" rel="stylesheet" />
+  <link rel="stylesheet" href="../css/portal.css" />
+</head>
+<body>
+
+<div class="portal-layout">
+
+  <!-- ========== SIDEBAR ========== -->
+  <aside class="sidebar">
+    <div class="sidebar__logo">
+      <a href="/"><img src="../assets/logo-horizontal.png" alt="Diamond Touch Detailing" /></a>
+      <div class="sidebar__badge">Admin</div>
+    </div>
+
+    <nav class="sidebar__nav" aria-label="Admin navigation">
+      <a href="dashboard.html" class="sidebar__link">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><rect x="3" y="3" width="7" height="7" rx="1"/><rect x="14" y="3" width="7" height="7" rx="1"/><rect x="3" y="14" width="7" height="7" rx="1"/><rect x="14" y="14" width="7" height="7" rx="1"/></svg>
+        Dashboard
+      </a>
+      <a href="calendar.html" class="sidebar__link active">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><rect x="3" y="4" width="18" height="18" rx="2"/><path d="M16 2v4M8 2v4M3 10h18"/></svg>
+        Calendar
+      </a>
+      <a href="bookings.html" class="sidebar__link">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2"/></svg>
+        Bookings
+      </a>
+      <a href="clients.html" class="sidebar__link">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><circle cx="9" cy="7" r="4"/><path d="M3 21v-2a4 4 0 014-4h4a4 4 0 014 4v2"/><circle cx="19" cy="7" r="2"/><path d="M21 21v-1a2 2 0 00-2-2h-1"/></svg>
+        Clients
+      </a>
+      <a href="memberships.html" class="sidebar__link">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z"/></svg>
+        Memberships
+      </a>
+      <a href="availability.html" class="sidebar__link">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><circle cx="12" cy="12" r="10"/><path d="M12 6v6l4 2"/></svg>
+        Availability
+      </a>
+      <a href="revenue.html" class="sidebar__link">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M12 2v20M17 5H9.5a3.5 3.5 0 000 7h5a3.5 3.5 0 010 7H6"/></svg>
+        Revenue
+      </a>
+    </nav>
+
+    <div class="sidebar__footer">
+      <div class="sidebar__user">
+        <div class="sidebar__avatar" id="userAvatar">A</div>
+        <div class="sidebar__user-info">
+          <div class="sidebar__user-name" id="userName">Admin</div>
+          <div class="sidebar__user-email" id="userEmail"></div>
+        </div>
+      </div>
+      <button class="btn-signout" onclick="signOut()">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M17 16l4-4m0 0l-4-4m4 4H7m6 4v1a2 2 0 01-2 2H5a2 2 0 01-2-2V7a2 2 0 012-2h6a2 2 0 012 2v1"/></svg>
+        Sign out
+      </button>
+    </div>
+  </aside>
+
+  <!-- ========== MAIN ========== -->
+  <main class="portal-main">
+    <div class="portal-main__inner">
+
+      <div class="page-header">
+        <p class="page-header__eyebrow">Admin Panel</p>
+        <h1 class="page-header__title">Calendar</h1>
+        <p class="page-header__sub">View and manage your appointment schedule</p>
+      </div>
+
+      <!-- Calendar controls -->
+      <div class="cal-header">
+        <div class="cal-nav">
+          <button class="cal-nav-btn" id="prevBtn" aria-label="Previous">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M15 18l-6-6 6-6"/></svg>
+          </button>
+          <button class="cal-today-btn" id="todayBtn">Today</button>
+          <button class="cal-nav-btn" id="nextBtn" aria-label="Next">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M9 18l6-6-6-6"/></svg>
+          </button>
+          <h2 class="cal-title" id="calTitle">Loading…</h2>
+        </div>
+        <div class="view-toggle">
+          <button class="view-toggle-btn active" id="monthBtn">Month</button>
+          <button class="view-toggle-btn" id="weekBtn">Week</button>
+        </div>
+      </div>
+
+      <!-- Month view -->
+      <div id="monthView">
+        <div class="cal-day-headers">
+          <div class="cal-day-header">Sun</div>
+          <div class="cal-day-header">Mon</div>
+          <div class="cal-day-header">Tue</div>
+          <div class="cal-day-header">Wed</div>
+          <div class="cal-day-header">Thu</div>
+          <div class="cal-day-header">Fri</div>
+          <div class="cal-day-header">Sat</div>
+        </div>
+        <div class="cal-grid" id="calGrid"></div>
+      </div>
+
+      <!-- Week view -->
+      <div id="weekView" style="display:none">
+        <div class="week-container">
+          <div class="week-grid" id="weekGrid"></div>
+        </div>
+      </div>
+
+    </div>
+  </main>
+
+</div><!-- .portal-layout -->
+
+<!-- ========== DAY PANEL ========== -->
+<div class="day-panel-overlay" id="dayOverlay"></div>
+<div class="day-panel" id="dayPanel" role="dialog" aria-modal="true" aria-label="Day detail">
+  <div class="day-panel__head">
+    <div class="day-panel__date" id="dayPanelDate"></div>
+    <button class="day-panel__close" id="dayPanelClose" aria-label="Close">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M18 6L6 18M6 6l12 12"/></svg>
+    </button>
+  </div>
+  <div class="day-panel__body" id="dayPanelBody"></div>
+</div>
+
+<!-- ========== BOOKING MODAL (week view) ========== -->
+<div class="modal-overlay" id="bookingModal" role="dialog" aria-modal="true">
+  <div class="modal" id="modalContent"></div>
+</div>
+
+<!-- ========== MOBILE TAB BAR ========== -->
+<nav class="tab-bar" aria-label="Admin mobile navigation">
+  <div class="tab-bar__inner">
+    <a href="dashboard.html" class="tab-bar__item">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><rect x="3" y="3" width="7" height="7" rx="1"/><rect x="14" y="3" width="7" height="7" rx="1"/><rect x="3" y="14" width="7" height="7" rx="1"/><rect x="14" y="14" width="7" height="7" rx="1"/></svg>
+      Home
+    </a>
+    <a href="calendar.html" class="tab-bar__item active">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><rect x="3" y="4" width="18" height="18" rx="2"/><path d="M16 2v4M8 2v4M3 10h18"/></svg>
+      Calendar
+    </a>
+    <a href="bookings.html" class="tab-bar__item">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2"/></svg>
+      Bookings
+    </a>
+    <a href="clients.html" class="tab-bar__item">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><circle cx="9" cy="7" r="4"/><path d="M3 21v-2a4 4 0 014-4h4a4 4 0 014 4v2"/></svg>
+      Clients
+    </a>
+    <a href="availability.html" class="tab-bar__item">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><circle cx="12" cy="12" r="10"/><path d="M12 6v6l4 2"/></svg>
+      Avail
+    </a>
+  </div>
+</nav>
+
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2/dist/umd/supabase.js"></script>
+<script src="../js/supabase-config.js"></script>
+<script src="../js/auth.js"></script>
+<script>
+/* ── State ──────────────────────────────────────────────────── */
+let currentDate = new Date();
+let viewMode    = 'month';
+let bookings    = [];
+let blockedDates = [];
+let activeDayStr = null; // track which day panel is open
+
+/* ── Init ───────────────────────────────────────────────────── */
+(async () => {
+  const profile = await requireAdmin();
+  if (!profile) return;
+
+  document.getElementById('userName').textContent  = profile.full_name || 'Admin';
+  document.getElementById('userEmail').textContent = profile.email || '';
+  document.getElementById('userAvatar').textContent = (profile.full_name || 'A').charAt(0).toUpperCase();
+
+  await loadData();
+  renderCalendar();
+})();
+
+/* ── Data ───────────────────────────────────────────────────── */
+async function loadData() {
+  const { data: bData } = await _supabase
+    .from('bookings')
+    .select('*, profiles(full_name, phone)')
+    .order('preferred_date', { ascending: true })
+    .order('preferred_time', { ascending: true });
+
+  bookings = bData || [];
+
+  const { data: blData } = await _supabase
+    .from('blocked_dates')
+    .select('date');
+
+  blockedDates = (blData || []).map(b => b.date);
+}
+
+/* ── Render dispatch ────────────────────────────────────────── */
+function renderCalendar() {
+  updateTitle();
+  if (viewMode === 'month') renderMonth();
+  else renderWeek();
+}
+
+function updateTitle() {
+  if (viewMode === 'month') {
+    document.getElementById('calTitle').textContent = currentDate.toLocaleDateString('en-US', {
+      month: 'long', year: 'numeric'
+    });
+  } else {
+    const ws = weekStart(currentDate);
+    const we = new Date(ws); we.setDate(we.getDate() + 6);
+    const opts = { month: 'short', day: 'numeric' };
+    document.getElementById('calTitle').textContent =
+      ws.toLocaleDateString('en-US', opts) + ' – ' +
+      we.toLocaleDateString('en-US', { ...opts, year: 'numeric' });
+  }
+}
+
+/* ── Month render ───────────────────────────────────────────── */
+function renderMonth() {
+  const year  = currentDate.getFullYear();
+  const month = currentDate.getMonth();
+
+  const firstDay = new Date(year, month, 1);
+  const lastDay  = new Date(year, month + 1, 0);
+
+  const gridStart = new Date(firstDay);
+  gridStart.setDate(gridStart.getDate() - firstDay.getDay());
+
+  const gridEnd = new Date(lastDay);
+  gridEnd.setDate(gridEnd.getDate() + (6 - lastDay.getDay()));
+
+  const today = new Date(); today.setHours(0,0,0,0);
+
+  const grid = document.getElementById('calGrid');
+  grid.innerHTML = '';
+
+  for (let d = new Date(gridStart); d <= gridEnd; d.setDate(d.getDate() + 1)) {
+    const dateStr       = toDateStr(d);
+    const dayBookings   = bookings.filter(b => b.preferred_date === dateStr);
+    const isToday       = d.getTime() === today.getTime();
+    const isOtherMonth  = d.getMonth() !== month;
+    const isBlocked     = blockedDates.includes(dateStr);
+
+    const cell = document.createElement('div');
+    cell.className = 'cal-cell' +
+      (isToday      ? ' cal-cell--today'       : '') +
+      (isOtherMonth ? ' cal-cell--other-month' : '') +
+      (isBlocked    ? ' cal-cell--blocked'     : '');
+
+    const pills = dayBookings.slice(0, 3).map(b => {
+      const active = ['pending', 'confirmed'].includes(b.status);
+      return `<div class="booking-pill booking-pill--${active ? 'active' : 'gray'}">${b.profiles?.full_name || 'Client'}</div>`;
+    }).join('');
+
+    const more = dayBookings.length > 3 ? `<div class="cal-cell__more">+${dayBookings.length - 3} more</div>` : '';
+
+    const countBadge = dayBookings.length > 0
+      ? `<span style="font-size:0.6rem;color:var(--clr-muted-2);font-weight:400">${dayBookings.length}</span>`
+      : '';
+
+    cell.innerHTML = `
+      <div class="cal-cell__num"><span>${d.getDate()}</span>${countBadge}</div>
+      <div class="cal-cell__pills">${pills}${more}</div>
+    `;
+
+    const ds = dateStr;
+    cell.addEventListener('click', () => openDayPanel(ds));
+    grid.appendChild(cell);
+  }
+
+  document.getElementById('monthView').style.display = '';
+  document.getElementById('weekView').style.display  = 'none';
+}
+
+/* ── Week render ────────────────────────────────────────────── */
+function renderWeek() {
+  const ws   = weekStart(currentDate);
+  const today = new Date(); today.setHours(0,0,0,0);
+  const DAY_NAMES = ['Sun', 'Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat'];
+
+  const days = Array.from({ length: 7 }, (_, i) => {
+    const d = new Date(ws); d.setDate(d.getDate() + i); return d;
+  });
+
+  const grid = document.getElementById('weekGrid');
+  grid.innerHTML = '';
+
+  /* Corner cell */
+  const corner = document.createElement('div');
+  corner.className = 'week-corner';
+  grid.appendChild(corner);
+
+  /* Day header cells */
+  days.forEach(d => {
+    const isToday = d.getTime() === today.getTime();
+    const h = document.createElement('div');
+    h.className = 'week-col-header' + (isToday ? ' week-col-header--today' : '');
+    h.innerHTML = `
+      <div class="week-col-header__day">${DAY_NAMES[d.getDay()]}</div>
+      <div class="week-col-header__date">${d.getDate()}</div>
+    `;
+    grid.appendChild(h);
+  });
+
+  /* Time rows 8am–5pm */
+  for (let h = 8; h <= 17; h++) {
+    const label = document.createElement('div');
+    label.className = 'week-time-label';
+    label.textContent = h < 12 ? `${h}am` : h === 12 ? '12pm' : `${h - 12}pm`;
+    grid.appendChild(label);
+
+    days.forEach(d => {
+      const dateStr = toDateStr(d);
+      const slotBookings = bookings.filter(b => {
+        if (b.preferred_date !== dateStr || !b.preferred_time) return false;
+        return parseInt(b.preferred_time.split(':')[0]) === h;
+      });
+
+      const slot = document.createElement('div');
+      slot.className = 'week-slot';
+
+      slotBookings.forEach(b => {
+        const active = ['pending', 'confirmed'].includes(b.status);
+        const block = document.createElement('div');
+        block.className = 'week-booking-block' + (active ? '' : ' week-booking-block--gray');
+        block.innerHTML = `<strong>${b.profiles?.full_name || 'Client'}</strong><br>${b.service_name || ''}`;
+        block.addEventListener('click', e => { e.stopPropagation(); openBookingModal(b); });
+        slot.appendChild(block);
+      });
+
+      grid.appendChild(slot);
+    });
+  }
+
+  document.getElementById('monthView').style.display = 'none';
+  document.getElementById('weekView').style.display  = '';
+}
+
+/* ── Day panel ──────────────────────────────────────────────── */
+function openDayPanel(dateStr) {
+  activeDayStr = dateStr;
+  const date = new Date(dateStr + 'T00:00:00');
+  const dayBookings = bookings.filter(b => b.preferred_date === dateStr)
+    .sort((a, b) => (a.preferred_time || '').localeCompare(b.preferred_time || ''));
+
+  document.getElementById('dayPanelDate').textContent = date.toLocaleDateString('en-US', {
+    weekday: 'long', month: 'long', day: 'numeric', year: 'numeric'
+  });
+
+  const body = document.getElementById('dayPanelBody');
+
+  if (dayBookings.length === 0) {
+    body.innerHTML = `
+      <div class="empty-state" style="padding:2rem 1rem">
+        <div class="empty-state__title">No bookings</div>
+        <div class="empty-state__sub">No appointments scheduled for this day</div>
+      </div>`;
+  } else {
+    body.innerHTML = dayBookings.map(renderDetailCard).join('');
+  }
+
+  document.getElementById('dayPanel').classList.add('open');
+  document.getElementById('dayOverlay').classList.add('open');
+  document.body.style.overflow = 'hidden';
+}
+
+function renderDetailCard(b) {
+  const actionMap = {
+    pending: `
+      <button onclick="updateStatus('${b.id}','confirmed')" class="btn btn--primary btn--sm">Confirm</button>
+      <button onclick="updateStatus('${b.id}','cancelled')" class="btn btn--ghost btn--sm">Cancel</button>`,
+    confirmed: `
+      <button onclick="updateStatus('${b.id}','completed')" class="btn btn--primary btn--sm">Complete</button>
+      <button onclick="updateStatus('${b.id}','cancelled')" class="btn btn--ghost btn--sm">Cancel</button>`,
+    completed: `<span class="badge badge--completed">Completed</span>`,
+    cancelled: `<span class="badge badge--cancelled">Cancelled</span>`
+  };
+
+  const deposit = b.deposit_paid
+    ? `Deposit paid — $${((b.deposit_amount || 0) / 100).toFixed(0)}`
+    : 'No deposit on file';
+
+  return `
+    <div class="booking-detail-card">
+      <div style="display:flex;align-items:flex-start;justify-content:space-between;margin-bottom:0.5rem">
+        <div class="booking-detail-card__name">${b.profiles?.full_name || 'Unknown Client'}</div>
+        <span class="badge badge--${b.status}">${b.status}</span>
+      </div>
+      <div class="booking-detail-card__meta">
+        <span>📞 ${b.profiles?.phone || '—'}</span>
+        <span>🔧 ${b.service_name || '—'}</span>
+        <span>🚗 ${b.vehicle_type || '—'}</span>
+        <span>🕐 ${formatTime(b.preferred_time)}</span>
+        <span>💳 ${deposit}</span>
+        ${b.notes ? `<span style="font-style:italic">"${b.notes}"</span>` : ''}
+      </div>
+      <div class="booking-detail-card__actions">${actionMap[b.status] || ''}</div>
+    </div>`;
+}
+
+function closeDayPanel() {
+  activeDayStr = null;
+  document.getElementById('dayPanel').classList.remove('open');
+  document.getElementById('dayOverlay').classList.remove('open');
+  document.body.style.overflow = '';
+}
+
+/* ── Booking modal (week view) ──────────────────────────────── */
+function openBookingModal(b) {
+  const actionMap = {
+    pending:   `<button onclick="updateStatus('${b.id}','confirmed');closeModal()" class="btn btn--primary btn--sm">Confirm</button>
+                <button onclick="updateStatus('${b.id}','cancelled');closeModal()" class="btn btn--ghost btn--sm">Cancel</button>`,
+    confirmed: `<button onclick="updateStatus('${b.id}','completed');closeModal()" class="btn btn--primary btn--sm">Complete</button>
+                <button onclick="updateStatus('${b.id}','cancelled');closeModal()" class="btn btn--ghost btn--sm">Cancel</button>`,
+    completed: `<span class="badge badge--completed">Completed</span>`,
+    cancelled: `<span class="badge badge--cancelled">Cancelled</span>`
+  };
+
+  document.getElementById('modalContent').innerHTML = `
+    <div class="modal__head">
+      <div>
+        <div class="modal__title">${b.profiles?.full_name || 'Client'}</div>
+        <div style="margin-top:0.35rem"><span class="badge badge--${b.status}">${b.status}</span></div>
+      </div>
+      <button class="modal__close" onclick="closeModal()" aria-label="Close">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M18 6L6 18M6 6l12 12"/></svg>
+      </button>
+    </div>
+    <div class="modal__body">
+      <div class="modal__row"><span class="modal__label">Phone</span><span class="modal__value">${b.profiles?.phone || '—'}</span></div>
+      <div class="modal__row"><span class="modal__label">Service</span><span class="modal__value">${b.service_name || '—'}</span></div>
+      <div class="modal__row"><span class="modal__label">Vehicle</span><span class="modal__value">${b.vehicle_type || '—'}</span></div>
+      <div class="modal__row"><span class="modal__label">Date</span><span class="modal__value">${formatDate(b.preferred_date)}</span></div>
+      <div class="modal__row"><span class="modal__label">Time</span><span class="modal__value">${formatTime(b.preferred_time)}</span></div>
+      <div class="modal__row"><span class="modal__label">Deposit</span><span class="modal__value">${b.deposit_paid ? `Paid — $${((b.deposit_amount || 0) / 100).toFixed(0)}` : 'Not paid'}</span></div>
+      ${b.notes ? `<div class="modal__row"><span class="modal__label">Notes</span><span class="modal__value" style="font-style:italic">"${b.notes}"</span></div>` : ''}
+    </div>
+    <div class="modal__actions">${actionMap[b.status] || ''}</div>
+  `;
+
+  document.getElementById('bookingModal').classList.add('open');
+  document.body.style.overflow = 'hidden';
+}
+
+function closeModal(e) {
+  if (e && e.target !== document.getElementById('bookingModal')) return;
+  document.getElementById('bookingModal').classList.remove('open');
+  document.body.style.overflow = '';
+}
+
+/* ── Status update ──────────────────────────────────────────── */
+async function updateStatus(id, status) {
+  await _supabase.from('bookings').update({ status }).eq('id', id);
+  await loadData();
+  renderCalendar();
+
+  // Re-open day panel if it was open
+  if (activeDayStr) openDayPanel(activeDayStr);
+}
+
+/* ── Navigation ─────────────────────────────────────────────── */
+document.getElementById('prevBtn').addEventListener('click', () => {
+  if (viewMode === 'month') currentDate.setMonth(currentDate.getMonth() - 1);
+  else currentDate.setDate(currentDate.getDate() - 7);
+  renderCalendar();
+});
+
+document.getElementById('nextBtn').addEventListener('click', () => {
+  if (viewMode === 'month') currentDate.setMonth(currentDate.getMonth() + 1);
+  else currentDate.setDate(currentDate.getDate() + 7);
+  renderCalendar();
+});
+
+document.getElementById('todayBtn').addEventListener('click', () => {
+  currentDate = new Date();
+  renderCalendar();
+});
+
+document.getElementById('monthBtn').addEventListener('click', () => {
+  viewMode = 'month';
+  document.getElementById('monthBtn').classList.add('active');
+  document.getElementById('weekBtn').classList.remove('active');
+  renderCalendar();
+});
+
+document.getElementById('weekBtn').addEventListener('click', () => {
+  viewMode = 'week';
+  document.getElementById('weekBtn').classList.add('active');
+  document.getElementById('monthBtn').classList.remove('active');
+  renderCalendar();
+});
+
+document.getElementById('dayOverlay').addEventListener('click', closeDayPanel);
+document.getElementById('dayPanelClose').addEventListener('click', closeDayPanel);
+document.getElementById('bookingModal').addEventListener('click', closeModal);
+
+/* ── Helpers ────────────────────────────────────────────────── */
+function toDateStr(d) {
+  return d.toISOString().split('T')[0];
+}
+
+function weekStart(d) {
+  const ws = new Date(d);
+  ws.setDate(ws.getDate() - ws.getDay());
+  ws.setHours(0,0,0,0);
+  return ws;
+}
+
+function formatTime(t) {
+  if (!t) return '—';
+  const [h, m] = t.split(':');
+  const hour = parseInt(h);
+  return `${hour > 12 ? hour - 12 : hour || 12}:${m} ${hour >= 12 ? 'PM' : 'AM'}`;
+}
+</script>
+</body>
+</html>

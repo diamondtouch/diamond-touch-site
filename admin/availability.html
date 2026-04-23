@@ -1,0 +1,523 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Availability — Diamond Touch Admin</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300;0,400;0,500;0,600;1,300;1,400&family=DM+Sans:ital,opsz,wght@0,9..40,300;0,9..40,400;0,9..40,500;0,9..40,600;1,9..40,300&display=swap" rel="stylesheet" />
+  <link rel="stylesheet" href="../css/portal.css" />
+</head>
+<body>
+
+<div class="portal-layout">
+
+  <!-- ========== SIDEBAR ========== -->
+  <aside class="sidebar">
+    <div class="sidebar__logo">
+      <a href="/"><img src="../assets/logo-horizontal.png" alt="Diamond Touch Detailing" /></a>
+      <div class="sidebar__badge">Admin</div>
+    </div>
+
+    <nav class="sidebar__nav" aria-label="Admin navigation">
+      <a href="dashboard.html" class="sidebar__link">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><rect x="3" y="3" width="7" height="7" rx="1"/><rect x="14" y="3" width="7" height="7" rx="1"/><rect x="3" y="14" width="7" height="7" rx="1"/><rect x="14" y="14" width="7" height="7" rx="1"/></svg>
+        Dashboard
+      </a>
+      <a href="calendar.html" class="sidebar__link">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><rect x="3" y="4" width="18" height="18" rx="2"/><path d="M16 2v4M8 2v4M3 10h18"/></svg>
+        Calendar
+      </a>
+      <a href="bookings.html" class="sidebar__link">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2"/></svg>
+        Bookings
+      </a>
+      <a href="clients.html" class="sidebar__link">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><circle cx="9" cy="7" r="4"/><path d="M3 21v-2a4 4 0 014-4h4a4 4 0 014 4v2"/><circle cx="19" cy="7" r="2"/><path d="M21 21v-1a2 2 0 00-2-2h-1"/></svg>
+        Clients
+      </a>
+      <a href="memberships.html" class="sidebar__link">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z"/></svg>
+        Memberships
+      </a>
+      <a href="availability.html" class="sidebar__link active">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><circle cx="12" cy="12" r="10"/><path d="M12 6v6l4 2"/></svg>
+        Availability
+      </a>
+      <a href="revenue.html" class="sidebar__link">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M12 2v20M17 5H9.5a3.5 3.5 0 000 7h5a3.5 3.5 0 010 7H6"/></svg>
+        Revenue
+      </a>
+    </nav>
+
+    <div class="sidebar__footer">
+      <div class="sidebar__user">
+        <div class="sidebar__avatar" id="userAvatar">A</div>
+        <div class="sidebar__user-info">
+          <div class="sidebar__user-name" id="userName">Admin</div>
+          <div class="sidebar__user-email" id="userEmail"></div>
+        </div>
+      </div>
+      <button class="btn-signout" onclick="signOut()">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M17 16l4-4m0 0l-4-4m4 4H7m6 4v1a2 2 0 01-2 2H5a2 2 0 01-2-2V7a2 2 0 012-2h6a2 2 0 012 2v1"/></svg>
+        Sign out
+      </button>
+    </div>
+  </aside>
+
+  <!-- ========== MAIN ========== -->
+  <main class="portal-main">
+    <div class="portal-main__inner">
+
+      <div class="page-header">
+        <p class="page-header__eyebrow">Admin Panel</p>
+        <h1 class="page-header__title">Availability</h1>
+        <p class="page-header__sub">Manage your working hours and block dates off</p>
+      </div>
+
+      <div class="inline-alert" id="alertMsg"></div>
+
+      <!-- ── Section 1: Working Hours ── -->
+      <div class="avail-section">
+        <div class="avail-section__title">Working Hours</div>
+
+        <div style="overflow-x:auto">
+          <table class="avail-hours-table" id="hoursTable">
+            <thead>
+              <tr>
+                <th>Day</th>
+                <th>Open</th>
+                <th>Start Time</th>
+                <th>End Time</th>
+                <th>Max Bookings / Day</th>
+              </tr>
+            </thead>
+            <tbody id="hoursTbody">
+              <tr><td colspan="5" style="text-align:center;color:var(--clr-muted);padding:1.5rem">Loading schedule…</td></tr>
+            </tbody>
+          </table>
+        </div>
+
+        <div style="margin-top:1.25rem">
+          <button class="btn btn--primary" id="saveHoursBtn" onclick="saveHours()">Save Changes</button>
+        </div>
+      </div>
+
+      <!-- ── Section 2: Block Dates ── -->
+      <div class="avail-section">
+        <div class="avail-section__title">Block Dates</div>
+
+        <p style="font-size:0.875rem;color:var(--clr-muted);margin-bottom:1.25rem">
+          Click any date to block it. Click a blocked date (shown in red) to unblock it.
+        </p>
+
+        <!-- Mini calendar -->
+        <div class="mini-cal" id="miniCal">
+          <div class="mini-cal__header">
+            <button class="mini-cal__nav" id="miniPrev" aria-label="Previous month">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M15 18l-6-6 6-6"/></svg>
+            </button>
+            <div class="mini-cal__month" id="miniMonthLabel">Loading…</div>
+            <button class="mini-cal__nav" id="miniNext" aria-label="Next month">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M9 18l6-6-6-6"/></svg>
+            </button>
+          </div>
+          <div class="mini-cal__grid" id="miniGrid"></div>
+        </div>
+
+        <!-- Upcoming blocked dates list -->
+        <div style="margin-top:1.5rem">
+          <div style="font-size:0.875rem;font-weight:600;color:var(--clr-muted);margin-bottom:0.75rem;text-transform:uppercase;letter-spacing:0.08em;font-size:0.7rem">Upcoming Blocked Dates</div>
+          <div class="blocked-list" id="blockedList">
+            <div style="font-size:0.875rem;color:var(--clr-muted-2)">No upcoming blocked dates</div>
+          </div>
+        </div>
+      </div>
+
+      <!-- ── Section 3: Quick Block ── -->
+      <div class="avail-section">
+        <div class="avail-section__title">Quick Block</div>
+
+        <div class="quick-block-btns">
+          <button class="btn btn--ghost btn--sm" onclick="blockToday()">Block Today</button>
+          <button class="btn btn--ghost btn--sm" onclick="blockThisWeek()">Block This Week</button>
+        </div>
+
+        <div style="margin-top:0.25rem">
+          <div style="font-size:0.875rem;font-weight:500;color:var(--clr-muted);margin-bottom:0.75rem">Block a date range</div>
+          <div class="date-range-row">
+            <div>
+              <label class="form-label" for="rangeFrom">From</label>
+              <input class="form-input" type="date" id="rangeFrom" style="width:auto" />
+            </div>
+            <div>
+              <label class="form-label" for="rangeTo">To</label>
+              <input class="form-input" type="date" id="rangeTo" style="width:auto" />
+            </div>
+            <div>
+              <label class="form-label" for="rangeReason">Reason (optional)</label>
+              <input class="form-input" type="text" id="rangeReason" placeholder="e.g. Holiday" style="width:200px" />
+            </div>
+            <button class="btn btn--primary btn--sm" onclick="blockRange()" style="align-self:flex-end">Block Range</button>
+          </div>
+        </div>
+      </div>
+
+    </div>
+  </main>
+
+</div>
+
+<!-- ========== MOBILE TAB BAR ========== -->
+<nav class="tab-bar" aria-label="Admin mobile navigation">
+  <div class="tab-bar__inner">
+    <a href="dashboard.html" class="tab-bar__item">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><rect x="3" y="3" width="7" height="7" rx="1"/><rect x="14" y="3" width="7" height="7" rx="1"/><rect x="3" y="14" width="7" height="7" rx="1"/><rect x="14" y="14" width="7" height="7" rx="1"/></svg>
+      Home
+    </a>
+    <a href="calendar.html" class="tab-bar__item">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><rect x="3" y="4" width="18" height="18" rx="2"/><path d="M16 2v4M8 2v4M3 10h18"/></svg>
+      Calendar
+    </a>
+    <a href="bookings.html" class="tab-bar__item">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2"/></svg>
+      Bookings
+    </a>
+    <a href="clients.html" class="tab-bar__item">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><circle cx="9" cy="7" r="4"/><path d="M3 21v-2a4 4 0 014-4h4a4 4 0 014 4v2"/></svg>
+      Clients
+    </a>
+    <a href="availability.html" class="tab-bar__item active">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><circle cx="12" cy="12" r="10"/><path d="M12 6v6l4 2"/></svg>
+      Avail
+    </a>
+  </div>
+</nav>
+
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2/dist/umd/supabase.js"></script>
+<script src="../js/supabase-config.js"></script>
+<script src="../js/auth.js"></script>
+<script>
+/* ── Constants ──────────────────────────────────────────────── */
+const DAY_NAMES  = ['Sunday','Monday','Tuesday','Wednesday','Thursday','Friday','Saturday'];
+const TIME_OPTS  = ['07:00','07:30','08:00','08:30','09:00','09:30','10:00','10:30','11:00','11:30','12:00','12:30','13:00','13:30','14:00','14:30','15:00','15:30','16:00','16:30','17:00','17:30','18:00'];
+const TIME_LABEL = t => {
+  const [h, m] = t.split(':');
+  const hour = parseInt(h);
+  return `${hour > 12 ? hour - 12 : hour || 12}:${m} ${hour >= 12 ? 'PM' : 'AM'}`;
+};
+
+/* ── State ──────────────────────────────────────────────────── */
+let availRows   = {}; // day_of_week (0–6) → db row
+let blockedRows = []; // upcoming blocked_dates rows
+let miniDate    = new Date();
+
+const todayStr = () => new Date().toISOString().split('T')[0];
+const toDateStr = d => d.toISOString().split('T')[0];
+
+/* ── Init ───────────────────────────────────────────────────── */
+(async () => {
+  const profile = await requireAdmin();
+  if (!profile) return;
+
+  document.getElementById('userName').textContent  = profile.full_name || 'Admin';
+  document.getElementById('userEmail').textContent = profile.email || '';
+  document.getElementById('userAvatar').textContent = (profile.full_name || 'A').charAt(0).toUpperCase();
+
+  await loadAll();
+  renderHoursTable();
+  renderMiniCal();
+  renderBlockedList();
+})();
+
+/* ── Load data ──────────────────────────────────────────────── */
+async function loadAll() {
+  const { data: avail } = await _supabase.from('availability').select('*');
+  availRows = {};
+  (avail || []).forEach(r => { availRows[r.day_of_week] = r; });
+
+  const { data: blocked } = await _supabase
+    .from('blocked_dates')
+    .select('*')
+    .gte('date', todayStr())
+    .order('date');
+  blockedRows = blocked || [];
+}
+
+/* ── Render hours table ─────────────────────────────────────── */
+function renderHoursTable() {
+  const tbody = document.getElementById('hoursTbody');
+  tbody.innerHTML = '';
+
+  for (let dow = 0; dow <= 6; dow++) {
+    const row    = availRows[dow];
+    const active = row ? row.active : false;
+    const start  = row?.start_time?.substring(0,5) || '08:00';
+    const end    = row?.end_time?.substring(0,5)   || '17:00';
+    const max    = row?.max_bookings ?? 3;
+
+    const tr = document.createElement('tr');
+    tr.innerHTML = `
+      <td><span class="day-label">${DAY_NAMES[dow]}</span></td>
+      <td>
+        <label class="toggle-switch" title="${active ? 'Open' : 'Closed'}">
+          <input type="checkbox" id="active-${dow}" ${active ? 'checked' : ''} onchange="onToggle(${dow})">
+          <div class="toggle-track"><div class="toggle-thumb"></div></div>
+        </label>
+      </td>
+      <td>
+        <select class="time-select" id="start-${dow}" ${active ? '' : 'disabled'}>
+          ${TIME_OPTS.map(t => `<option value="${t}" ${t === start ? 'selected' : ''}>${TIME_LABEL(t)}</option>`).join('')}
+        </select>
+      </td>
+      <td>
+        <select class="time-select" id="end-${dow}" ${active ? '' : 'disabled'}>
+          ${TIME_OPTS.map(t => `<option value="${t}" ${t === end ? 'selected' : ''}>${TIME_LABEL(t)}</option>`).join('')}
+        </select>
+      </td>
+      <td>
+        <input class="max-bookings-input" type="number" min="1" max="20" id="max-${dow}" value="${max}" ${active ? '' : 'disabled'} />
+      </td>
+    `;
+    tbody.appendChild(tr);
+  }
+}
+
+function onToggle(dow) {
+  const checked = document.getElementById(`active-${dow}`).checked;
+  document.getElementById(`start-${dow}`).disabled = !checked;
+  document.getElementById(`end-${dow}`).disabled   = !checked;
+  document.getElementById(`max-${dow}`).disabled   = !checked;
+}
+
+/* ── Save hours ─────────────────────────────────────────────── */
+async function saveHours() {
+  const btn = document.getElementById('saveHoursBtn');
+  btn.disabled = true;
+  btn.innerHTML = '<span class="spinner"></span>';
+
+  try {
+    for (let dow = 0; dow <= 6; dow++) {
+      const active       = document.getElementById(`active-${dow}`).checked;
+      const start_time   = document.getElementById(`start-${dow}`).value;
+      const end_time     = document.getElementById(`end-${dow}`).value;
+      const max_bookings = parseInt(document.getElementById(`max-${dow}`).value) || 3;
+
+      const payload = { day_of_week: dow, active, start_time, end_time, max_bookings };
+
+      if (availRows[dow]?.id) {
+        await _supabase.from('availability').update(payload).eq('id', availRows[dow].id);
+      } else {
+        const { data } = await _supabase.from('availability').insert(payload).select().single();
+        if (data) availRows[dow] = data;
+      }
+    }
+    // Reload to sync
+    await loadAll();
+    showAlert('Schedule saved successfully!', 'success');
+  } catch (err) {
+    showAlert('Failed to save. Please try again.', 'error');
+  }
+
+  btn.disabled = false;
+  btn.textContent = 'Save Changes';
+}
+
+/* ── Mini calendar ──────────────────────────────────────────── */
+function renderMiniCal() {
+  const year  = miniDate.getFullYear();
+  const month = miniDate.getMonth();
+  const today = new Date(); today.setHours(0,0,0,0);
+
+  document.getElementById('miniMonthLabel').textContent = miniDate.toLocaleDateString('en-US', {
+    month: 'long', year: 'numeric'
+  });
+
+  const blockedSet = new Set(blockedRows.map(r => r.date));
+
+  const firstDay = new Date(year, month, 1);
+  const lastDay  = new Date(year, month + 1, 0);
+  const grid     = document.getElementById('miniGrid');
+  grid.innerHTML  = '';
+
+  // Day labels
+  ['S','M','T','W','T','F','S'].forEach(l => {
+    const el = document.createElement('div');
+    el.className = 'mini-cal__day-label';
+    el.textContent = l;
+    grid.appendChild(el);
+  });
+
+  // Leading empty cells
+  for (let i = 0; i < firstDay.getDay(); i++) {
+    const el = document.createElement('div');
+    el.className = 'mini-cal__day mini-cal__day--empty';
+    grid.appendChild(el);
+  }
+
+  // Day cells
+  for (let d = 1; d <= lastDay.getDate(); d++) {
+    const cellDate = new Date(year, month, d);
+    const ds       = toDateStr(cellDate);
+    const isPast   = cellDate < today;
+    const isToday  = cellDate.getTime() === today.getTime();
+    const isBlocked = blockedSet.has(ds);
+
+    const el = document.createElement('div');
+    el.className = 'mini-cal__day' +
+      (isPast    ? ' mini-cal__day--past'    : '') +
+      (isToday   ? ' mini-cal__day--today'   : '') +
+      (isBlocked ? ' mini-cal__day--blocked' : '');
+    el.textContent = d;
+
+    if (!isPast) {
+      el.addEventListener('click', () => toggleBlockDate(ds));
+    }
+
+    grid.appendChild(el);
+  }
+}
+
+/* ── Block / unblock a date ─────────────────────────────────── */
+async function toggleBlockDate(dateStr) {
+  const existing = blockedRows.find(r => r.date === dateStr);
+
+  if (existing) {
+    const { error } = await _supabase.from('blocked_dates').delete().eq('id', existing.id);
+    if (!error) {
+      blockedRows = blockedRows.filter(r => r.date !== dateStr);
+      showAlert('Date unblocked.', 'success');
+    }
+  } else {
+    const reason = prompt('Reason for blocking this date? (optional — press OK to skip)', '');
+    if (reason === null) return; // user cancelled
+    const { data, error } = await _supabase
+      .from('blocked_dates')
+      .insert({ date: dateStr, reason: reason.trim() || null })
+      .select()
+      .single();
+    if (data) {
+      blockedRows.push(data);
+      blockedRows.sort((a, b) => a.date.localeCompare(b.date));
+      showAlert('Date blocked.', 'success');
+    }
+    if (error) showAlert('Failed to block date.', 'error');
+  }
+
+  renderMiniCal();
+  renderBlockedList();
+}
+
+/* ── Blocked list ───────────────────────────────────────────── */
+function renderBlockedList() {
+  const list = document.getElementById('blockedList');
+
+  if (blockedRows.length === 0) {
+    list.innerHTML = '<div style="font-size:0.875rem;color:var(--clr-muted-2)">No upcoming blocked dates</div>';
+    return;
+  }
+
+  list.innerHTML = blockedRows.map(r => `
+    <div class="blocked-item">
+      <div class="blocked-item__date">${formatDate(r.date)}</div>
+      <div class="blocked-item__reason">${r.reason || ''}</div>
+      <button class="blocked-item__remove" onclick="unblockById('${r.id}')" aria-label="Unblock">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M18 6L6 18M6 6l12 12"/></svg>
+      </button>
+    </div>
+  `).join('');
+}
+
+async function unblockById(id) {
+  const { error } = await _supabase.from('blocked_dates').delete().eq('id', id);
+  if (!error) {
+    blockedRows = blockedRows.filter(r => r.id !== id);
+    renderMiniCal();
+    renderBlockedList();
+    showAlert('Date unblocked.', 'success');
+  }
+}
+
+/* ── Quick block ────────────────────────────────────────────── */
+async function blockToday() {
+  await blockDates([todayStr()], 'Blocked by admin');
+}
+
+async function blockThisWeek() {
+  const today = new Date();
+  const day   = today.getDay(); // 0=Sun
+  const mon   = new Date(today); mon.setDate(today.getDate() - ((day + 6) % 7));
+  const dates = [];
+  for (let i = 0; i < 7; i++) {
+    const d = new Date(mon); d.setDate(mon.getDate() + i);
+    dates.push(toDateStr(d));
+  }
+  await blockDates(dates, 'Week blocked');
+}
+
+async function blockRange() {
+  const from   = document.getElementById('rangeFrom').value;
+  const to     = document.getElementById('rangeTo').value;
+  const reason = document.getElementById('rangeReason').value.trim();
+
+  if (!from || !to) { showAlert('Please select a start and end date.', 'error'); return; }
+  if (from > to)    { showAlert('Start date must be before end date.', 'error'); return; }
+
+  const dates = [];
+  for (let d = new Date(from + 'T00:00:00'); toDateStr(d) <= to; d.setDate(d.getDate() + 1)) {
+    dates.push(toDateStr(d));
+  }
+
+  await blockDates(dates, reason || null);
+  document.getElementById('rangeFrom').value   = '';
+  document.getElementById('rangeTo').value     = '';
+  document.getElementById('rangeReason').value = '';
+}
+
+async function blockDates(dates, reason) {
+  // Filter out already-blocked dates
+  const existingDates = new Set(blockedRows.map(r => r.date));
+  const toInsert = dates.filter(d => !existingDates.has(d)).map(d => ({ date: d, reason }));
+
+  if (toInsert.length === 0) {
+    showAlert('All selected dates are already blocked.', 'error');
+    return;
+  }
+
+  const { data, error } = await _supabase
+    .from('blocked_dates')
+    .insert(toInsert)
+    .select();
+
+  if (error) { showAlert('Failed to block dates.', 'error'); return; }
+
+  if (data) {
+    blockedRows = [...blockedRows, ...data].sort((a, b) => a.date.localeCompare(b.date));
+    renderMiniCal();
+    renderBlockedList();
+    showAlert(`${data.length} date${data.length !== 1 ? 's' : ''} blocked.`, 'success');
+  }
+}
+
+/* ── Mini cal navigation ────────────────────────────────────── */
+document.getElementById('miniPrev').addEventListener('click', () => {
+  miniDate.setMonth(miniDate.getMonth() - 1);
+  renderMiniCal();
+});
+
+document.getElementById('miniNext').addEventListener('click', () => {
+  miniDate.setMonth(miniDate.getMonth() + 1);
+  renderMiniCal();
+});
+
+/* ── Alert helper ───────────────────────────────────────────── */
+function showAlert(msg, type = 'success') {
+  const el = document.getElementById('alertMsg');
+  el.textContent = msg;
+  el.className = `inline-alert inline-alert--${type} visible`;
+  setTimeout(() => { el.classList.remove('visible'); }, 3500);
+}
+</script>
+</body>
+</html>
