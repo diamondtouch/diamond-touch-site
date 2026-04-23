@@ -1415,9 +1415,8 @@
       document.getElementById('embed-success').style.display = 'block';
       document.getElementById('embed-confirm-btn').style.display = 'none';
       document.getElementById('embed-step4-back').style.display = 'none';
-      window._embedSquareCard.destroy();
-      window._embedSquareCard = null;
-      window._embedSquareReady = false;
+      embedSquareCard.destroy();
+      embedSquareCard = null;
 
     } catch(err) {
       statusEl.textContent = err.message;

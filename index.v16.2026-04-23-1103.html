@@ -1054,7 +1054,7 @@
 // ─── EMBEDDED BOOKING WIZARD ───────────────────────────────
 (function() {
   const APP_ID = "sandbox-sq0idb-e4hfCqcraP5ssqJLEEJcoA";
-  const LOCATION_ID = "L89Y31ZYTJZ40"; // sandbox location ID — matches Square init script
+  const LOCATION_ID = "L89Y31ZYTJZ40"; // sandbox location ID
   const SUPABASE_URL = "https://fjafmptbzydqizafuaru.supabase.co";
   const SUPABASE_KEY = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImZqYWZtcHRienlkcWl6YWZ1YXJ1Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzU1MzI2NDUsImV4cCI6MjA5MTEwODY0NX0.XT_T3h9wsoPJqMTeBV0ohoCbAiDc8oFdZg7LHxoAeAM";
 
@@ -1415,9 +1415,8 @@
       document.getElementById('embed-success').style.display = 'block';
       document.getElementById('embed-confirm-btn').style.display = 'none';
       document.getElementById('embed-step4-back').style.display = 'none';
-      window._embedSquareCard.destroy();
-      window._embedSquareCard = null;
-      window._embedSquareReady = false;
+      embedSquareCard.destroy();
+      embedSquareCard = null;
 
     } catch(err) {
       statusEl.textContent = err.message;

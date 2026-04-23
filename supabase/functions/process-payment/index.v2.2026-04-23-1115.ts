@@ -84,12 +84,14 @@ serve(async (req: Request) => {
     const { data: booking, error: dbError } = await supabase
       .from("bookings")
       .insert({
-        service_name: bookingData.service,
+        name: bookingData.name,
+        email: bookingData.email,
+        phone: bookingData.phone,
+        service: bookingData.service,
         vehicle_type: bookingData.vehicle_type,
         preferred_date: bookingData.preferred_date ?? null,
-        notes: (bookingData.notes ?? "") + ` | Customer: ${bookingData.name} | Email: ${bookingData.email} | Phone: ${bookingData.phone}`,
+        notes: bookingData.notes ?? null,
         deposit_paid: true,
-        deposit_amount: 5000,
         square_payment_id: paymentId,
         status: "confirmed",
       })
