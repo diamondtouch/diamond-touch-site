@@ -63,6 +63,7 @@
         <li><a href="#maintenance" class="nav__link">Membership</a></li>
         <li><a href="#testimonials" class="nav__link">Reviews</a></li>
         <li><a href="#faq" class="nav__link">FAQ</a></li>
+        <li><a href="portal/login.html" class="nav__link" id="nav-myaccount">My Account</a></li>
       </ul>
 
 
@@ -1131,6 +1132,7 @@
         const sb = supabase.createClient(SUPABASE_URL, SUPABASE_KEY);
         const { data: { session } } = await sb.auth.getSession();
         if (session) {
+          // Top bar
           document.getElementById("topbar-signin").style.display = "none";
           document.getElementById("topbar-signup").style.display = "none";
           document.querySelector(".top-bar__right .top-bar__divider").style.display = "none";
@@ -1142,6 +1144,9 @@
             await sb.auth.signOut();
             window.location.reload();
           });
+          // Nav bar — My Account → dashboard when logged in
+          const navAccount = document.getElementById("nav-myaccount");
+          if (navAccount) navAccount.href = "portal/dashboard.html";
         }
       } catch(e) {}
     }
