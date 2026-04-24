@@ -37,7 +37,7 @@
     <div class="top-bar__inner">
       <div class="top-bar__left">
         <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" width="14" height="14"><path d="M22 16.92v3a2 2 0 01-2.18 2 19.79 19.79 0 01-8.63-3.07A19.5 19.5 0 013.07 9.81a19.79 19.79 0 01-3.07-8.63A2 2 0 012 1h3a2 2 0 012 1.72c.127.96.361 1.903.7 2.81a2 2 0 01-.45 2.11L6.09 8.91a16 16 0 006 6l1.27-1.27a2 2 0 012.11-.45c.907.339 1.85.573 2.81.7A2 2 0 0122 16.92z"/></svg>
-        <span>Call or Text: <a href="tel:+19513453195">(951) 345-3195</a></span>
+        <span>Call or Text: <a href="tel:+19512930214">(951) 293-0214</a></span>
       </div>
       <div class="top-bar__right">
         <a href="portal/dashboard.html" class="top-bar__link" id="topbar-account" style="display:none">My Account</a>
@@ -125,8 +125,8 @@
   <!-- ========== MARQUEE ========== -->
   <div class="marquee" id="marquee" aria-hidden="true">
     <div class="marquee__track">
-      <span class="marquee__content"><span class="marquee__sep">✦</span> Premium Mobile Service <span class="marquee__sep">✦</span> Serving the Inland Empire <span class="marquee__sep">✦</span> Murrieta &amp; Temecula <span class="marquee__sep">✦</span> &amp; All Surrounding Areas <span class="marquee__sep">✦</span> Like New Results <span class="marquee__sep">✦</span> Satisfaction Guaranteed <span class="marquee__sep">✦</span> Same-Week Booking <span class="marquee__sep">✦</span> 5-Star Rated <span class="marquee__sep">✦</span> Premium Mobile Service <span class="marquee__sep">✦</span> Serving the Inland Empire <span class="marquee__sep">✦</span> Murrieta &amp; Temecula <span class="marquee__sep">✦</span> &amp; All Surrounding Areas <span class="marquee__sep">✦</span> Like New Results <span class="marquee__sep">✦</span> Satisfaction Guaranteed <span class="marquee__sep">✦</span> Same-Week Booking <span class="marquee__sep">✦</span> 5-Star Rated</span>
-      <span class="marquee__content" aria-hidden="true"><span class="marquee__sep">✦</span> Premium Mobile Service <span class="marquee__sep">✦</span> Serving the Inland Empire <span class="marquee__sep">✦</span> Murrieta &amp; Temecula <span class="marquee__sep">✦</span> &amp; All Surrounding Areas <span class="marquee__sep">✦</span> Like New Results <span class="marquee__sep">✦</span> Satisfaction Guaranteed <span class="marquee__sep">✦</span> Same-Week Booking <span class="marquee__sep">✦</span> 5-Star Rated <span class="marquee__sep">✦</span> Premium Mobile Service <span class="marquee__sep">✦</span> Serving the Inland Empire <span class="marquee__sep">✦</span> Murrieta &amp; Temecula <span class="marquee__sep">✦</span> &amp; All Surrounding Areas <span class="marquee__sep">✦</span> Like New Results <span class="marquee__sep">✦</span> Satisfaction Guaranteed <span class="marquee__sep">✦</span> Same-Week Booking <span class="marquee__sep">✦</span> 5-Star Rated</span>
+      <span class="marquee__content"><span class="marquee__sep">✦</span> Premium Mobile Service <span class="marquee__sep">✦</span> Murrieta &amp; Temecula <span class="marquee__sep">✦</span> Like New Results <span class="marquee__sep">✦</span> Satisfaction Guaranteed <span class="marquee__sep">✦</span> Same-Week Booking <span class="marquee__sep">✦</span> 5-Star Rated <span class="marquee__sep">✦</span> Premium Mobile Service <span class="marquee__sep">✦</span> Murrieta &amp; Temecula <span class="marquee__sep">✦</span> Like New Results <span class="marquee__sep">✦</span> Satisfaction Guaranteed <span class="marquee__sep">✦</span> Same-Week Booking <span class="marquee__sep">✦</span> 5-Star Rated</span>
+      <span class="marquee__content" aria-hidden="true"><span class="marquee__sep">✦</span> Premium Mobile Service <span class="marquee__sep">✦</span> Murrieta &amp; Temecula <span class="marquee__sep">✦</span> Like New Results <span class="marquee__sep">✦</span> Satisfaction Guaranteed <span class="marquee__sep">✦</span> Same-Week Booking <span class="marquee__sep">✦</span> 5-Star Rated <span class="marquee__sep">✦</span> Premium Mobile Service <span class="marquee__sep">✦</span> Murrieta &amp; Temecula <span class="marquee__sep">✦</span> Like New Results <span class="marquee__sep">✦</span> Satisfaction Guaranteed <span class="marquee__sep">✦</span> Same-Week Booking <span class="marquee__sep">✦</span> 5-Star Rated</span>
     </div>
   </div>
 
@@ -750,10 +750,6 @@
             <div id="order-discount-row" style="display:none;justify-content:space-between;align-items:center;margin-bottom:.6rem;font-size:.9rem">
               <span id="order-discount-label" style="color:#4ade80"></span>
               <span id="order-discount-amount" style="color:#4ade80"></span>
-            </div>
-            <div id="order-tax-row" style="display:none;justify-content:space-between;align-items:center;margin-bottom:.6rem;font-size:.9rem">
-              <span id="order-tax-label" style="color:#aaa">Sales Tax</span>
-              <span id="order-tax-amount" style="color:#aaa"></span>
             </div>
             <div style="border-top:1px solid #1e1e1e;margin:.875rem 0"></div>
             <div style="display:flex;justify-content:space-between;align-items:center">
@@ -1427,71 +1423,17 @@
       </div>`;
     // Update order summary box
     document.getElementById('order-original').textContent = '$50.00';
+    document.getElementById('order-total').textContent = '$50.00';
+    document.getElementById('order-discount-row').style.display = 'none';
     appliedCoupon = null;
     document.getElementById('embed-coupon-input').value = '';
     document.getElementById('embed-coupon-status').textContent = '';
     document.getElementById('embed-confirm-btn').textContent = 'Pay $50 Deposit →';
-    // Auto-detect state from address field and calculate tax
-    setTimeout(updateOrderSummary, 100);
   }
 
   document.getElementById("embed-step4-back").addEventListener("click", () => goStep(3));
 
-  // ─── Sales tax rates by state (2026) ──────────────────────────
-  const STATE_TAX = {
-    AL:0.04,AK:0,AZ:0.056,AR:0.065,CA:0.0725,CO:0.029,CT:0.0635,DE:0,
-    FL:0.06,GA:0.04,HI:0.04,ID:0.06,IL:0.0625,IN:0.07,IA:0.06,KS:0.065,
-    KY:0.06,LA:0.0445,ME:0.055,MD:0.06,MA:0.0625,MI:0.06,MN:0.06875,
-    MS:0.07,MO:0.04225,MT:0,NE:0.055,NV:0.0685,NH:0,NJ:0.06625,NM:0.05125,
-    NY:0.04,NC:0.0475,ND:0.05,OH:0.0575,OK:0.045,OR:0,PA:0.06,RI:0.07,
-    SC:0.06,SD:0.045,TN:0.07,TX:0.0625,UT:0.0595,VT:0.06,VA:0.053,
-    WA:0.065,WV:0.06,WI:0.05,WY:0.04
-  };
-  let taxRate = 0;
-  let taxAmount = 0;
-
-  function updateOrderSummary() {
-    const stateEl = document.getElementById('embed-address-state');
-    const stateCode = (stateEl?.value || 'CA').trim().toUpperCase();
-    taxRate = STATE_TAX[stateCode] ?? 0;
-    const baseAmount = appliedCoupon ? appliedCoupon.finalAmount : 5000;
-    taxAmount = Math.round(baseAmount * taxRate);
-    const grandTotal = baseAmount + taxAmount;
-
-    // Discount row
-    const discRow = document.getElementById('order-discount-row');
-    if (appliedCoupon) {
-      document.getElementById('order-discount-label').textContent = appliedCoupon.label + ' (' + appliedCoupon.code + ')';
-      document.getElementById('order-discount-amount').textContent = '-$' + (appliedCoupon.discountAmount / 100).toFixed(2);
-      discRow.style.display = 'flex';
-    } else {
-      discRow.style.display = 'none';
-    }
-
-    // Tax row
-    const taxRow = document.getElementById('order-tax-row');
-    if (taxRate > 0) {
-      document.getElementById('order-tax-label').textContent = stateCode + ' Sales Tax (' + (taxRate * 100).toFixed(2).replace(/\.?0+$/, '') + '%)';
-      document.getElementById('order-tax-amount').textContent = '$' + (taxAmount / 100).toFixed(2);
-      taxRow.style.display = 'flex';
-    } else {
-      taxRow.style.display = 'none';
-    }
-
-    // Grand total
-    document.getElementById('order-total').textContent = grandTotal === 0 ? 'FREE' : '$' + (grandTotal / 100).toFixed(2);
-
-    // Button
-    const btn = document.getElementById('embed-confirm-btn');
-    if (btn && document.getElementById('embed-terms-agree').checked) {
-      btn.textContent = grandTotal === 0 ? 'Book Now (Free) →' : 'Pay $' + (grandTotal / 100).toFixed(2) + ' →';
-    }
-  }
-
-  // Recalculate tax when state changes
-  document.getElementById('embed-address-state')?.addEventListener('input', updateOrderSummary);
-
-// ─── Square inline card payment ─────────────────────────────
+  // ─── Square inline card payment ─────────────────────────────
   const EDGE_FN_URL        = "https://fjafmptbzydqizafuaru.supabase.co/functions/v1/process-payment";
   const COUPON_FN_URL      = "https://fjafmptbzydqizafuaru.supabase.co/functions/v1/validate-coupon";
   let appliedCoupon        = null; // { couponId, code, discountAmount, finalAmount, label }
@@ -1514,12 +1456,27 @@
         appliedCoupon = data;
         statusEl.textContent = '✓ ' + data.label + ' applied' + (data.description ? ' — ' + data.description : '');
         statusEl.style.color = '#4ade80';
+        // Update order summary
+        const discountRow = document.getElementById('order-discount-row');
+        document.getElementById('order-discount-label').textContent = data.label + ' (' + data.code + ')';
+        document.getElementById('order-discount-amount').textContent = '-$' + (data.discountAmount / 100).toFixed(2);
+        document.getElementById('order-total').textContent = data.finalAmount === 0 ? 'FREE' : '$' + (data.finalAmount / 100).toFixed(2);
+        discountRow.style.display = 'flex';
+        // Update button
+        const btn = document.getElementById('embed-confirm-btn');
+        if (document.getElementById('embed-terms-agree').checked) {
+          btn.disabled = false;
+        }
+        btn.textContent = data.finalAmount === 0 ? 'Book Now (Free) →' : 'Pay $' + (data.finalAmount / 100).toFixed(2) + ' →';
       } else {
         appliedCoupon = null;
         statusEl.textContent = data.error || 'Invalid code.';
         statusEl.style.color = '#e91e8c';
+        // Reset order summary
+        document.getElementById('order-discount-row').style.display = 'none';
+        document.getElementById('order-total').textContent = '$50.00';
+        document.getElementById('embed-confirm-btn').textContent = 'Pay $50 Deposit →';
       }
-      updateOrderSummary();
     } catch(e) {
       statusEl.textContent = 'Could not check coupon.';
       statusEl.style.color = '#e91e8c';
@@ -1614,9 +1571,8 @@
         notes: ['Vehicle: ' + [vYear, vMake, vModel, vColor].filter(Boolean).join(' '), state.address ? 'Address: ' + state.address : '', state.addons.length ? 'Addons: ' + state.addons.map(a=>a.name).join(', ') : ''].filter(Boolean).join(' | ')
       };
 
-      // Use coupon-adjusted amount + tax
-      const baseCharge  = appliedCoupon ? appliedCoupon.finalAmount : 5000;
-      const chargeAmount = baseCharge + taxAmount;
+      // Use coupon-adjusted amount
+      const chargeAmount = appliedCoupon ? appliedCoupon.finalAmount : 5000;
 
       let data;
       if (state.isMemberBooking || chargeAmount === 0) {
