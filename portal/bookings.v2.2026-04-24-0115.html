@@ -13,23 +13,14 @@
   <link rel="icon" type="image/png" sizes="16x16" href="/favicon-16x16.png">
   <link rel="shortcut icon" href="/favicon.ico">
 <style>
-.bk-details { max-height: 0; overflow: hidden; transition: max-height 0.4s ease; }
-.booking-card.expanded .bk-details { max-height: 1200px; }
-.bk-receipt { background:#0d0d0d; border:1px solid #1e1e1e; border-radius:8px; margin:.875rem 0; overflow:hidden; }
-.bk-receipt-section { padding:.625rem 1rem; border-bottom:1px solid #1a1a1a; }
-.bk-receipt-section:last-child { border-bottom:none; }
-.bk-receipt-label { font-size:.68rem; text-transform:uppercase; letter-spacing:.08em; color:#444; margin-bottom:.5rem; }
-.bk-receipt-row { display:flex; justify-content:space-between; align-items:baseline; font-size:.875rem; padding:.3rem 0; gap:1rem; }
-.bk-receipt-row-label { color:#888; flex-shrink:0; }
-.bk-receipt-row-val { color:#f5f5f5; text-align:right; }
-.bk-receipt-row-val.green { color:#4ade80; }
-.bk-receipt-row-val.pink { color:#e91e8c; }
-.bk-receipt-row-val.dim { color:#555; font-size:.8rem; }
-.bk-receipt-total { display:flex; justify-content:space-between; align-items:center; padding:.875rem 1rem; background:#0a0a0a; }
-.bk-receipt-total-label { font-size:.875rem; font-weight:600; color:#f5f5f5; }
-.bk-receipt-total-val { font-size:1.25rem; font-weight:700; color:#e91e8c; }
-.bk-toggle { font-size:0.7rem; color:var(--clr-muted); transition:transform 0.25s; display:inline-block; }
-.booking-card.expanded .bk-toggle { transform:rotate(180deg); }
+.bk-details { max-height: 0; overflow: hidden; transition: max-height 0.35s ease; }
+.booking-card.expanded .bk-details { max-height: 600px; }
+.bk-detail-row { display: flex; justify-content: space-between; align-items: baseline; padding: 0.5rem 0; border-bottom: 1px solid #1e1e1e; font-size: 0.875rem; gap: 1rem; }
+.bk-detail-row:last-child { border-bottom: none; }
+.bk-detail-row span:first-child { color: var(--clr-muted); flex-shrink: 0; }
+.bk-detail-row span:last-child { text-align: right; }
+.bk-toggle { font-size: 0.7rem; color: var(--clr-muted); transition: transform 0.25s; display: inline-block; }
+.booking-card.expanded .bk-toggle { transform: rotate(180deg); }
 </style>
 </head>
 <body>
@@ -201,39 +192,15 @@
     const balance = total ? (total - deposit) : null;
     const payRef = b.square_payment_id ? b.square_payment_id.slice(-8) : null;
 
-    const detailBlock = `
-      <div class="bk-receipt">
-        <div class="bk-receipt-section">
-          <div class="bk-receipt-label">Appointment</div>
-          <div class="bk-receipt-row"><span class="bk-receipt-row-label">Date</span><span class="bk-receipt-row-val">${formatDate(b.preferred_date)}</span></div>
-          ${b.preferred_time ? `<div class="bk-receipt-row"><span class="bk-receipt-row-label">Time</span><span class="bk-receipt-row-val">${formatTime(b.preferred_time)}</span></div>` : ''}
-          ${parsed.address ? `<div class="bk-receipt-row"><span class="bk-receipt-row-label">Address</span><span class="bk-receipt-row-val">${parsed.address}</span></div>` : ''}
-        </div>
-        ${parsed.vehicle ? `
-        <div class="bk-receipt-section">
-          <div class="bk-receipt-label">Vehicle</div>
-          <div class="bk-receipt-row"><span class="bk-receipt-row-label">Details</span><span class="bk-receipt-row-val">${parsed.vehicle}</span></div>
-          <div class="bk-receipt-row"><span class="bk-receipt-row-label">Type</span><span class="bk-receipt-row-val" style="text-transform:capitalize">${b.vehicle_type || ''}</span></div>
-        </div>` : ''}
-        <div class="bk-receipt-section">
-          <div class="bk-receipt-label">Services</div>
-          <div class="bk-receipt-row"><span class="bk-receipt-row-label">${b.service_name || 'Detail Service'}</span><span class="bk-receipt-row-val">${total !== null ? '$'+total.toFixed(2) : '—'}</span></div>
-          ${parsed.addons ? parsed.addons.split(',').map(a => `<div class="bk-receipt-row"><span class="bk-receipt-row-label" style="padding-left:.75rem;font-size:.8rem">+ ${a.trim()}</span><span class="bk-receipt-row-val dim">Add-on</span></div>`).join('') : ''}
-        </div>
-        <div class="bk-receipt-section">
-          <div class="bk-receipt-label">Payment</div>
-          ${total !== null ? `<div class="bk-receipt-row"><span class="bk-receipt-row-label">Service total</span><span class="bk-receipt-row-val">$${total.toFixed(2)}</span></div>` : ''}
-          <div class="bk-receipt-row"><span class="bk-receipt-row-label">Deposit paid</span><span class="bk-receipt-row-val green">− $${deposit.toFixed(2)} ✓</span></div>
-          ${payRef ? `<div class="bk-receipt-row"><span class="bk-receipt-row-label">Payment ref</span><span class="bk-receipt-row-val dim">…${payRef}</span></div>` : ''}
-        </div>
-        <div class="bk-receipt-total">
-          <div>
-            <div class="bk-receipt-total-label">Balance due at service</div>
-            <div style="font-size:.72rem;color:#444;margin-top:.1rem">Collected day of appointment</div>
-          </div>
-          <div class="bk-receipt-total-val">${balance !== null && balance > 0 ? '$'+balance.toFixed(2) : balance === 0 ? 'Paid in full' : '—'}</div>
-        </div>
-      </div>`;
+    const detailRows = [
+      parsed.vehicle   ? `<div class="bk-detail-row"><span>Vehicle</span><span>${parsed.vehicle}</span></div>` : '',
+      parsed.address   ? `<div class="bk-detail-row"><span>Service address</span><span>${parsed.address}</span></div>` : '',
+      parsed.addons    ? `<div class="bk-detail-row"><span>Add-ons</span><span>${parsed.addons}</span></div>` : `<div class="bk-detail-row"><span>Add-ons</span><span style="color:var(--clr-muted)">None</span></div>`,
+      `<div class="bk-detail-row"><span>Deposit paid</span><span style="color:#4ade80">$${deposit.toFixed(0)} ✓</span></div>`,
+      total !== null ? `<div class="bk-detail-row"><span>Total service cost</span><span>$${total.toFixed(0)}</span></div>` : '',
+      balance !== null && balance > 0 ? `<div class="bk-detail-row"><span>Balance due at service</span><span style="color:#e91e8c">$${balance.toFixed(0)}</span></div>` : '',
+      payRef ? `<div class="bk-detail-row"><span>Payment ref</span><span style="color:var(--clr-muted);font-size:0.8rem">…${payRef}</span></div>` : '',
+    ].filter(Boolean).join('');
 
     if (isPast) {
       return `
@@ -247,7 +214,7 @@
             ${timeDisplay ? `<span>·</span><span>${timeDisplay}</span>` : ''}
             <span>·</span><span style="color:var(--clr-muted)">${b.vehicle_type || ''}</span>
           </div>
-          <div class="bk-details">${detailBlock}</div>
+          <div class="bk-details">${detailRows}</div>
           ${b.status === 'completed' ? `
           <div class="booking-card__actions">
             <a href="../#booking" class="btn btn--ghost btn--sm">Book Again</a>
@@ -267,7 +234,7 @@
           ${timeDisplay ? `<span>·</span><span>${timeDisplay}</span>` : ''}
           <span>·</span><span style="color:var(--clr-muted)">${b.vehicle_type || ''}</span>
         </div>
-        <div class="bk-details">${detailBlock}</div>
+        <div class="bk-details">${detailRows}</div>
         ${showCancel ? `
         <div class="booking-card__actions">
           <button class="btn btn--ghost btn--sm cancel-btn" data-id="${b.id}" data-service="${b.service_name || 'Detail Service'}" data-date="${b.preferred_date}">

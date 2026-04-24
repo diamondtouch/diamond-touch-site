@@ -233,78 +233,69 @@ serve(async (req: Request) => {
           from: "Diamond Touch Detailing <bookings@diamondtouchdetails.com>",
           to: [bookingData.email],
           subject: `Booking Confirmed — ${bookingData.service} on ${dateDisplay}`,
-          html: `<!DOCTYPE html>
-<html><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
-<style>
-  body{margin:0;padding:0;background:#0a0a0a;font-family:'Helvetica Neue',Helvetica,Arial,sans-serif}
-  .receipt-row{display:flex;justify-content:space-between;padding:12px 24px;border-bottom:1px solid #1a1a1a;font-size:14px}
-  .receipt-row:last-child{border-bottom:none}
-  .rl{color:#666}.rv{color:#f5f5f5;font-weight:500;text-align:right}
-  .rv.green{color:#4ade80}.rv.pink{color:#e91e8c;font-size:18px;font-weight:700}
-</style>
-</head>
-<body>
-<table width="100%" cellpadding="0" cellspacing="0" style="background:#0a0a0a;padding:32px 0">
+          html: `<!DOCTYPE html><html><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"></head><body style="margin:0;padding:0;background:#0a0a0a;font-family:'Helvetica Neue',Helvetica,Arial,sans-serif">
+<table width="100%" cellpadding="0" cellspacing="0" style="background:#0a0a0a;padding:40px 0">
 <tr><td align="center">
-<table width="600" cellpadding="0" cellspacing="0" style="max-width:600px;width:100%;font-family:'Helvetica Neue',Helvetica,Arial,sans-serif">
+<table width="600" cellpadding="0" cellspacing="0" style="max-width:600px;width:100%">
 
-  <tr><td style="background:#111;border-radius:12px 12px 0 0;padding:28px 32px;text-align:center;border-bottom:1px solid #1a1a1a">
-    <div style="font-size:22px;letter-spacing:.15em;color:#e91e8c;font-weight:700">&#9670; DIAMOND TOUCH DETAILING</div>
+  <!-- Header -->
+  <tr><td style="background:#111;border-radius:12px 12px 0 0;padding:32px 40px;text-align:center;border-bottom:1px solid #1a1a1a">
+    <div style="font-size:28px;letter-spacing:.15em;color:#e91e8c;font-weight:700">◆ DIAMOND TOUCH</div>
+    <div style="font-size:11px;letter-spacing:.3em;color:#666;text-transform:uppercase;margin-top:4px">DETAILING</div>
   </td></tr>
 
-  <tr><td style="background:#111;padding:32px;text-align:center">
-    <div style="width:56px;height:56px;background:#e91e8c1a;border-radius:50%;margin:0 auto 16px;line-height:56px;font-size:24px;text-align:center">&#10003;</div>
-    <h1 style="margin:0 0 6px;font-size:24px;font-weight:700;color:#f5f5f5">You're Booked!</h1>
-    <p style="margin:0;font-size:14px;color:#888">Confirmation &bull; ${dateDisplay} at ${timeDisplay}</p>
+  <!-- Hero -->
+  <tr><td style="background:#111;padding:40px 40px 32px;text-align:center">
+    <div style="width:56px;height:56px;background:#e91e8c1a;border-radius:50%;margin:0 auto 20px;display:flex;align-items:center;justify-content:center;font-size:24px;line-height:56px">✓</div>
+    <h1 style="margin:0 0 8px;font-size:26px;font-weight:700;color:#f5f5f5">You're Booked!</h1>
+    <p style="margin:0;font-size:15px;color:#888">Your appointment is confirmed and your deposit is secured.</p>
   </td></tr>
 
-  <!-- Receipt block -->
-  <tr><td style="background:#111;padding:0 32px 28px">
+  <!-- Booking details -->
+  <tr><td style="background:#111;padding:0 40px 32px">
     <table width="100%" cellpadding="0" cellspacing="0" style="background:#0d0d0d;border:1px solid #1e1e1e;border-radius:10px;overflow:hidden">
-
-      <!-- Section: Client -->
-      <tr><td colspan="2" style="padding:10px 24px 4px;font-size:11px;text-transform:uppercase;letter-spacing:.1em;color:#444;border-bottom:1px solid #1a1a1a">Client</td></tr>
-      <tr><td class="rl" style="padding:11px 24px;font-size:13px;color:#666;width:40%;border-bottom:1px solid #1a1a1a">Name</td><td class="rv" style="padding:11px 24px;font-size:14px;color:#f5f5f5;font-weight:500;border-bottom:1px solid #1a1a1a">${bookingData.name}</td></tr>
-      <tr><td style="padding:11px 24px;font-size:13px;color:#666;border-bottom:1px solid #1a1a1a">Email</td><td style="padding:11px 24px;font-size:14px;color:#f5f5f5;border-bottom:1px solid #1a1a1a">${bookingData.email}</td></tr>
-      <tr><td style="padding:11px 24px;font-size:13px;color:#666;border-bottom:1px solid #1e1e1e">Phone</td><td style="padding:11px 24px;font-size:14px;color:#f5f5f5;border-bottom:1px solid #1e1e1e">${bookingData.phone}</td></tr>
-
-      <!-- Section: Appointment -->
-      <tr><td colspan="2" style="padding:10px 24px 4px;font-size:11px;text-transform:uppercase;letter-spacing:.1em;color:#444;border-bottom:1px solid #1a1a1a">Appointment</td></tr>
-      <tr><td style="padding:11px 24px;font-size:13px;color:#666;border-bottom:1px solid #1a1a1a">Date</td><td style="padding:11px 24px;font-size:14px;color:#f5f5f5;font-weight:600;border-bottom:1px solid #1a1a1a">${dateDisplay}</td></tr>
-      <tr><td style="padding:11px 24px;font-size:13px;color:#666;border-bottom:1px solid #1a1a1a">Time</td><td style="padding:11px 24px;font-size:14px;color:#f5f5f5;font-weight:600;border-bottom:1px solid #1a1a1a">${timeDisplay}</td></tr>
-      ${bookingData.notes && bookingData.notes.includes('Address:') ? `<tr><td style="padding:11px 24px;font-size:13px;color:#666;border-bottom:1px solid #1a1a1a;vertical-align:top">Address</td><td style="padding:11px 24px;font-size:13px;color:#aaa;border-bottom:1px solid #1a1a1a">${(bookingData.notes.match(/Address:\s*([^|]+)/)||[])[1]||''}</td></tr>` : ''}
-
-      <!-- Section: Vehicle -->
-      <tr><td colspan="2" style="padding:10px 24px 4px;font-size:11px;text-transform:uppercase;letter-spacing:.1em;color:#444;border-bottom:1px solid #1a1a1a">Vehicle</td></tr>
-      ${bookingData.notes && bookingData.notes.includes('Vehicle:') ? `<tr><td style="padding:11px 24px;font-size:13px;color:#666;border-bottom:1px solid #1a1a1a">Details</td><td style="padding:11px 24px;font-size:14px;color:#f5f5f5;border-bottom:1px solid #1a1a1a">${(bookingData.notes.match(/Vehicle:\s*([^|]+)/)||[])[1]||''}</td></tr>` : ''}
-      <tr><td style="padding:11px 24px;font-size:13px;color:#666;border-bottom:1px solid #1e1e1e;text-transform:capitalize">Type</td><td style="padding:11px 24px;font-size:14px;color:#f5f5f5;text-transform:capitalize;border-bottom:1px solid #1e1e1e">${bookingData.vehicle_type}</td></tr>
-
-      <!-- Section: Services -->
-      <tr><td colspan="2" style="padding:10px 24px 4px;font-size:11px;text-transform:uppercase;letter-spacing:.1em;color:#444;border-bottom:1px solid #1a1a1a">Services</td></tr>
-      <tr><td style="padding:11px 24px;font-size:14px;color:#f5f5f5;font-weight:500;border-bottom:1px solid #1a1a1a">${bookingData.service}</td><td style="padding:11px 24px;font-size:14px;color:#f5f5f5;text-align:right;border-bottom:1px solid #1a1a1a">${bookingData.total_amount ? '$'+(bookingData.total_amount/100).toFixed(2) : '—'}</td></tr>
-      ${bookingData.notes && bookingData.notes.includes('Addons:') ? ((bookingData.notes.match(/Addons:\s*([^|]+)/)||[])[1]||'').split(',').map((a:string)=>a.trim()).filter((a:string)=>a).map((a:string)=>`<tr><td style="padding:8px 24px 8px 36px;font-size:13px;color:#888;border-bottom:1px solid #1a1a1a">+ ${a}</td><td style="padding:8px 24px;font-size:13px;color:#666;text-align:right;border-bottom:1px solid #1a1a1a">Add-on</td></tr>`).join('') : ''}
-
-      <!-- Section: Payment -->
-      <tr><td colspan="2" style="padding:10px 24px 4px;font-size:11px;text-transform:uppercase;letter-spacing:.1em;color:#444;border-bottom:1px solid #1a1a1a">Payment</td></tr>
-      ${bookingData.total_amount ? `<tr><td style="padding:11px 24px;font-size:13px;color:#666;border-bottom:1px solid #1a1a1a">Service total</td><td style="padding:11px 24px;font-size:14px;color:#f5f5f5;text-align:right;border-bottom:1px solid #1a1a1a">$${(bookingData.total_amount/100).toFixed(2)}</td></tr>` : ''}
-      <tr><td style="padding:11px 24px;font-size:13px;color:#666;border-bottom:1px solid #1a1a1a">Deposit paid today</td><td style="padding:11px 24px;font-size:14px;color:#4ade80;font-weight:600;text-align:right;border-bottom:1px solid #1a1a1a">${depositDisplay} &#10003;</td></tr>
-
-      <!-- Total -->
-      <tr style="background:#0a0a0a"><td style="padding:18px 24px;font-size:15px;font-weight:700;color:#f5f5f5">Balance due at service</td><td style="padding:18px 24px;font-size:20px;font-weight:700;color:#e91e8c;text-align:right">${bookingData.total_amount ? '$'+Math.max(0,(bookingData.total_amount-(bookingData.deposit_amount||5000))/100).toFixed(2) : '—'}</td></tr>
-
+      <tr style="border-bottom:1px solid #1a1a1a">
+        <td style="padding:16px 20px;font-size:13px;color:#666;width:40%">Service</td>
+        <td style="padding:16px 20px;font-size:15px;color:#f5f5f5;font-weight:600">${bookingData.service}</td>
+      </tr>
+      <tr style="border-bottom:1px solid #1a1a1a">
+        <td style="padding:16px 20px;font-size:13px;color:#666">Vehicle</td>
+        <td style="padding:16px 20px;font-size:15px;color:#f5f5f5;text-transform:capitalize">${bookingData.vehicle_type}</td>
+      </tr>
+      <tr style="border-bottom:1px solid #1a1a1a">
+        <td style="padding:16px 20px;font-size:13px;color:#666">Date</td>
+        <td style="padding:16px 20px;font-size:15px;color:#f5f5f5">${dateDisplay}</td>
+      </tr>
+      <tr style="border-bottom:1px solid #1a1a1a">
+        <td style="padding:16px 20px;font-size:13px;color:#666">Time</td>
+        <td style="padding:16px 20px;font-size:15px;color:#f5f5f5">${timeDisplay}</td>
+      </tr>
+      ${bookingData.notes ? `<tr style="border-bottom:1px solid #1a1a1a"><td style="padding:16px 20px;font-size:13px;color:#666">Details</td><td style="padding:16px 20px;font-size:13px;color:#aaa">${bookingData.notes}</td></tr>` : ''}
+      <tr style="border-bottom:1px solid #1a1a1a">
+        <td style="padding:16px 20px;font-size:13px;color:#666">Deposit Paid</td>
+        <td style="padding:16px 20px;font-size:15px;color:#4ade80;font-weight:700">${depositDisplay} ✓</td>
+      </tr>
+      <tr>
+        <td style="padding:16px 20px;font-size:13px;color:#666">Balance at Service</td>
+        <td style="padding:16px 20px;font-size:15px;color:#f5f5f5">${totalDisplay !== 'TBD' ? '$' + (Math.max(0, bookingData.total_amount - (bookingData.deposit_amount || 5000)) / 100).toFixed(0) : 'TBD'}</td>
+      </tr>
     </table>
   </td></tr>
 
-  <tr><td style="background:#111;padding:4px 32px 28px;text-align:center">
-    <a href="https://diamondtouchdetails.com/portal/bookings.html" style="display:inline-block;background:#e91e8c;color:#fff;text-decoration:none;padding:13px 32px;border-radius:7px;font-size:14px;font-weight:600">View Full Booking Details &rarr;</a>
+  <!-- CTA -->
+  <tr><td style="background:#111;padding:0 40px 32px;text-align:center">
+    <p style="font-size:14px;color:#666;margin:0 0 20px">Need to make changes? Log in to your account to manage your booking.</p>
+    <a href="https://diamondtouchdetails.com/portal/bookings.html" style="display:inline-block;background:#e91e8c;color:#fff;text-decoration:none;padding:14px 32px;border-radius:6px;font-size:14px;font-weight:600;letter-spacing:.03em">View My Bookings</a>
   </td></tr>
 
-  <tr><td style="background:#0d0d0d;border-radius:0 0 12px 12px;padding:20px 32px;text-align:center;border-top:1px solid #1a1a1a">
-    <p style="margin:0 0 4px;font-size:12px;color:#444">&#9670; Diamond Touch Detailing &mdash; Your Vehicle. Perfected.</p>
-    <p style="margin:0;font-size:12px;color:#333">Murrieta, CA &nbsp;&middot;&nbsp; <a href="mailto:sales@diamondtouchdetails.com" style="color:#555">sales@diamondtouchdetails.com</a> &nbsp;&middot;&nbsp; (951) 345-3195</p>
+  <!-- Footer -->
+  <tr><td style="background:#0d0d0d;border-radius:0 0 12px 12px;padding:24px 40px;text-align:center;border-top:1px solid #1a1a1a">
+    <p style="margin:0 0 4px;font-size:12px;color:#444">◆ Diamond Touch Detailing — Your Vehicle. Perfected.</p>
+    <p style="margin:0;font-size:12px;color:#333">Murrieta, CA &nbsp;·&nbsp; <a href="mailto:sales@diamondtouchdetails.com" style="color:#333">sales@diamondtouchdetails.com</a></p>
   </td></tr>
 
-</table></td></tr></table>
+</table>
+</td></tr></table>
 </body></html>`,
         }),
       });
