@@ -343,6 +343,20 @@
   const isActive = membership && membership.status === 'active';
 
   // ── Route ─────────────────────────────────────────────────────
+  const checkSVG = `<svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M20 6 9 17l-5-5"/></svg>`;
+  const featureItems = [
+    'Monthly Signature Detail',
+    'Interior refresh + exterior wash',
+    'Priority 48-hour booking',
+    '15% off all add-ons',
+    'Free quarterly odor treatment',
+    '6-month minimum commitment',
+  ];
+  function featuresHTML() {
+    return featureItems.map(f => `<li class="plan-card__feature">${checkSVG}${f}</li>`).join('');
+  }
+
+
   if (isActive) {
     renderActiveMembership(membership);
   } else {
@@ -392,19 +406,6 @@
   function getSquarePayments() {
     if (!squarePayments) squarePayments = Square.payments(APP_ID, LOCATION_ID);
     return squarePayments;
-  }
-
-  const checkSVG = `<svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M20 6 9 17l-5-5"/></svg>`;
-  const featureItems = [
-    'Monthly Signature Detail',
-    'Interior refresh + exterior wash',
-    'Priority 48-hour booking',
-    '15% off all add-ons',
-    'Free quarterly odor treatment',
-    '6-month minimum commitment',
-  ];
-  function featuresHTML() {
-    return featureItems.map(f => `<li class="plan-card__feature">${checkSVG}${f}</li>`).join('');
   }
 
   // ── renderJoinPlans ───────────────────────────────────────────
