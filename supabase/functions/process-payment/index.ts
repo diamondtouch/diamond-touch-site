@@ -35,7 +35,7 @@ serve(async (req: Request) => {
 
   try {
     const body = await req.json();
-    const { sourceId, amount, currency, locationId, note, buyerEmail, bookingData, userToken } = body;
+    const { sourceId, amount, currency, locationId, note, buyerEmail, bookingData, userToken, couponId } = body;
 
     if (!sourceId || !amount || !locationId || !bookingData) {
       return new Response(JSON.stringify({ success: false, error: "Missing required fields" }), {
@@ -120,7 +120,18 @@ serve(async (req: Request) => {
       );
     }
 
-    // 4. Auto-save phone + vehicle to user profile/garage if logged in
+    // 4. Increment coupon usage if applied
+    if (couponId) {
+      try {
+        await supabase.rpc('increment_coupon_uses', { coupon_id: couponId });
+      } catch (_) {}
+      // Fallback: direct update
+      try {
+        await supabase.from('coupons').update({ uses_count: supabase.rpc('uses_count + 1') }).eq('id', couponId);
+      } catch (_) {}
+    }
+
+    // 5. Auto-save phone + vehicle to user profile/garage if logged in
     if (userId) {
       try {
         // Save phone to profile if missing

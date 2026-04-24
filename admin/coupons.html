@@ -1,0 +1,232 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Coupons — Diamond Touch Admin</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300;0,400;0,500;0,600;1,300;1,400&family=DM+Sans:ital,opsz,wght@0,9..40,300;0,9..40,400;0,9..40,500;0,9..40,600;1,9..40,300&display=swap" rel="stylesheet" />
+  <link rel="stylesheet" href="../css/portal.css" />
+  <style>
+    .coupon-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(320px, 1fr)); gap: 1rem; margin-top: 1.5rem; }
+    .coupon-card { background: #111; border: 1px solid #222; border-radius: 10px; padding: 1.25rem; display: flex; flex-direction: column; gap: .75rem; }
+    .coupon-card.inactive { opacity: .5; }
+    .coupon-card__code { font-size: 1.25rem; font-weight: 700; color: #e91e8c; letter-spacing: .08em; font-family: 'DM Sans', monospace; }
+    .coupon-card__badge { display: inline-flex; align-items: center; background: #e91e8c22; color: #e91e8c; border-radius: 4px; padding: 2px 10px; font-size: .8rem; font-weight: 600; }
+    .coupon-card__meta { font-size: .8rem; color: #666; display: flex; flex-direction: column; gap: .2rem; }
+    .coupon-card__meta span { color: #aaa; }
+    .coupon-card__actions { display: flex; gap: .5rem; margin-top: .25rem; }
+    .create-form { background: #111; border: 1px solid #222; border-radius: 10px; padding: 1.5rem; margin-bottom: 1.5rem; }
+    .create-form h3 { margin: 0 0 1.25rem; font-size: 1rem; color: #f5f5f5; }
+    .form-grid-3 { display: grid; grid-template-columns: 1fr 1fr 1fr; gap: .875rem; }
+    @media(max-width:700px) { .form-grid-3 { grid-template-columns: 1fr 1fr; } }
+    .form-field { display: flex; flex-direction: column; gap: .3rem; }
+    .form-field label { font-size: .75rem; color: #888; text-transform: uppercase; letter-spacing: .05em; }
+    .form-field input, .form-field select { background: #1a1a1a; border: 1px solid #2a2a2a; border-radius: 6px; color: #f5f5f5; padding: .5rem .75rem; font-size: .875rem; font-family: inherit; }
+    .form-field input:focus, .form-field select:focus { outline: none; border-color: #e91e8c; }
+  </style>
+</head>
+<body>
+<div class="portal-layout">
+  <aside class="sidebar">
+    <div class="sidebar__logo">
+      <a href="/"><img src="../assets/logo-horizontal.png" alt="Diamond Touch Detailing" /></a>
+      <div class="sidebar__badge">Admin</div>
+    </div>
+    <nav class="sidebar__nav">
+      <a href="dashboard.html" class="sidebar__link"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><rect x="3" y="3" width="7" height="7" rx="1"/><rect x="14" y="3" width="7" height="7" rx="1"/><rect x="3" y="14" width="7" height="7" rx="1"/><rect x="14" y="14" width="7" height="7" rx="1"/></svg>Dashboard</a>
+      <a href="calendar.html" class="sidebar__link"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><rect x="3" y="4" width="18" height="18" rx="2"/><path d="M16 2v4M8 2v4M3 10h18"/></svg>Calendar</a>
+      <a href="bookings.html" class="sidebar__link"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2"/></svg>Bookings</a>
+      <a href="clients.html" class="sidebar__link"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><circle cx="9" cy="7" r="4"/><path d="M3 21v-2a4 4 0 014-4h4a4 4 0 014 4v2"/></svg>Clients</a>
+      <a href="memberships.html" class="sidebar__link"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z"/></svg>Memberships</a>
+      <a href="coupons.html" class="sidebar__link active"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M20.59 13.41l-7.17 7.17a2 2 0 01-2.83 0L2 12V2h10l8.59 8.59a2 2 0 010 2.82z"/><circle cx="7" cy="7" r="1.5" fill="currentColor"/></svg>Coupons</a>
+      <a href="availability.html" class="sidebar__link"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><circle cx="12" cy="12" r="10"/><path d="M12 6v6l4 2"/></svg>Availability</a>
+      <a href="revenue.html" class="sidebar__link"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M12 2v20M17 5H9.5a3.5 3.5 0 000 7h5a3.5 3.5 0 010 7H6"/></svg>Revenue</a>
+    </nav>
+    <div class="sidebar__footer">
+      <div class="sidebar__user">
+        <div class="sidebar__avatar" id="userAvatar">A</div>
+        <div class="sidebar__user-info">
+          <div class="sidebar__user-name" id="userName">Admin</div>
+          <div class="sidebar__user-email" id="userEmail"></div>
+        </div>
+      </div>
+      <button class="btn-signout" onclick="signOut()"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M17 16l4-4m0 0l-4-4m4 4H7m6 4v1a2 2 0 01-2 2H5a2 2 0 01-2-2V7a2 2 0 012-2h6a2 2 0 012 2v1"/></svg>Sign out</button>
+    </div>
+  </aside>
+
+  <main class="portal-main">
+    <div class="portal-main__inner">
+      <div class="page-header">
+        <p class="page-header__eyebrow">Admin Panel</p>
+        <h1 class="page-header__title">Coupons</h1>
+        <p class="page-header__sub">Create and manage discount codes for bookings and memberships.</p>
+      </div>
+
+      <!-- Create coupon form -->
+      <div class="create-form">
+        <h3>Create New Coupon</h3>
+        <div class="form-grid-3">
+          <div class="form-field">
+            <label>Code</label>
+            <input type="text" id="newCode" placeholder="SUMMER25" style="text-transform:uppercase" maxlength="20" />
+          </div>
+          <div class="form-field">
+            <label>Discount Type</label>
+            <select id="newType">
+              <option value="percent">Percentage (%)</option>
+              <option value="fixed">Fixed Amount ($)</option>
+            </select>
+          </div>
+          <div class="form-field">
+            <label>Discount Value</label>
+            <input type="number" id="newValue" placeholder="25" min="1" max="100" />
+          </div>
+          <div class="form-field">
+            <label>Applies To</label>
+            <select id="newAppliesTo">
+              <option value="all">All (booking + membership)</option>
+              <option value="booking">Bookings only</option>
+              <option value="membership">Memberships only</option>
+            </select>
+          </div>
+          <div class="form-field">
+            <label>Max Uses (blank = unlimited)</label>
+            <input type="number" id="newMaxUses" placeholder="Unlimited" min="1" />
+          </div>
+          <div class="form-field">
+            <label>Expires (blank = never)</label>
+            <input type="date" id="newExpires" />
+          </div>
+          <div class="form-field" style="grid-column:span 3">
+            <label>Description (shown to customer)</label>
+            <input type="text" id="newDesc" placeholder="e.g. Friends & family discount" />
+          </div>
+        </div>
+        <div style="display:flex;gap:.75rem;align-items:center;margin-top:1.25rem">
+          <button class="btn btn--primary btn--sm" id="createCouponBtn">Create Coupon</button>
+          <span id="createMsg" style="font-size:.8rem"></span>
+        </div>
+      </div>
+
+      <!-- Coupon list -->
+      <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:.5rem">
+        <h2 style="font-size:1rem;font-weight:600;margin:0" id="couponCount">Loading...</h2>
+        <label style="display:flex;align-items:center;gap:.5rem;font-size:.875rem;color:#888;cursor:pointer">
+          <input type="checkbox" id="showInactive" style="accent-color:#e91e8c" /> Show inactive
+        </label>
+      </div>
+      <div class="coupon-grid" id="couponGrid"><div class="loading-row">Loading coupons...</div></div>
+    </div>
+  </main>
+</div>
+
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2/dist/umd/supabase.js"></script>
+<script src="../js/supabase-config.js"></script>
+<script src="../js/auth.js"></script>
+<script>
+(async () => {
+  const profile = await requireAdmin();
+  if (!profile) return;
+  document.getElementById('userName').textContent  = profile.full_name || 'Admin';
+  document.getElementById('userEmail').textContent = profile.email || '';
+  document.getElementById('userAvatar').textContent = (profile.full_name || 'A').charAt(0).toUpperCase();
+
+  let showInactive = false;
+  let allCoupons = [];
+
+  async function loadCoupons() {
+    const { data } = await _supabase.from('coupons').select('*').order('created_at', { ascending: false });
+    allCoupons = data || [];
+    renderCoupons();
+  }
+
+  function renderCoupons() {
+    const list = showInactive ? allCoupons : allCoupons.filter(c => c.active);
+    document.getElementById('couponCount').textContent = list.length + ' coupon' + (list.length !== 1 ? 's' : '');
+    if (!list.length) {
+      document.getElementById('couponGrid').innerHTML = '<p style="color:#555;font-size:.875rem">No coupons yet.</p>';
+      return;
+    }
+    document.getElementById('couponGrid').innerHTML = list.map(c => {
+      const discLabel = c.discount_type === 'percent' ? c.discount_value + '% off' : '$' + c.discount_value + ' off';
+      const usageStr  = c.max_uses ? c.uses_count + ' / ' + c.max_uses + ' used' : c.uses_count + ' uses';
+      const expStr    = c.expires_at ? 'Expires ' + new Date(c.expires_at).toLocaleDateString('en-US',{month:'short',day:'numeric',year:'numeric'}) : 'No expiry';
+      return `
+        <div class="coupon-card ${c.active ? '' : 'inactive'}">
+          <div style="display:flex;justify-content:space-between;align-items:flex-start">
+            <div class="coupon-card__code">${c.code}</div>
+            <span class="coupon-card__badge">${discLabel}</span>
+          </div>
+          ${c.description ? `<div style="font-size:.875rem;color:#aaa">${c.description}</div>` : ''}
+          <div class="coupon-card__meta">
+            <div>Applies to: <span>${c.applies_to}</span></div>
+            <div>Usage: <span>${usageStr}</span></div>
+            <div>${expStr}</div>
+            <div>Status: <span style="color:${c.active ? '#4ade80' : '#888'}">${c.active ? 'Active' : 'Inactive'}</span></div>
+          </div>
+          <div class="coupon-card__actions">
+            <button class="btn btn--ghost btn--sm" onclick="toggleCoupon('${c.id}', ${c.active})">${c.active ? 'Deactivate' : 'Reactivate'}</button>
+            <button class="btn btn--ghost btn--sm" onclick="deleteCoupon('${c.id}')" style="color:#fca5a5;border-color:rgba(239,68,68,.3)">Delete</button>
+          </div>
+        </div>`;
+    }).join('');
+  }
+
+  document.getElementById('showInactive').addEventListener('change', function() {
+    showInactive = this.checked;
+    renderCoupons();
+  });
+
+  // Create
+  document.getElementById('createCouponBtn').addEventListener('click', async () => {
+    const code     = document.getElementById('newCode').value.trim().toUpperCase();
+    const type     = document.getElementById('newType').value;
+    const value    = parseInt(document.getElementById('newValue').value);
+    const applies  = document.getElementById('newAppliesTo').value;
+    const maxUses  = document.getElementById('newMaxUses').value ? parseInt(document.getElementById('newMaxUses').value) : null;
+    const expires  = document.getElementById('newExpires').value || null;
+    const desc     = document.getElementById('newDesc').value.trim() || null;
+    const msgEl    = document.getElementById('createMsg');
+
+    if (!code || !value || value < 1) {
+      msgEl.textContent = 'Code and value are required.'; msgEl.style.color = '#e91e8c'; return;
+    }
+
+    const { error } = await _supabase.from('coupons').insert({
+      code, discount_type: type, discount_value: value, applies_to: applies,
+      max_uses: maxUses, expires_at: expires ? expires + 'T23:59:59Z' : null, description: desc
+    });
+
+    if (error) {
+      msgEl.textContent = error.message.includes('unique') ? 'Code already exists.' : 'Error: ' + error.message;
+      msgEl.style.color = '#e91e8c';
+    } else {
+      msgEl.textContent = 'Coupon created ✓'; msgEl.style.color = '#4ade80';
+      document.getElementById('newCode').value = '';
+      document.getElementById('newValue').value = '';
+      document.getElementById('newDesc').value = '';
+      document.getElementById('newMaxUses').value = '';
+      document.getElementById('newExpires').value = '';
+      setTimeout(() => { msgEl.textContent = ''; }, 3000);
+      await loadCoupons();
+    }
+  });
+
+  window.toggleCoupon = async (id, currentActive) => {
+    await _supabase.from('coupons').update({ active: !currentActive }).eq('id', id);
+    await loadCoupons();
+  };
+
+  window.deleteCoupon = async (id) => {
+    if (!confirm('Delete this coupon? This cannot be undone.')) return;
+    await _supabase.from('coupons').delete().eq('id', id);
+    await loadCoupons();
+  };
+
+  await loadCoupons();
+})();
+</script>
+</body>
+</html>

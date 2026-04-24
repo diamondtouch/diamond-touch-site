@@ -458,15 +458,6 @@
           <input type="checkbox" id="contractCheck" style="margin-top:3px;accent-color:#e91e8c;flex-shrink:0" />
           <span>I have read, understand, and agree to the Diamond Club Membership Agreement above, including the 6-month minimum commitment. I understand this constitutes a legally binding contract.</span>
         </label>
-        <!-- Coupon -->
-        <div style="margin-bottom:1rem">
-          <div style="display:flex;gap:.5rem">
-            <input type="text" id="mem-coupon-input" placeholder="Coupon code (optional)" autocomplete="off"
-              style="flex:1;background:#1a1a1a;border:1px solid #2a2a2a;border-radius:6px;padding:.5rem .875rem;color:#f5f5f5;font-size:.875rem;font-family:inherit;text-transform:uppercase" />
-            <button type="button" id="mem-coupon-btn" class="btn btn--ghost btn--sm" style="white-space:nowrap">Apply</button>
-          </div>
-          <div id="mem-coupon-status" style="font-size:.8rem;margin-top:.35rem"></div>
-        </div>
         <div id="membership-card-container" style="margin:1.25rem 0"></div>
         <div class="inline-alert inline-alert--error" id="membershipError" role="alert"></div>
         <button class="btn btn--primary btn--full" id="startMembershipBtn" disabled>Sign &amp; Start My Membership</button>
@@ -507,38 +498,6 @@
     });
 
     document.getElementById('startMembershipBtn').addEventListener('click', () => startMembership());
-
-    // Coupon apply
-    let appliedMemCoupon = null;
-    async function applyMemCoupon() {
-      const code = document.getElementById('mem-coupon-input').value.trim().toUpperCase();
-      const statusEl = document.getElementById('mem-coupon-status');
-      if (!code) return;
-      statusEl.textContent = 'Checking...'; statusEl.style.color = '#888';
-      try {
-        const p = PLANS[selectedPlanKey];
-        const res = await fetch('https://fjafmptbzydqizafuaru.supabase.co/functions/v1/validate-coupon', {
-          method: 'POST',
-          headers: { 'Content-Type': 'application/json', 'Authorization': 'Bearer ' + SUPABASE_ANON_KEY },
-          body: JSON.stringify({ code, amountCents: p ? p.price : 14900, appliesTo: 'membership' })
-        });
-        const data = await res.json();
-        if (data.valid) {
-          appliedMemCoupon = data;
-          statusEl.textContent = '\u2713 ' + data.label + ' applied' + (data.description ? ' \u2014 ' + data.description : '');
-          statusEl.style.color = '#4ade80';
-          const btn = document.getElementById('startMembershipBtn');
-          if (btn && data.finalAmount === 0) btn.textContent = 'Start Free \u2192';
-          else if (btn && p) btn.textContent = 'Sign & Pay $' + (data.finalAmount / 100).toFixed(0) + ' \u2192';
-        } else {
-          appliedMemCoupon = null;
-          statusEl.textContent = data.error || 'Invalid code.';
-          statusEl.style.color = '#e91e8c';
-        }
-      } catch(e) { statusEl.textContent = 'Could not check coupon.'; statusEl.style.color = '#e91e8c'; }
-    }
-    document.getElementById('mem-coupon-btn').addEventListener('click', applyMemCoupon);
-    document.getElementById('mem-coupon-input').addEventListener('keydown', (e) => { if (e.key === 'Enter') applyMemCoupon(); });
   }
 
   // ── renderPlanCards ───────────────────────────────────────────

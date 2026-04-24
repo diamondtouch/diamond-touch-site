@@ -727,15 +727,6 @@
             </ul>
             <a href="terms.html" target="_blank" class="booking-terms-box__link">Read full Terms of Service →</a>
           </div>
-          <!-- Coupon code -->
-          <div style="margin-bottom:1rem">
-            <div style="display:flex;gap:.5rem">
-              <input type="text" id="embed-coupon-input" placeholder="Coupon code (optional)" autocomplete="off"
-                style="flex:1;background:#1a1a1a;border:1px solid #2a2a2a;border-radius:6px;padding:.5rem .875rem;color:#f5f5f5;font-size:.875rem;font-family:inherit;text-transform:uppercase" />
-              <button type="button" id="embed-coupon-btn" class="btn btn--ghost btn--sm" style="white-space:nowrap">Apply</button>
-            </div>
-            <div id="embed-coupon-status" style="font-size:.8rem;margin-top:.35rem"></div>
-          </div>
           <div class="embed-payment-wrap">
             <div id="embed-card-container" style="background:#1a1a1a;border:1px solid #2a2a2a;border-radius:8px;padding:16px;min-height:90px;margin-bottom:12px;"></div>
             <div id="embed-payment-status" style="font-size:0.875rem;margin-top:8px;"></div>
@@ -1363,50 +1354,7 @@
   document.getElementById("embed-step4-back").addEventListener("click", () => goStep(3));
 
   // ─── Square inline card payment ─────────────────────────────
-  const EDGE_FN_URL        = "https://fjafmptbzydqizafuaru.supabase.co/functions/v1/process-payment";
-  const COUPON_FN_URL      = "https://fjafmptbzydqizafuaru.supabase.co/functions/v1/validate-coupon";
-  let appliedCoupon        = null; // { couponId, code, discountAmount, finalAmount, label }
-
-  // Coupon apply button
-  document.getElementById('embed-coupon-btn').addEventListener('click', async () => {
-    const code    = document.getElementById('embed-coupon-input').value.trim().toUpperCase();
-    const statusEl = document.getElementById('embed-coupon-status');
-    if (!code) return;
-    statusEl.textContent = 'Checking...';
-    statusEl.style.color = '#888';
-    try {
-      const res  = await fetch(COUPON_FN_URL, {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json', 'Authorization': 'Bearer ' + SUPABASE_KEY },
-        body: JSON.stringify({ code, amountCents: 5000, appliesTo: 'booking' })
-      });
-      const data = await res.json();
-      if (data.valid) {
-        appliedCoupon = data;
-        statusEl.textContent = '✓ ' + data.label + ' applied' + (data.description ? ' — ' + data.description : '');
-        statusEl.style.color = '#4ade80';
-        // Update button label
-        const btn = document.getElementById('embed-confirm-btn');
-        if (data.finalAmount === 0) {
-          btn.textContent = 'Book Now (Free) →';
-        } else {
-          btn.textContent = 'Pay $' + (data.finalAmount / 100).toFixed(0) + ' Deposit →';
-        }
-      } else {
-        appliedCoupon = null;
-        statusEl.textContent = data.error || 'Invalid code.';
-        statusEl.style.color = '#e91e8c';
-      }
-    } catch(e) {
-      statusEl.textContent = 'Could not check coupon.';
-      statusEl.style.color = '#e91e8c';
-    }
-  });
-
-  // Allow pressing Enter in coupon field
-  document.getElementById('embed-coupon-input').addEventListener('keydown', (e) => {
-    if (e.key === 'Enter') document.getElementById('embed-coupon-btn').click();
-  });
+  const EDGE_FN_URL = "https://fjafmptbzydqizafuaru.supabase.co/functions/v1/process-payment";
   // Terms checkbox enables button + member booking label
   document.getElementById("embed-terms-agree").addEventListener("change", function() {
     document.getElementById("embed-confirm-btn").disabled = !this.checked;
@@ -1491,11 +1439,8 @@
         notes: ['Vehicle: ' + [vYear, vMake, vModel, vColor].filter(Boolean).join(' '), state.address ? 'Address: ' + state.address : '', state.addons.length ? 'Addons: ' + state.addons.map(a=>a.name).join(', ') : ''].filter(Boolean).join(' | ')
       };
 
-      // Use coupon-adjusted amount
-      const chargeAmount = appliedCoupon ? appliedCoupon.finalAmount : 5000;
-
       let data;
-      if (state.isMemberBooking || chargeAmount === 0) {
+      if (state.isMemberBooking) {
         // Member booking — no charge, save directly to Supabase
         const { error: bookErr } = await fetch(SUPABASE_URL + '/rest/v1/bookings', {
           method: 'POST',
@@ -1520,13 +1465,12 @@
           headers: { 'Content-Type': 'application/json', 'Authorization': 'Bearer ' + SUPABASE_KEY },
           body: JSON.stringify({
             sourceId: tokenResult.token,
-            amount: chargeAmount,
+            amount: 5000,
             currency: 'USD',
             locationId: LOCATION_ID,
-            note: 'Diamond Touch Detailing deposit — ' + state.serviceName + ' for ' + state.name + (appliedCoupon ? ' [Coupon: ' + appliedCoupon.code + ']' : ''),
+            note: 'Diamond Touch Detailing deposit — ' + state.serviceName + ' for ' + state.name,
             buyerEmail: state.email,
             bookingData: bookingPayload,
-            couponId: appliedCoupon?.couponId || null,
             userToken
           })
         });
