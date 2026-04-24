@@ -16,39 +16,18 @@
 .row-detail { display: none; }
 .row-detail.open { display: table-row; }
 .row-detail td { padding: 0 !important; }
-.row-detail-inner { padding: 1.5rem; background: #0d0d0d; border-bottom: 2px solid #1e1e1e; display: grid; grid-template-columns: 1fr 1fr; gap: 2rem; }
-@media(max-width:768px){.row-detail-inner{grid-template-columns:1fr}}
-
-/* Receipt */
-.receipt { background: #111; border: 1px solid #1e1e1e; border-radius: 10px; overflow: hidden; }
-.receipt__header { padding: 1rem 1.25rem; border-bottom: 1px solid #1e1e1e; display: flex; justify-content: space-between; align-items: center; }
-.receipt__title { font-size: .7rem; text-transform: uppercase; letter-spacing: .12em; color: #666; }
-.receipt__id { font-size: .7rem; color: #444; font-family: monospace; }
-.receipt__section { padding: .875rem 1.25rem; border-bottom: 1px solid #1a1a1a; }
-.receipt__section:last-child { border-bottom: none; }
-.receipt__label { font-size: .7rem; text-transform: uppercase; letter-spacing: .08em; color: #555; margin-bottom: .625rem; }
-.receipt__row { display: flex; justify-content: space-between; align-items: baseline; font-size: .875rem; margin-bottom: .35rem; gap: 1rem; }
-.receipt__row:last-child { margin-bottom: 0; }
-.receipt__row-label { color: #aaa; }
-.receipt__row-val { color: #f5f5f5; text-align: right; }
-.receipt__row-val.accent { color: #e91e8c; }
-.receipt__row-val.green { color: #4ade80; }
-.receipt__row-val.dim { color: #555; font-size: .8rem; }
-.receipt__divider { height: 1px; background: #1e1e1e; margin: 0; }
-.receipt__total { padding: 1rem 1.25rem; display: flex; justify-content: space-between; align-items: center; }
-.receipt__total-label { font-size: .875rem; font-weight: 600; color: #f5f5f5; }
-.receipt__total-val { font-size: 1.25rem; font-weight: 700; color: #e91e8c; }
-.receipt__badge { display: inline-flex; align-items: center; gap: .3rem; background: #e91e8c1a; color: #e91e8c; border-radius: 4px; padding: 2px 8px; font-size: .72rem; font-weight: 600; }
-
-/* Edit form */
-.edit-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 0.75rem; }
+.row-detail-inner { padding: 1.25rem 1.5rem; background: #111; border-bottom: 1px solid #222; display: grid; grid-template-columns: 1fr 1fr; gap: 1.5rem; }
+.edit-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 0.875rem; }
 .edit-field { display: flex; flex-direction: column; gap: 0.35rem; }
-.edit-field label { font-size: 0.72rem; color: #666; text-transform: uppercase; letter-spacing: 0.05em; }
-.edit-field input, .edit-field select, .edit-field textarea { background: #1a1a1a; border: 1px solid #2a2a2a; border-radius: 6px; color: #f5f5f5; padding: 0.5rem 0.75rem; font-size: 0.875rem; font-family: inherit; width: 100%; box-sizing: border-box; }
+.edit-field label { font-size: 0.75rem; color: var(--clr-muted); text-transform: uppercase; letter-spacing: 0.05em; }
+.edit-field input, .edit-field select, .edit-field textarea { background: #1a1a1a; border: 1px solid #2a2a2a; border-radius: 6px; color: #f5f5f5; padding: 0.5rem 0.75rem; font-size: 0.875rem; font-family: inherit; width: 100%; }
 .edit-field textarea { resize: vertical; min-height: 70px; }
 .edit-field input:focus, .edit-field select:focus, .edit-field textarea:focus { outline: none; border-color: #e91e8c; }
-.edit-actions { display: flex; gap: 0.5rem; margin-top: 1rem; align-items: center; flex-wrap: wrap; }
+.edit-actions { display: flex; gap: 0.5rem; margin-top: 1rem; align-items: center; }
 .edit-save-msg { font-size: 0.8rem; color: #4ade80; }
+.client-info-box { background: #0d0d0d; border: 1px solid #222; border-radius: 8px; padding: 1rem; font-size: 0.875rem; display: flex; flex-direction: column; gap: 0.5rem; }
+.client-info-box strong { color: #f5f5f5; }
+.client-info-box span { color: var(--clr-muted); }
 </style>
 </head>
 <body>
@@ -294,70 +273,13 @@ function renderTable() {
           </div>
         </td>
       </tr>
-      <!-- Expanded: Receipt + Edit -->
+      <!-- Expanded detail / edit row -->
       <tr class="row-detail" id="detail-${b.id}">
         <td colspan="9">
           <div class="row-detail-inner">
-
-            <!-- LEFT: Itemized Receipt -->
+            <!-- LEFT: Edit form -->
             <div>
-              <div class="receipt">
-                <div class="receipt__header">
-                  <div class="receipt__title">◆ Booking Receipt</div>
-                  <div class="receipt__id">#${b.id.slice(-8).toUpperCase()}</div>
-                </div>
-
-                <div class="receipt__section">
-                  <div class="receipt__label">Client</div>
-                  <div class="receipt__row"><span class="receipt__row-label">Name</span><span class="receipt__row-val">${clientName(b)}</span></div>
-                  <div class="receipt__row"><span class="receipt__row-label">Email</span><span class="receipt__row-val">${clientEmail(b)}</span></div>
-                  <div class="receipt__row"><span class="receipt__row-label">Phone</span><span class="receipt__row-val">${clientPhone(b)}</span></div>
-                </div>
-
-                <div class="receipt__section">
-                  <div class="receipt__label">Appointment</div>
-                  <div class="receipt__row"><span class="receipt__row-label">Date</span><span class="receipt__row-val">${formatDate(b.preferred_date)}</span></div>
-                  <div class="receipt__row"><span class="receipt__row-label">Time</span><span class="receipt__row-val">${formatTime(b.preferred_time)}</span></div>
-                  ${parseNotesField(b.notes,'Address') !== '—' ? `<div class="receipt__row"><span class="receipt__row-label">Address</span><span class="receipt__row-val">${parseNotesField(b.notes,'Address')}</span></div>` : ''}
-                  <div class="receipt__row"><span class="receipt__row-label">Status</span><span class="receipt__row-val"><span class="receipt__badge">${b.status}</span></span></div>
-                  <div class="receipt__row"><span class="receipt__row-label">Booked on</span><span class="receipt__row-val dim">${formatDate(b.created_at?.split('T')[0])}</span></div>
-                </div>
-
-                <div class="receipt__section">
-                  <div class="receipt__label">Vehicle</div>
-                  ${parseNotesField(b.notes,'Vehicle') !== '—' ? `<div class="receipt__row"><span class="receipt__row-label">Details</span><span class="receipt__row-val">${parseNotesField(b.notes,'Vehicle')}</span></div>` : ''}
-                  <div class="receipt__row"><span class="receipt__row-label">Type</span><span class="receipt__row-val" style="text-transform:capitalize">${b.vehicle_type || '—'}</span></div>
-                </div>
-
-                <div class="receipt__section">
-                  <div class="receipt__label">Services &amp; Add-ons</div>
-                  <div class="receipt__row"><span class="receipt__row-label">${b.service_name || 'Detail Service'}</span><span class="receipt__row-val">${b.total_amount ? '$' + (b.total_amount/100).toFixed(2) : '—'}</span></div>
-                  ${(() => { const a = parseNotesField(b.notes,'Addons'); if(a==='—'||!a) return ''; return a.split(',').map(x=>x.trim()).filter(Boolean).map(x=>`<div class="receipt__row"><span class="receipt__row-label" style="padding-left:.75rem;font-size:.8rem">+ ${x}</span><span class="receipt__row-val dim">included</span></div>`).join(''); })()}
-                </div>
-
-                <div class="receipt__section">
-                  <div class="receipt__label">Payment Breakdown</div>
-                  ${b.total_amount ? `<div class="receipt__row"><span class="receipt__row-label">Service total</span><span class="receipt__row-val">$${(b.total_amount/100).toFixed(2)}</span></div>` : ''}
-                  ${b.deposit_paid ? `<div class="receipt__row"><span class="receipt__row-label">Deposit collected</span><span class="receipt__row-val green">− $${((b.deposit_amount||5000)/100).toFixed(2)} ✓</span></div>` : `<div class="receipt__row"><span class="receipt__row-label">Deposit</span><span class="receipt__row-val" style="color:#e91e8c">Not paid</span></div>`}
-                  ${b.square_payment_id ? `<div class="receipt__row"><span class="receipt__row-label">Square ref</span><span class="receipt__row-val dim">…${b.square_payment_id.slice(-10)}</span></div>` : ''}
-                </div>
-
-                <div class="receipt__divider"></div>
-                <div class="receipt__total">
-                  <div>
-                    <div class="receipt__total-label">Balance Due at Service</div>
-                    <div style="font-size:.73rem;color:#444;margin-top:.15rem">Collected day of appointment</div>
-                  </div>
-                  <div class="receipt__total-val">
-                    ${b.total_amount ? '$' + Math.max(0, (b.total_amount - (b.deposit_amount||5000)) / 100).toFixed(2) : '—'}
-                  </div>
-                </div>
-              </div>
-            </div>
-
-            <!-- RIGHT: Edit Form -->
-            <div>
-              <div style="font-size:.72rem;color:#555;text-transform:uppercase;letter-spacing:.08em;margin-bottom:.875rem">Edit Booking</div>
+              <div style="font-size:0.8rem;color:var(--clr-muted);text-transform:uppercase;letter-spacing:.05em;margin-bottom:.875rem">Edit Booking</div>
               <div class="edit-grid">
                 <div class="edit-field">
                   <label>Service</label>
@@ -389,7 +311,7 @@ function renderTable() {
                   </select>
                 </div>
                 <div class="edit-field">
-                  <label>Service Total ($)</label>
+                  <label>Total ($)</label>
                   <input type="number" id="ef-total-${b.id}" value="${b.total_amount ? (b.total_amount/100).toFixed(0) : ''}" onclick="event.stopPropagation()" />
                 </div>
                 <div class="edit-field" style="grid-column:span 2">
@@ -397,7 +319,7 @@ function renderTable() {
                   <textarea id="ef-notes-${b.id}" onclick="event.stopPropagation()">${b.notes||''}</textarea>
                 </div>
                 <div class="edit-field" style="grid-column:span 2">
-                  <label>Admin Notes (private)</label>
+                  <label>Admin Notes</label>
                   <textarea id="ef-adminnotes-${b.id}" onclick="event.stopPropagation()">${b.admin_notes||''}</textarea>
                 </div>
               </div>
@@ -407,7 +329,18 @@ function renderTable() {
                 <span class="edit-save-msg" id="ef-msg-${b.id}"></span>
               </div>
             </div>
-
+            <!-- RIGHT: Client info -->
+            <div>
+              <div style="font-size:0.8rem;color:var(--clr-muted);text-transform:uppercase;letter-spacing:.05em;margin-bottom:.875rem">Client Info</div>
+              <div class="client-info-box">
+                <div><span>Name &nbsp;</span><strong>${clientName(b)}</strong></div>
+                <div><span>Email &nbsp;</span><strong>${clientEmail(b)}</strong></div>
+                <div><span>Phone &nbsp;</span><strong>${clientPhone(b)}</strong></div>
+                <div><span>Booked &nbsp;</span><strong>${formatDate(b.created_at?.split('T')[0])}</strong></div>
+                <div><span>Deposit &nbsp;</span><strong>${b.deposit_paid ? `Paid — $${((b.deposit_amount||0)/100).toFixed(0)}` : 'Not paid'}</strong></div>
+                ${b.square_payment_id ? `<div><span>Square ID &nbsp;</span><strong style="font-size:0.78rem">${b.square_payment_id}</strong></div>` : ''}
+              </div>
+            </div>
           </div>
         </td>
       </tr>`;
