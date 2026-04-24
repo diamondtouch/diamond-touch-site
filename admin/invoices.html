@@ -1,0 +1,223 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Invoices — Diamond Touch Admin</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:wght@300;400;500;600&family=DM+Sans:wght@300;400;500;600&display=swap" rel="stylesheet" />
+  <link rel="stylesheet" href="../css/portal.css" />
+  <style>
+    .inv-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(320px, 1fr)); gap: 1rem; margin-top: 1.5rem; }
+    .inv-card { background: #111; border: 1px solid #1e1e1e; border-radius: 12px; overflow: hidden; }
+    .inv-card.paid { border-color: #4ade8033; }
+    .inv-card.sent, .inv-card.viewed { border-color: #e91e8c33; }
+    .inv-card__header { padding: 1rem 1.25rem; border-bottom: 1px solid #1e1e1e; display: flex; justify-content: space-between; align-items: center; }
+    .inv-card__code { font-family: monospace; font-size: .9rem; font-weight: 700; color: #f5f5f5; letter-spacing: .08em; }
+    .inv-card__body { padding: 1rem 1.25rem; display: flex; flex-direction: column; gap: .5rem; font-size: .875rem; }
+    .inv-row { display: flex; justify-content: space-between; align-items: baseline; }
+    .inv-row span:first-child { color: #666; }
+    .inv-row span:last-child { color: #f5f5f5; font-weight: 500; }
+    .inv-card__footer { padding: .875rem 1.25rem; border-top: 1px solid #1a1a1a; display: flex; gap: .5rem; align-items: center; flex-wrap: wrap; }
+    .badge--inv-sent { background: #e91e8c22; color: #e91e8c; border: 1px solid #e91e8c44; border-radius: 4px; padding: 2px 8px; font-size: .72rem; font-weight: 600; }
+    .badge--inv-viewed { background: #f59e0b22; color: #f59e0b; border: 1px solid #f59e0b44; border-radius: 4px; padding: 2px 8px; font-size: .72rem; font-weight: 600; }
+    .badge--inv-paid { background: #4ade8022; color: #4ade80; border: 1px solid #4ade8044; border-radius: 4px; padding: 2px 8px; font-size: .72rem; font-weight: 600; }
+    .badge--inv-cancelled { background: #55555522; color: #888; border: 1px solid #33333344; border-radius: 4px; padding: 2px 8px; font-size: .72rem; font-weight: 600; }
+    .inv-amount { font-size: 1.25rem; font-weight: 700; color: #e91e8c; }
+    .inv-amount.paid { color: #4ade80; }
+    .stats-row { display: grid; grid-template-columns: repeat(auto-fit, minmax(140px, 1fr)); gap: 1rem; margin-bottom: 1.5rem; }
+    .stat-mini { background: #111; border: 1px solid #1e1e1e; border-radius: 10px; padding: 1rem; text-align: center; }
+    .stat-mini__val { font-size: 1.75rem; font-weight: 700; color: #f5f5f5; }
+    .stat-mini__label { font-size: .72rem; color: #666; text-transform: uppercase; letter-spacing: .08em; margin-top: .25rem; }
+  </style>
+</head>
+<body>
+<div class="portal-layout">
+  <aside class="sidebar">
+    <div class="sidebar__logo">
+      <a href="/"><img src="../assets/logo-horizontal.png" alt="Diamond Touch Detailing" /></a>
+      <div class="sidebar__badge">Admin</div>
+    </div>
+    <nav class="sidebar__nav">
+      <a href="dashboard.html" class="sidebar__link"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><rect x="3" y="3" width="7" height="7" rx="1"/><rect x="14" y="3" width="7" height="7" rx="1"/><rect x="3" y="14" width="7" height="7" rx="1"/><rect x="14" y="14" width="7" height="7" rx="1"/></svg>Dashboard</a>
+      <a href="calendar.html" class="sidebar__link"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><rect x="3" y="4" width="18" height="18" rx="2"/><path d="M16 2v4M8 2v4M3 10h18"/></svg>Calendar</a>
+      <a href="bookings.html" class="sidebar__link"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2"/></svg>Bookings</a>
+      <a href="clients.html" class="sidebar__link"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><circle cx="9" cy="7" r="4"/><path d="M3 21v-2a4 4 0 014-4h4a4 4 0 014 4v2"/></svg>Clients</a>
+      <a href="invoices.html" class="sidebar__link active"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M14 2H6a2 2 0 00-2 2v16a2 2 0 002 2h12a2 2 0 002-2V8z"/><polyline points="14 2 14 8 20 8"/><line x1="16" y1="13" x2="8" y2="13"/><line x1="16" y1="17" x2="8" y2="17"/><polyline points="10 9 9 9 8 9"/></svg>Invoices</a>
+      <a href="coupons.html" class="sidebar__link"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M20.59 13.41l-7.17 7.17a2 2 0 01-2.83 0L2 12V2h10l8.59 8.59a2 2 0 010 2.82z"/><circle cx="7" cy="7" r="1.5" fill="currentColor"/></svg>Coupons</a>
+      <a href="memberships.html" class="sidebar__link"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z"/></svg>Memberships</a>
+      <a href="availability.html" class="sidebar__link"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><circle cx="12" cy="12" r="10"/><path d="M12 6v6l4 2"/></svg>Availability</a>
+      <a href="revenue.html" class="sidebar__link"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M12 2v20M17 5H9.5a3.5 3.5 0 000 7h5a3.5 3.5 0 010 7H6"/></svg>Revenue</a>
+    </nav>
+    <div class="sidebar__footer">
+      <div class="sidebar__user"><div class="sidebar__avatar" id="userAvatar">A</div><div class="sidebar__user-info"><div class="sidebar__user-name" id="userName">Admin</div><div class="sidebar__user-email" id="userEmail"></div></div></div>
+      <button class="btn-signout" onclick="signOut()"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M17 16l4-4m0 0l-4-4m4 4H7m6 4v1a2 2 0 01-2 2H5a2 2 0 01-2-2V7a2 2 0 012-2h6a2 2 0 012 2v1"/></svg>Sign out</button>
+    </div>
+  </aside>
+
+  <main class="portal-main">
+    <div class="portal-main__inner">
+      <div class="page-header">
+        <p class="page-header__eyebrow">Admin Panel</p>
+        <h1 class="page-header__title">Invoices</h1>
+        <p class="page-header__sub" id="invCount">Loading…</p>
+      </div>
+
+      <!-- Stats -->
+      <div class="stats-row" id="statsRow"></div>
+
+      <!-- Filter pills -->
+      <div class="filter-bar" style="margin-bottom:1rem">
+        <button class="filter-pill active" onclick="setFilter('all',this)">All</button>
+        <button class="filter-pill" onclick="setFilter('sent',this)">Sent</button>
+        <button class="filter-pill" onclick="setFilter('viewed',this)">Viewed</button>
+        <button class="filter-pill" onclick="setFilter('paid',this)">Paid</button>
+      </div>
+
+      <div class="inv-grid" id="invGrid"><div class="loading-row">Loading invoices…</div></div>
+    </div>
+  </main>
+</div>
+
+<nav class="tab-bar"><div class="tab-bar__inner">
+  <a href="dashboard.html" class="tab-bar__item"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><rect x="3" y="3" width="7" height="7" rx="1"/><rect x="14" y="3" width="7" height="7" rx="1"/><rect x="3" y="14" width="7" height="7" rx="1"/><rect x="14" y="14" width="7" height="7" rx="1"/></svg>Home</a>
+  <a href="bookings.html" class="tab-bar__item"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2"/></svg>Bookings</a>
+  <a href="invoices.html" class="tab-bar__item active"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M14 2H6a2 2 0 00-2 2v16a2 2 0 002 2h12a2 2 0 002-2V8z"/><polyline points="14 2 14 8 20 8"/></svg>Invoices</a>
+  <a href="clients.html" class="tab-bar__item"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><circle cx="9" cy="7" r="4"/><path d="M3 21v-2a4 4 0 014-4h4a4 4 0 014 4v2"/></svg>Clients</a>
+  <a href="revenue.html" class="tab-bar__item"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M12 2v20M17 5H9.5a3.5 3.5 0 000 7h5a3.5 3.5 0 010 7H6"/></svg>Revenue</a>
+</div></nav>
+
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2/dist/umd/supabase.js"></script>
+<script src="../js/supabase-config.js"></script>
+<script src="../js/auth.js"></script>
+<script>
+let allInvoices = [];
+let currentFilter = 'all';
+
+(async () => {
+  const profile = await requireAdmin();
+  if (!profile) return;
+  document.getElementById('userName').textContent  = profile.full_name || 'Admin';
+  document.getElementById('userEmail').textContent = profile.email || '';
+  document.getElementById('userAvatar').textContent = (profile.full_name||'A').charAt(0).toUpperCase();
+  await load();
+})();
+
+async function load() {
+  const { data } = await _supabase
+    .from('invoices')
+    .select('*, bookings(service_name,vehicle_type,preferred_date)')
+    .order('created_at', { ascending: false });
+  allInvoices = data || [];
+  renderStats();
+  render();
+}
+
+function renderStats() {
+  const total   = allInvoices.length;
+  const paid    = allInvoices.filter(i => i.status === 'paid').length;
+  const viewed  = allInvoices.filter(i => i.status === 'viewed').length;
+  const outstanding = allInvoices.filter(i => ['sent','viewed'].includes(i.status)).reduce((s,i) => s + i.amount_cents + (i.tax_cents||0), 0);
+  const collected   = allInvoices.filter(i => i.status === 'paid').reduce((s,i) => s + (i.total_paid_cents||0), 0);
+  document.getElementById('statsRow').innerHTML = `
+    <div class="stat-mini"><div class="stat-mini__val">${total}</div><div class="stat-mini__label">Total Invoices</div></div>
+    <div class="stat-mini"><div class="stat-mini__val" style="color:#4ade80">${paid}</div><div class="stat-mini__label">Paid</div></div>
+    <div class="stat-mini"><div class="stat-mini__val" style="color:#f59e0b">${viewed}</div><div class="stat-mini__label">Viewed (unpaid)</div></div>
+    <div class="stat-mini"><div class="stat-mini__val" style="color:#e91e8c">$${(outstanding/100).toFixed(0)}</div><div class="stat-mini__label">Outstanding</div></div>
+    <div class="stat-mini"><div class="stat-mini__val" style="color:#4ade80">$${(collected/100).toFixed(0)}</div><div class="stat-mini__label">Collected</div></div>`;
+}
+
+function setFilter(f, btn) {
+  currentFilter = f;
+  document.querySelectorAll('.filter-pill').forEach(p => p.classList.remove('active'));
+  btn.classList.add('active');
+  render();
+}
+
+function fmt(cents) { return '$' + (cents/100).toFixed(2); }
+function fmtDate(d) {
+  if (!d) return '—';
+  return new Date(d+'T12:00:00').toLocaleDateString('en-US',{month:'short',day:'numeric',year:'numeric'});
+}
+
+function render() {
+  const list = currentFilter === 'all' ? allInvoices : allInvoices.filter(i => i.status === currentFilter);
+  document.getElementById('invCount').textContent = `${list.length} invoice${list.length!==1?'s':''}`;
+
+  if (!list.length) {
+    document.getElementById('invGrid').innerHTML = '<p style="color:#555;font-size:.875rem;grid-column:1/-1">No invoices found.</p>';
+    return;
+  }
+
+  document.getElementById('invGrid').innerHTML = list.map(inv => {
+    const b = inv.bookings || {};
+    const total = inv.amount_cents + (inv.tax_cents||0);
+    const badge = `<span class="badge--inv-${inv.status}">${inv.status==='viewed'?'👁 Viewed':inv.status==='paid'?'✓ Paid':inv.status==='sent'?'Sent':'Cancelled'}</span>`;
+    const tipStr = inv.tip_cents > 0 ? ` + $${(inv.tip_cents/100).toFixed(2)} tip` : '';
+    const invoiceUrl = `https://diamondtouchdetails.com/invoice.html?code=${inv.short_code}`;
+
+    return `
+      <div class="inv-card ${inv.status}">
+        <div class="inv-card__header">
+          <div class="inv-card__code">#${inv.short_code}</div>
+          ${badge}
+        </div>
+        <div class="inv-card__body">
+          <div class="inv-row"><span>To</span><span>${inv.sent_to_email||'—'}</span></div>
+          <div class="inv-row"><span>Service</span><span>${b.service_name||'—'}</span></div>
+          <div class="inv-row"><span>Date</span><span>${fmtDate(b.preferred_date)}</span></div>
+          <div class="inv-row"><span>Balance</span><span>${fmt(total)}</span></div>
+          ${inv.tip_cents > 0 ? `<div class="inv-row"><span>Tip</span><span style="color:#4ade80">${fmt(inv.tip_cents)}</span></div>` : ''}
+          ${inv.status==='paid' ? `<div class="inv-row"><span>Total collected</span><span style="color:#4ade80;font-weight:700">${fmt(inv.total_paid_cents||0)}${tipStr}</span></div>` : ''}
+          ${inv.paid_at ? `<div class="inv-row"><span>Paid at</span><span>${new Date(inv.paid_at).toLocaleString('en-US',{month:'short',day:'numeric',hour:'numeric',minute:'2-digit'})}</span></div>` : ''}
+          <div class="inv-row"><span>Sent</span><span>${fmtDate(inv.created_at?.split('T')[0])}</span></div>
+        </div>
+        <div class="inv-card__footer">
+          <a href="${invoiceUrl}" target="_blank" class="btn btn--ghost btn--sm" style="font-size:.75rem">View Invoice ↗</a>
+          <button class="btn btn--ghost btn--sm" style="font-size:.75rem" onclick="copyLink('${invoiceUrl}',this)">Copy Link</button>
+          ${inv.status!=='paid'?`<button class="btn btn--ghost btn--sm" style="font-size:.75rem;color:#4ade80;border-color:#4ade8033" onclick="markPaid('${inv.id}',this)">Mark Paid</button>`:''}
+          ${inv.status==='paid'?'':''}
+          <button class="btn btn--ghost btn--sm" style="font-size:.75rem;color:#555;border-color:#2a2a2a" onclick="resendInvoice('${inv.id}',this)">Resend</button>
+        </div>
+      </div>`;
+  }).join('');
+}
+
+function copyLink(url, btn) {
+  navigator.clipboard.writeText(url).then(() => {
+    const orig = btn.textContent;
+    btn.textContent = 'Copied ✓';
+    setTimeout(() => { btn.textContent = orig; }, 2000);
+  });
+}
+
+async function markPaid(id, btn) {
+  if (!confirm('Mark this invoice as paid manually?')) return;
+  const orig = btn.textContent;
+  btn.disabled = true; btn.textContent = 'Saving…';
+  await _supabase.from('invoices').update({ status:'paid', paid_at: new Date().toISOString() }).eq('id', id);
+  await load();
+}
+
+async function resendInvoice(id, btn) {
+  // Re-trigger the invoice email by fetching the invoice and sending again
+  const inv = allInvoices.find(i => i.id === id);
+  if (!inv) return;
+  const orig = btn.textContent;
+  btn.disabled = true; btn.textContent = 'Sending…';
+  const { data:{ session } } = await _supabase.auth.getSession();
+  // Re-send via bookings
+  if (inv.booking_id) {
+    const res = await fetch('https://fjafmptbzydqizafuaru.supabase.co/functions/v1/process-invoice', {
+      method:'POST',
+      headers:{'Content-Type':'application/json','Authorization':`Bearer ${session.access_token}`},
+      body:JSON.stringify({action:'resend',invoiceId:id,adminToken:session.access_token})
+    });
+  }
+  btn.textContent = 'Sent ✓'; btn.style.color='#4ade80';
+  setTimeout(() => { btn.textContent = orig; btn.style.color=''; btn.disabled=false; }, 3000);
+}
+</script>
+</body>
+</html>

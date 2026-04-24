@@ -45,6 +45,7 @@
         <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z"/></svg>
         Memberships
       </a>
+      <a href="invoices.html" class="sidebar__link"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M14 2H6a2 2 0 00-2 2v16a2 2 0 002 2h12a2 2 0 002-2V8z"/><polyline points="14 2 14 8 20 8"/><line x1="16" y1="13" x2="8" y2="13"/><line x1="16" y1="17" x2="8" y2="17"/><polyline points="10 9 9 9 8 9"/></svg>Invoices</a>
       <a href="coupons.html" class="sidebar__link"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M20.59 13.41l-7.17 7.17a2 2 0 01-2.83 0L2 12V2h10l8.59 8.59a2 2 0 010 2.82z"/><circle cx="7" cy="7" r="1.5" fill="currentColor"/></svg>Coupons</a>
       <a href="availability.html" class="sidebar__link">
         <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><circle cx="12" cy="12" r="10"/><path d="M12 6v6l4 2"/></svg>
@@ -425,7 +426,7 @@ function renderDetailCard(b) {
     completed: `<span class="badge badge--completed">Completed</span>`,
     cancelled: `<span class="badge badge--cancelled">Cancelled</span>`
   };
-  return `<div class="booking-detail-card" style="padding:0;background:transparent;border:none">${renderReceiptHTML(b)}<div style="padding:.5rem 0 .25rem">${actionMap[b.status]||''}</div></div>`;
+  return `<div class="booking-detail-card" style="padding:0;background:transparent;border:none">${renderReceiptHTML(b)}<div style="display:flex;gap:.5rem;flex-wrap:wrap;padding:.5rem 0 .25rem">${actionMap[b.status]||''}<button onclick="sendInvoiceFromCal('${b.id}');event.stopPropagation()" style="background:none;border:1px solid #e91e8c44;border-radius:6px;color:#e91e8c;padding:.4rem .875rem;font-size:.8rem;cursor:pointer;font-family:inherit">◆ Send Invoice</button></div></div>`;
 }
 
 function closeDayPanel() {
@@ -456,7 +457,7 @@ function openBookingModal(b) {
     <div class="modal__body" style="padding:1rem">
       ${renderReceiptHTML(b)}
     </div>
-    <div class="modal__actions">${actionMap[b.status] || ''}</div>
+    <div class="modal__actions" style="display:flex;gap:.5rem;flex-wrap:wrap">${actionMap[b.status] || ''}<button onclick="sendInvoiceFromCal('${b.id}')" style="background:none;border:1px solid #e91e8c44;border-radius:6px;color:#e91e8c;padding:.5rem 1rem;font-size:.875rem;cursor:pointer;font-family:inherit">◆ Send Invoice</button></div>
   `;
 
   document.getElementById('bookingModal').classList.add('open');
@@ -514,6 +515,31 @@ document.getElementById('weekBtn').addEventListener('click', () => {
 document.getElementById('dayOverlay').addEventListener('click', closeDayPanel);
 document.getElementById('dayPanelClose').addEventListener('click', closeDayPanel);
 document.getElementById('bookingModal').addEventListener('click', closeModal);
+
+async function sendInvoiceFromCal(id) {
+  const btn = event?.target;
+  const origText = btn?.textContent;
+  if (btn) { btn.disabled = true; btn.textContent = 'Sending…'; }
+  try {
+    const { data: { session } } = await _supabase.auth.getSession();
+    const res = await fetch('https://fjafmptbzydqizafuaru.supabase.co/functions/v1/process-invoice', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json', 'Authorization': `Bearer ${session.access_token}` },
+      body: JSON.stringify({ action: 'create', bookingId: id, adminToken: session.access_token }),
+    });
+    const data = await res.json();
+    if (!data.success) throw new Error(data.error || 'Failed');
+    if (btn) { btn.textContent = '✓ Invoice Sent'; btn.style.color = '#4ade80'; }
+    const box = document.createElement('div');
+    box.style.cssText = 'position:fixed;top:20px;right:20px;background:#111;border:1px solid #e91e8c;border-radius:10px;padding:1rem 1.25rem;z-index:9999;max-width:340px;font-size:.875rem';
+    box.innerHTML = `<div style="color:#e91e8c;font-weight:600;margin-bottom:.4rem">Invoice Sent ✓</div><div style="color:#aaa;font-size:.8rem;margin-bottom:.625rem">Client emailed the payment link.</div><a href="${data.invoiceUrl}" target="_blank" style="color:#e91e8c;word-break:break-all;font-size:.75rem">${data.invoiceUrl}</a><div style="margin-top:.75rem"><button onclick="this.closest('div[style]').remove()" style="background:none;border:1px solid #333;border-radius:6px;color:#888;padding:3px 10px;cursor:pointer;font-size:.8rem">Dismiss</button></div>`;
+    document.body.appendChild(box);
+    setTimeout(() => box.remove(), 12000);
+  } catch(err) {
+    alert('Error: ' + err.message);
+    if (btn) { btn.disabled = false; btn.textContent = origText; }
+  }
+}
 
 /* ── Helpers ────────────────────────────────────────────────── */
 function toDateStr(d) {
