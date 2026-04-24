@@ -1,0 +1,397 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Invoice — Diamond Touch Detailing</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300;0,400;0,500;0,600;1,300;1,400&family=DM+Sans:wght@300;400;500;600&display=swap" rel="stylesheet" />
+  <script src="https://web.squarecdn.com/v1/square.js"></script>
+  <style>
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+    :root {
+      --pink: #e91e8c;
+      --pink-dim: rgba(233,30,140,.12);
+      --bg: #0a0a0a;
+      --surface: #111;
+      --border: #1e1e1e;
+      --text: #f5f5f5;
+      --muted: #888;
+      --dim: #444;
+    }
+    body { background: var(--bg); color: var(--text); font-family: 'DM Sans', sans-serif; min-height: 100vh; }
+
+    /* Loading / Error screens */
+    .screen { display: none; min-height: 100vh; align-items: center; justify-content: center; padding: 2rem; text-align: center; flex-direction: column; gap: 1rem; }
+    .screen.active { display: flex; }
+
+    /* Main invoice */
+    #invoicePage { display: none; max-width: 520px; margin: 0 auto; padding: 2rem 1rem 4rem; }
+    #invoicePage.active { display: block; }
+
+    /* Header */
+    .inv-header { text-align: center; margin-bottom: 2rem; }
+    .inv-header img { height: 48px; margin-bottom: .75rem; }
+    .inv-header__sub { font-size: .75rem; letter-spacing: .2em; text-transform: uppercase; color: var(--dim); }
+
+    /* Card */
+    .inv-card { background: var(--surface); border: 1px solid var(--border); border-radius: 12px; overflow: hidden; margin-bottom: 1.25rem; }
+    .inv-card__header { padding: .875rem 1.25rem; border-bottom: 1px solid var(--border); display: flex; justify-content: space-between; align-items: center; }
+    .inv-card__title { font-size: .68rem; text-transform: uppercase; letter-spacing: .1em; color: var(--dim); }
+    .inv-card__code { font-size: .75rem; color: var(--dim); font-family: monospace; }
+    .inv-row { display: flex; justify-content: space-between; align-items: baseline; padding: .875rem 1.25rem; border-bottom: 1px solid var(--border); font-size: .9rem; gap: 1rem; }
+    .inv-row:last-child { border-bottom: none; }
+    .inv-row__label { color: var(--muted); flex-shrink: 0; }
+    .inv-row__val { color: var(--text); text-align: right; }
+
+    /* Balance */
+    .inv-balance { background: #0d0d0d; border: 1px solid var(--border); border-radius: 12px; padding: 1.5rem; text-align: center; margin-bottom: 1.25rem; }
+    .inv-balance__label { font-size: .75rem; text-transform: uppercase; letter-spacing: .1em; color: var(--dim); margin-bottom: .5rem; }
+    .inv-balance__amount { font-family: 'Cormorant Garamond', serif; font-size: 3.5rem; font-weight: 300; color: var(--pink); line-height: 1; }
+    .inv-balance__sub { font-size: .8rem; color: var(--dim); margin-top: .5rem; }
+
+    /* Tip section */
+    .tip-section { background: var(--surface); border: 1px solid var(--border); border-radius: 12px; padding: 1.5rem; margin-bottom: 1.25rem; }
+    .tip-section__heading { font-family: 'Cormorant Garamond', serif; font-size: 1.75rem; font-weight: 400; font-style: italic; color: var(--text); margin-bottom: .375rem; }
+    .tip-section__sub { font-size: .8rem; color: var(--muted); line-height: 1.55; margin-bottom: 1.25rem; }
+    .tip-grid { display: grid; grid-template-columns: 1fr 1fr; gap: .75rem; margin-bottom: .875rem; }
+    .tip-btn {
+      background: #1a1a1a; border: 2px solid #2a2a2a; border-radius: 10px;
+      color: var(--muted); cursor: pointer; padding: 1rem .5rem;
+      text-align: center; transition: all .2s; font-family: 'DM Sans', sans-serif;
+      min-height: 80px; display: flex; flex-direction: column; align-items: center; justify-content: center; gap: .2rem;
+    }
+    .tip-btn__pct { font-size: 1.5rem; font-weight: 700; line-height: 1; }
+    .tip-btn__amt { font-size: .8rem; color: var(--dim); }
+    .tip-btn.selected { background: var(--pink-dim); border-color: var(--pink); color: var(--text); box-shadow: 0 0 16px rgba(233,30,140,.2); }
+    .tip-btn.selected .tip-btn__pct { color: var(--pink); }
+    .tip-btn.selected .tip-btn__amt { color: #e91e8c99; }
+    .custom-tip-wrap { display: none; margin-top: .75rem; position: relative; }
+    .custom-tip-wrap.visible { display: block; }
+    .custom-tip-wrap::before { content: '$'; position: absolute; left: 1rem; top: 50%; transform: translateY(-50%); color: var(--muted); font-size: 1rem; }
+    .custom-tip-input { width: 100%; background: #1a1a1a; border: 2px solid var(--pink); border-radius: 8px; color: var(--text); font-size: 1.25rem; font-family: inherit; padding: .875rem 1rem .875rem 1.75rem; text-align: center; }
+    .custom-tip-input:focus { outline: none; }
+    .no-tip-link { display: block; text-align: center; font-size: .8rem; color: var(--dim); text-decoration: none; margin-top: .625rem; cursor: pointer; }
+    .no-tip-link:hover { color: var(--muted); }
+
+    /* Payment summary */
+    .pay-summary { background: #0d0d0d; border: 1px solid var(--border); border-radius: 12px; overflow: hidden; margin-bottom: 1.25rem; }
+    .pay-summary__row { display: flex; justify-content: space-between; padding: .875rem 1.25rem; border-bottom: 1px solid var(--border); font-size: .9rem; }
+    .pay-summary__row:last-child { border-bottom: none; }
+    .pay-summary__label { color: var(--muted); }
+    .pay-summary__val { color: var(--text); font-weight: 500; }
+    .pay-summary__val.green { color: #4ade80; }
+    .pay-summary__total { display: flex; justify-content: space-between; align-items: center; padding: 1.25rem; background: #0a0a0a; border-top: 2px solid var(--border); }
+    .pay-summary__total-label { font-size: 1rem; font-weight: 600; }
+    .pay-summary__total-val { font-size: 1.75rem; font-weight: 700; color: var(--pink); }
+
+    /* Square card */
+    .card-section { background: var(--surface); border: 1px solid var(--border); border-radius: 12px; padding: 1.25rem; margin-bottom: 1.25rem; }
+    .card-section__label { font-size: .75rem; text-transform: uppercase; letter-spacing: .08em; color: var(--dim); margin-bottom: 1rem; }
+    #sq-card { min-height: 90px; }
+
+    /* Pay button */
+    .pay-btn {
+      width: 100%; background: var(--pink); color: #fff; border: none;
+      border-radius: 12px; font-size: 1.125rem; font-weight: 700;
+      font-family: 'DM Sans', sans-serif; padding: 1.125rem;
+      cursor: pointer; letter-spacing: .03em;
+      transition: background .2s, transform .1s;
+      min-height: 56px;
+    }
+    .pay-btn:hover { background: #d4187e; }
+    .pay-btn:active { transform: scale(.98); }
+    .pay-btn:disabled { background: #333; color: #666; cursor: not-allowed; transform: none; }
+
+    .pay-error { color: var(--pink); font-size: .875rem; text-align: center; margin-top: .75rem; display: none; }
+    .pay-error.visible { display: block; }
+
+    /* Secure badge */
+    .secure-badge { text-align: center; font-size: .75rem; color: var(--dim); margin-top: 1rem; }
+
+    /* Footer */
+    .inv-footer { text-align: center; padding: 2rem 1rem 1rem; font-size: .75rem; color: var(--dim); }
+
+    /* Success screen */
+    .success-amount { font-family: 'Cormorant Garamond', serif; font-size: 3rem; color: #4ade80; font-weight: 300; }
+  </style>
+</head>
+<body>
+
+<!-- Loading -->
+<div class="screen active" id="loadingScreen">
+  <div style="font-size:1.25rem;color:var(--muted)">Loading invoice…</div>
+</div>
+
+<!-- Error -->
+<div class="screen" id="errorScreen">
+  <div style="font-size:2rem;margin-bottom:.5rem">✕</div>
+  <div style="font-size:1.25rem;color:var(--text);margin-bottom:.5rem" id="errorTitle">Invoice not found</div>
+  <div style="font-size:.9rem;color:var(--muted)" id="errorMsg">This invoice link may be invalid or expired.</div>
+  <a href="/" style="margin-top:1.5rem;color:var(--pink);font-size:.9rem">← Back to Diamond Touch</a>
+</div>
+
+<!-- Paid screen -->
+<div class="screen" id="paidScreen">
+  <div style="font-size:3rem;margin-bottom:.5rem">✓</div>
+  <div style="font-size:1.5rem;color:var(--text);font-weight:700;margin-bottom:.5rem">Invoice Paid!</div>
+  <div style="font-size:.9rem;color:var(--muted);margin-bottom:.5rem">Thank you — your payment was received.</div>
+  <div class="success-amount" id="paidAmount"></div>
+  <a href="/" style="margin-top:2rem;color:var(--pink);font-size:.9rem">← Back to Diamond Touch</a>
+</div>
+
+<!-- Main invoice page -->
+<div id="invoicePage">
+  <div class="inv-header">
+    <img src="assets/logo-horizontal.png" alt="Diamond Touch Detailing" />
+    <div class="inv-header__sub">◆ Invoice</div>
+  </div>
+
+  <!-- Details card -->
+  <div class="inv-card">
+    <div class="inv-card__header">
+      <div class="inv-card__title">Service Details</div>
+      <div class="inv-card__code" id="invCode"></div>
+    </div>
+    <div class="inv-row"><span class="inv-row__label">Client</span><span class="inv-row__val" id="invClient"></span></div>
+    <div class="inv-row"><span class="inv-row__label">Service</span><span class="inv-row__val" id="invService"></span></div>
+    <div class="inv-row"><span class="inv-row__label">Vehicle</span><span class="inv-row__val" id="invVehicle"></span></div>
+    <div class="inv-row"><span class="inv-row__label">Date</span><span class="inv-row__val" id="invDate"></span></div>
+  </div>
+
+  <!-- Balance -->
+  <div class="inv-balance">
+    <div class="inv-balance__label">Balance Due</div>
+    <div class="inv-balance__amount" id="invBalance">$0.00</div>
+    <div class="inv-balance__sub">Remaining after deposit</div>
+  </div>
+
+  <!-- Tip section -->
+  <div class="tip-section">
+    <div class="tip-section__heading">Add a Tip?</div>
+    <div class="tip-section__sub">Your detailer works incredibly hard to make your car look perfect. Tips go 100% directly to them and are always deeply appreciated ♥</div>
+    <div class="tip-grid">
+      <button class="tip-btn" data-pct="15" onclick="selectTip(15)">
+        <div class="tip-btn__pct">15%</div>
+        <div class="tip-btn__amt" id="tip15amt">$0.00</div>
+      </button>
+      <button class="tip-btn selected" data-pct="20" onclick="selectTip(20)">
+        <div class="tip-btn__pct">20%</div>
+        <div class="tip-btn__amt" id="tip20amt">$0.00</div>
+      </button>
+      <button class="tip-btn" data-pct="25" onclick="selectTip(25)">
+        <div class="tip-btn__pct">25%</div>
+        <div class="tip-btn__amt" id="tip25amt">$0.00</div>
+      </button>
+      <button class="tip-btn" data-pct="custom" onclick="selectTip('custom')">
+        <div class="tip-btn__pct" style="font-size:1.1rem">Custom</div>
+        <div class="tip-btn__amt" id="tipcustomamt">Enter amount</div>
+      </button>
+    </div>
+    <div class="custom-tip-wrap" id="customTipWrap">
+      <input type="number" class="custom-tip-input" id="customTipInput" placeholder="0.00" min="0" step="0.01" oninput="updateFromCustom()" />
+    </div>
+    <a class="no-tip-link" onclick="selectTip(0)">No tip this time</a>
+  </div>
+
+  <!-- Payment summary -->
+  <div class="pay-summary">
+    <div class="pay-summary__row"><span class="pay-summary__label">Service balance</span><span class="pay-summary__val" id="summaryBalance">$0.00</span></div>
+    <div class="pay-summary__row" id="summaryTaxRow" style="display:none"><span class="pay-summary__label" id="summaryTaxLabel">Sales Tax</span><span class="pay-summary__val" id="summaryTax">$0.00</span></div>
+    <div class="pay-summary__row" id="summaryTipRow"><span class="pay-summary__label">Tip (20%)</span><span class="pay-summary__val green" id="summaryTip">$0.00</span></div>
+    <div class="pay-summary__total">
+      <div class="pay-summary__total-label">Total</div>
+      <div class="pay-summary__total-val" id="summaryTotal">$0.00</div>
+    </div>
+  </div>
+
+  <!-- Card form -->
+  <div class="card-section">
+    <div class="card-section__label">Card Information</div>
+    <div id="sq-card"></div>
+  </div>
+
+  <div class="pay-error" id="payError"></div>
+
+  <button class="pay-btn" id="payBtn" onclick="handlePay()">Pay $0.00 →</button>
+
+  <div class="secure-badge">🔒 Secured by Square · 256-bit encryption</div>
+</div>
+
+<!-- Footer -->
+<div class="inv-footer">
+  ◆ Diamond Touch Detailing · Murrieta, CA · (951) 345-3195
+</div>
+
+<script>
+const SUPABASE_URL   = 'https://fjafmptbzydqizafuaru.supabase.co';
+const SUPABASE_ANON  = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImZqYWZtcHRienlkcWl6YWZ1YXJ1Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzU1MzI2NDUsImV4cCI6MjA5MTEwODY0NX0.XT_T3h9wsoPJqMTeBV0ohoCbAiDc8oFdZg7LHxoAeAM';
+const EDGE_URL       = 'https://fjafmptbzydqizafuaru.supabase.co/functions/v1/process-invoice';
+const APP_ID         = 'sq0idp--RtyLXcLrc5ZANHKmDm30Q';
+const LOCATION_ID    = 'LE683QS3VSGN7';
+
+let invoice = null;
+let balanceCents = 0;
+let taxCents = 0;
+let selectedTipPct = 20;
+let customTipCents = 0;
+let sqCard = null;
+
+function fmt(cents) { return '$' + (cents / 100).toFixed(2); }
+
+function getTipCents() {
+  if (selectedTipPct === 0) return 0;
+  if (selectedTipPct === 'custom') return customTipCents;
+  return Math.round(balanceCents * selectedTipPct / 100);
+}
+
+function updateAmounts() {
+  const tip = getTipCents();
+  const total = balanceCents + taxCents + tip;
+
+  document.getElementById('tip15amt').textContent = fmt(Math.round(balanceCents * 0.15));
+  document.getElementById('tip20amt').textContent = fmt(Math.round(balanceCents * 0.20));
+  document.getElementById('tip25amt').textContent = fmt(Math.round(balanceCents * 0.25));
+
+  document.getElementById('summaryBalance').textContent = fmt(balanceCents);
+  document.getElementById('summaryTip').textContent     = tip > 0 ? fmt(tip) : '$0.00';
+  document.getElementById('summaryTotal').textContent   = fmt(total);
+
+  const tipRow = document.getElementById('summaryTipRow');
+  const tipLabel = tipRow.querySelector('.pay-summary__label');
+  if (selectedTipPct === 0) {
+    tipRow.style.display = 'none';
+  } else {
+    tipRow.style.display = 'flex';
+    tipLabel.textContent = selectedTipPct === 'custom' ? 'Tip (custom)' : `Tip (${selectedTipPct}%)`;
+  }
+
+  document.getElementById('payBtn').textContent = `Pay ${fmt(total)} →`;
+}
+
+function selectTip(pct) {
+  selectedTipPct = pct;
+  document.querySelectorAll('.tip-btn').forEach(b => b.classList.remove('selected'));
+  if (pct !== 0) {
+    const btn = document.querySelector(`.tip-btn[data-pct="${pct}"]`);
+    if (btn) btn.classList.add('selected');
+  }
+  const customWrap = document.getElementById('customTipWrap');
+  customWrap.classList.toggle('visible', pct === 'custom');
+  if (pct !== 'custom') customTipCents = 0;
+  updateAmounts();
+}
+
+function updateFromCustom() {
+  const val = parseFloat(document.getElementById('customTipInput').value) || 0;
+  customTipCents = Math.round(val * 100);
+  document.getElementById('tipcustomamt').textContent = fmt(customTipCents);
+  updateAmounts();
+}
+
+async function handlePay() {
+  const btn = document.getElementById('payBtn');
+  const errEl = document.getElementById('payError');
+  errEl.classList.remove('visible');
+  btn.disabled = true;
+  btn.textContent = 'Processing…';
+
+  try {
+    const result = await sqCard.tokenize();
+    if (result.status !== 'OK') throw new Error(result.errors?.[0]?.message || 'Card error');
+
+    const res = await fetch(EDGE_URL, {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json', 'Authorization': `Bearer ${SUPABASE_ANON}` },
+      body: JSON.stringify({ action: 'pay', shortCode: invoice.short_code, sourceId: result.token, tipCents: getTipCents() }),
+    });
+    const data = await res.json();
+    if (!data.success) throw new Error(data.error || 'Payment failed');
+
+    // Success!
+    document.getElementById('invoicePage').classList.remove('active');
+    document.getElementById('paidAmount').textContent = fmt(data.totalCharged);
+    document.getElementById('paidScreen').classList.add('active');
+
+  } catch(err) {
+    errEl.textContent = err.message;
+    errEl.classList.add('visible');
+    btn.disabled = false;
+    updateAmounts();
+  }
+}
+
+// ── Init ────────────────────────────────────────────────────
+(async () => {
+  const code = new URLSearchParams(window.location.search).get('code');
+  if (!code) {
+    document.getElementById('loadingScreen').classList.remove('active');
+    document.getElementById('errorScreen').classList.add('active');
+    return;
+  }
+
+  const res = await fetch(`${EDGE_URL}?code=${code}`, {
+    headers: { 'Authorization': `Bearer ${SUPABASE_ANON}` }
+  });
+  const data = await res.json();
+
+  document.getElementById('loadingScreen').classList.remove('active');
+
+  if (!data.success) {
+    document.getElementById('errorTitle').textContent = 'Invoice not found';
+    document.getElementById('errorMsg').textContent = 'This invoice link may be invalid.';
+    document.getElementById('errorScreen').classList.add('active');
+    return;
+  }
+
+  invoice = data.invoice;
+  const booking = invoice.bookings || {};
+
+  if (invoice.status === 'paid') {
+    document.getElementById('paidAmount').textContent = fmt(invoice.total_paid_cents || 0);
+    document.getElementById('paidScreen').classList.add('active');
+    return;
+  }
+
+  balanceCents = invoice.amount_cents || 0;
+  taxCents     = invoice.tax_cents || 0;
+
+  // Populate fields
+  document.getElementById('invCode').textContent = `#${invoice.short_code}`;
+  document.getElementById('invClient').textContent = invoice.sent_to_email || '—';
+  document.getElementById('invService').textContent = booking.service_name || 'Detail Service';
+  document.getElementById('invVehicle').textContent = (booking.vehicle_type || '').charAt(0).toUpperCase() + (booking.vehicle_type || '').slice(1) || '—';
+  document.getElementById('invDate').textContent = booking.preferred_date
+    ? new Date(booking.preferred_date + 'T12:00:00').toLocaleDateString('en-US', { weekday:'long', month:'long', day:'numeric', year:'numeric' })
+    : '—';
+  document.getElementById('invBalance').textContent = fmt(balanceCents);
+  document.getElementById('summaryBalance').textContent = fmt(balanceCents);
+
+  if (taxCents > 0) {
+    document.getElementById('summaryTaxRow').style.display = 'flex';
+    document.getElementById('summaryTax').textContent = fmt(taxCents);
+  }
+
+  updateAmounts();
+
+  // Init Square
+  const payments = window.Square.payments(APP_ID, LOCATION_ID);
+  sqCard = await payments.card({
+    style: {
+      '.input-container': { borderColor: '#2a2a2a', borderRadius: '8px' },
+      '.input-container.is-focus': { borderColor: '#e91e8c' },
+      '.input-container.is-error': { borderColor: '#ff4444' },
+      '.message-text': { color: '#888' },
+      '.message-text.is-error': { color: '#e91e8c' },
+      input: { backgroundColor: '#1a1a1a', color: '#f5f5f5' },
+      'input::placeholder': { color: '#555' },
+    }
+  });
+  await sqCard.attach('#sq-card');
+
+  document.getElementById('invoicePage').classList.add('active');
+})();
+</script>
+</body>
+</html>

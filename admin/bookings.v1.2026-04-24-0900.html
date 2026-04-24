@@ -305,7 +305,6 @@ function renderTable() {
     if (b.status === 'pending')   rowActions.push(`<button class="btn btn--primary btn--sm" onclick="updateStatus('${b.id}','confirmed');event.stopPropagation()">Confirm</button>`);
     if (b.status === 'confirmed') rowActions.push(`<button class="btn btn--primary btn--sm" onclick="updateStatus('${b.id}','completed');event.stopPropagation()">Complete</button>`);
     if (['pending','confirmed'].includes(b.status)) rowActions.push(`<button class="btn btn--ghost btn--sm" onclick="cancelBooking('${b.id}');event.stopPropagation()">Cancel</button>`);
-    if (['confirmed','completed'].includes(b.status)) rowActions.push(`<button class="btn btn--ghost btn--sm" style="color:#e91e8c;border-color:#e91e8c44" onclick="sendInvoice('${b.id}');event.stopPropagation()">Send Invoice</button>`);
 
     return `
       <!-- Main row -->
@@ -541,37 +540,6 @@ function closeSheet() {
 }
 
 /* ── Actions ────────────────────────────────────────────────── */
-async function sendInvoice(id) {
-  const { data: { session } } = await _supabase.auth.getSession();
-  if (!session) { alert('Not logged in'); return; }
-
-  const btn = event?.target;
-  const origText = btn?.textContent;
-  if (btn) { btn.disabled = true; btn.textContent = 'Sending…'; }
-
-  try {
-    const res = await fetch('https://fjafmptbzydqizafuaru.supabase.co/functions/v1/process-invoice', {
-      method: 'POST',
-      headers: { 'Content-Type': 'application/json', 'Authorization': `Bearer ${SUPABASE_ANON_KEY}` },
-      body: JSON.stringify({ action: 'create', bookingId: id, adminToken: session.access_token }),
-    });
-    const data = await res.json();
-    if (!data.success) throw new Error(data.error || 'Failed to create invoice');
-
-    if (btn) { btn.textContent = 'Invoice Sent ✓'; btn.style.color = '#4ade80'; }
-    // Show invoice URL
-    const urlBox = document.createElement('div');
-    urlBox.style.cssText = 'position:fixed;top:20px;right:20px;background:#111;border:1px solid #e91e8c;border-radius:10px;padding:1rem 1.25rem;z-index:1000;max-width:360px;font-size:.875rem';
-    urlBox.innerHTML = `<div style="color:#e91e8c;font-weight:600;margin-bottom:.5rem">Invoice Sent! ✓</div><div style="color:#aaa;margin-bottom:.75rem;font-size:.8rem">Client has been emailed the payment link.</div><a href="${data.invoiceUrl}" target="_blank" style="color:#e91e8c;word-break:break-all;font-size:.78rem">${data.invoiceUrl}</a><div style="margin-top:.75rem"><button onclick="this.closest('div[style]').remove()" style="background:none;border:1px solid #333;border-radius:6px;color:#888;padding:4px 12px;cursor:pointer;font-size:.8rem">Dismiss</button></div>`;
-    document.body.appendChild(urlBox);
-    setTimeout(() => urlBox.remove(), 12000);
-
-  } catch(err) {
-    alert('Error: ' + err.message);
-    if (btn) { btn.disabled = false; btn.textContent = origText; }
-  }
-}
-
 async function updateStatus(id, status) {
   const { error } = await _supabase.from('bookings').update({ status }).eq('id', id);
   if (!error) await loadBookings();
