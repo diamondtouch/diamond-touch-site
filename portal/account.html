@@ -76,9 +76,15 @@
         <form id="profileForm" novalidate>
           <div class="form-row-2">
             <div class="form-group">
-              <label class="form-label" for="fieldName">Full Name</label>
-              <input class="form-input" type="text" id="fieldName" name="full_name" placeholder="Jane Doe" autocomplete="name" />
+              <label class="form-label" for="fieldFirstName">First Name</label>
+              <input class="form-input" type="text" id="fieldFirstName" name="first_name" placeholder="Jane" autocomplete="given-name" />
             </div>
+            <div class="form-group">
+              <label class="form-label" for="fieldLastName">Last Name</label>
+              <input class="form-input" type="text" id="fieldLastName" name="last_name" placeholder="Doe" autocomplete="family-name" />
+            </div>
+          </div>
+          <div class="form-row-2">
             <div class="form-group">
               <label class="form-label" for="fieldPhone">Phone</label>
               <input class="form-input" type="tel" id="fieldPhone" name="phone" placeholder="(555) 000-0000" autocomplete="tel" />
@@ -180,7 +186,9 @@
   document.getElementById('userEmail').textContent = session.user.email || '';
   document.getElementById('userAvatar').textContent = (profile.full_name || 'C').charAt(0).toUpperCase();
 
-  document.getElementById('fieldName').value    = profile.full_name || '';
+  const nameParts = (profile.full_name || '').split(' ');
+  document.getElementById('fieldFirstName').value = nameParts[0] || '';
+  document.getElementById('fieldLastName').value  = nameParts.slice(1).join(' ') || '';
   document.getElementById('fieldPhone').value   = profile.phone || '';
   document.getElementById('fieldAddress').value = profile.address || '';
   document.getElementById('fieldEmail').value = session.user.email || '';
@@ -201,7 +209,9 @@
     const alertEl = document.getElementById('profileAlert');
     alertEl.className = 'inline-alert';
 
-    const fullName = document.getElementById('fieldName').value.trim();
+    const firstName = document.getElementById('fieldFirstName').value.trim();
+    const lastName  = document.getElementById('fieldLastName').value.trim();
+    const fullName  = [firstName, lastName].filter(Boolean).join(' ');
     const phone    = document.getElementById('fieldPhone').value.trim();
     const address  = document.getElementById('fieldAddress').value.trim();
 
