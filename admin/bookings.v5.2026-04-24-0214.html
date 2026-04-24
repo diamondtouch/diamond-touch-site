@@ -1,0 +1,653 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Bookings — Diamond Touch Admin</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300;0,400;0,500;0,600;1,300;1,400&family=DM+Sans:ital,opsz,wght@0,9..40,300;0,9..40,400;0,9..40,500;0,9..40,600;1,9..40,300&display=swap" rel="stylesheet" />
+  <link rel="stylesheet" href="../css/portal.css" />
+  <link rel="apple-touch-icon" sizes="180x180" href="/apple-touch-icon.png">
+  <link rel="icon" type="image/png" sizes="32x32" href="/favicon-32x32.png">
+  <link rel="icon" type="image/png" sizes="16x16" href="/favicon-16x16.png">
+  <link rel="shortcut icon" href="/favicon.ico">
+<style>
+.row-detail { display: none; }
+.row-detail.open { display: table-row; }
+.row-detail td { padding: 0 !important; }
+.row-detail-inner { padding: 1.5rem; background: #0d0d0d; border-bottom: 2px solid #1e1e1e; display: grid; grid-template-columns: 1fr 1fr; gap: 2rem; }
+@media(max-width:768px){.row-detail-inner{grid-template-columns:1fr}}
+
+/* Mobile: hide table, show cards */
+.booking-card-mobile { display:none; background:#111; border:1px solid #1e1e1e; border-radius:10px; padding:1rem; margin-bottom:.75rem; cursor:pointer; }
+.booking-card-mobile__top { display:flex; justify-content:space-between; align-items:flex-start; margin-bottom:.5rem; }
+.booking-card-mobile__name { font-weight:600; color:#f5f5f5; font-size:.9375rem; }
+.booking-card-mobile__service { font-size:.8rem; color:#888; margin-top:.15rem; }
+.booking-card-mobile__meta { display:flex; gap:.75rem; flex-wrap:wrap; font-size:.8rem; color:#888; margin-top:.35rem; }
+.booking-card-mobile__actions { display:flex; gap:.5rem; margin-top:.875rem; flex-wrap:wrap; }
+@media(max-width:640px) {
+  .table-wrap table { display:none; }
+  .booking-card-mobile { display:block; }
+  .row-detail-inner { padding:1rem; gap:1rem; }
+  .edit-grid { grid-template-columns:1fr; }
+  .edit-field { grid-column:auto !important; }
+}
+/* Bottom sheet */
+.sheet-overlay { display:none; position:fixed; inset:0; background:#000a; z-index:500; }
+.sheet-overlay.open { display:block; }
+.sheet { position:fixed; bottom:0; left:0; right:0; background:#111; border-radius:16px 16px 0 0; z-index:501; max-height:90vh; overflow-y:auto; transform:translateY(100%); transition:transform .3s ease; padding-bottom:env(safe-area-inset-bottom,0); }
+.sheet.open { transform:translateY(0); }
+.sheet__handle { width:36px; height:4px; background:#333; border-radius:2px; margin:12px auto 0; }
+.sheet__body { padding:1rem 1rem 2rem; }
+
+/* Receipt */
+.receipt { background: #111; border: 1px solid #1e1e1e; border-radius: 10px; overflow: hidden; }
+.receipt__header { padding: 1rem 1.25rem; border-bottom: 1px solid #1e1e1e; display: flex; justify-content: space-between; align-items: center; }
+.receipt__title { font-size: .7rem; text-transform: uppercase; letter-spacing: .12em; color: #666; }
+.receipt__id { font-size: .7rem; color: #444; font-family: monospace; }
+.receipt__section { padding: .875rem 1.25rem; border-bottom: 1px solid #1a1a1a; }
+.receipt__section:last-child { border-bottom: none; }
+.receipt__label { font-size: .7rem; text-transform: uppercase; letter-spacing: .08em; color: #555; margin-bottom: .625rem; }
+.receipt__row { display: flex; justify-content: space-between; align-items: baseline; font-size: .875rem; margin-bottom: .35rem; gap: 1rem; }
+.receipt__row:last-child { margin-bottom: 0; }
+.receipt__row-label { color: #aaa; }
+.receipt__row-val { color: #f5f5f5; text-align: right; }
+.receipt__row-val.accent { color: #e91e8c; }
+.receipt__row-val.green { color: #4ade80; }
+.receipt__row-val.dim { color: #555; font-size: .8rem; }
+.receipt__divider { height: 1px; background: #1e1e1e; margin: 0; }
+.receipt__total { padding: 1rem 1.25rem; display: flex; justify-content: space-between; align-items: center; }
+.receipt__total-label { font-size: .875rem; font-weight: 600; color: #f5f5f5; }
+.receipt__total-val { font-size: 1.25rem; font-weight: 700; color: #e91e8c; }
+.receipt__badge { display: inline-flex; align-items: center; gap: .3rem; background: #e91e8c1a; color: #e91e8c; border-radius: 4px; padding: 2px 8px; font-size: .72rem; font-weight: 600; }
+
+/* Edit form */
+.edit-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 0.75rem; }
+.edit-field { display: flex; flex-direction: column; gap: 0.35rem; }
+.edit-field label { font-size: 0.72rem; color: #666; text-transform: uppercase; letter-spacing: 0.05em; }
+.edit-field input, .edit-field select, .edit-field textarea { background: #1a1a1a; border: 1px solid #2a2a2a; border-radius: 6px; color: #f5f5f5; padding: 0.5rem 0.75rem; font-size: 0.875rem; font-family: inherit; width: 100%; box-sizing: border-box; }
+.edit-field textarea { resize: vertical; min-height: 70px; }
+.edit-field input:focus, .edit-field select:focus, .edit-field textarea:focus { outline: none; border-color: #e91e8c; }
+.edit-actions { display: flex; gap: 0.5rem; margin-top: 1rem; align-items: center; flex-wrap: wrap; }
+.edit-save-msg { font-size: 0.8rem; color: #4ade80; }
+</style>
+</head>
+<body>
+
+<div class="portal-layout">
+
+  <!-- ========== SIDEBAR ========== -->
+  <aside class="sidebar">
+    <div class="sidebar__logo">
+      <a href="/"><img src="../assets/logo-horizontal.png" alt="Diamond Touch Detailing" /></a>
+      <div class="sidebar__badge">Admin</div>
+    </div>
+
+    <nav class="sidebar__nav" aria-label="Admin navigation">
+      <a href="dashboard.html" class="sidebar__link">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><rect x="3" y="3" width="7" height="7" rx="1"/><rect x="14" y="3" width="7" height="7" rx="1"/><rect x="3" y="14" width="7" height="7" rx="1"/><rect x="14" y="14" width="7" height="7" rx="1"/></svg>
+        Dashboard
+      </a>
+      <a href="calendar.html" class="sidebar__link">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><rect x="3" y="4" width="18" height="18" rx="2"/><path d="M16 2v4M8 2v4M3 10h18"/></svg>
+        Calendar
+      </a>
+      <a href="bookings.html" class="sidebar__link active">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2"/></svg>
+        Bookings
+      </a>
+      <a href="clients.html" class="sidebar__link">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><circle cx="9" cy="7" r="4"/><path d="M3 21v-2a4 4 0 014-4h4a4 4 0 014 4v2"/><circle cx="19" cy="7" r="2"/><path d="M21 21v-1a2 2 0 00-2-2h-1"/></svg>
+        Clients
+      </a>
+      <a href="memberships.html" class="sidebar__link">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z"/></svg>
+        Memberships
+      </a>
+      <a href="invoices.html" class="sidebar__link"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M14 2H6a2 2 0 00-2 2v16a2 2 0 002 2h12a2 2 0 002-2V8z"/><polyline points="14 2 14 8 20 8"/><line x1="16" y1="13" x2="8" y2="13"/><line x1="16" y1="17" x2="8" y2="17"/><polyline points="10 9 9 9 8 9"/></svg>Invoices</a>
+      <a href="coupons.html" class="sidebar__link"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M20.59 13.41l-7.17 7.17a2 2 0 01-2.83 0L2 12V2h10l8.59 8.59a2 2 0 010 2.82z"/><circle cx="7" cy="7" r="1.5" fill="currentColor"/></svg>Coupons</a>
+      <a href="availability.html" class="sidebar__link">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><circle cx="12" cy="12" r="10"/><path d="M12 6v6l4 2"/></svg>
+        Availability
+      </a>
+      <a href="revenue.html" class="sidebar__link">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M12 2v20M17 5H9.5a3.5 3.5 0 000 7h5a3.5 3.5 0 010 7H6"/></svg>
+        Revenue
+      </a>
+    </nav>
+
+    <div class="sidebar__footer">
+      <div class="sidebar__user">
+        <div class="sidebar__avatar" id="userAvatar">A</div>
+        <div class="sidebar__user-info">
+          <div class="sidebar__user-name" id="userName">Admin</div>
+          <div class="sidebar__user-email" id="userEmail"></div>
+        </div>
+      </div>
+      <button class="btn-signout" onclick="signOut()">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M17 16l4-4m0 0l-4-4m4 4H7m6 4v1a2 2 0 01-2 2H5a2 2 0 01-2-2V7a2 2 0 012-2h6a2 2 0 012 2v1"/></svg>
+        Sign out
+      </button>
+    </div>
+  </aside>
+
+  <!-- ========== MAIN ========== -->
+  <main class="portal-main">
+    <div class="portal-main__inner">
+
+      <div class="page-header">
+        <p class="page-header__eyebrow">Admin Panel</p>
+        <h1 class="page-header__title">All Bookings</h1>
+        <p class="page-header__sub" id="bookingsCount">Loading…</p>
+      </div>
+
+      <!-- Filter bar -->
+      <div class="filter-bar" role="group" aria-label="Filter bookings">
+        <button class="filter-pill active" data-filter="all"       onclick="setFilter('all',this)">All</button>
+        <button class="filter-pill"        data-filter="pending"   onclick="setFilter('pending',this)">Pending</button>
+        <button class="filter-pill"        data-filter="confirmed" onclick="setFilter('confirmed',this)">Confirmed</button>
+        <button class="filter-pill"        data-filter="completed" onclick="setFilter('completed',this)">Completed</button>
+        <button class="filter-pill"        data-filter="cancelled" onclick="setFilter('cancelled',this)">Cancelled</button>
+        <button class="filter-pill"        data-filter="today"     onclick="setFilter('today',this)">Today</button>
+        <button class="filter-pill"        data-filter="week"      onclick="setFilter('week',this)">This Week</button>
+      </div>
+
+      <!-- Search -->
+      <div class="search-row">
+        <input
+          class="search-input"
+          type="search"
+          id="searchInput"
+          placeholder="Search by client name or phone…"
+          oninput="onSearch(this.value)"
+        />
+      </div>
+
+      <!-- Bookings table -->
+      <div id="bookingsWrap">
+        <div class="empty-state" style="border:1px solid var(--clr-border);border-radius:var(--radius-lg);padding:2.5rem">
+          <div class="empty-state__title">Loading bookings…</div>
+        </div>
+      </div>
+
+    </div>
+  </main>
+
+</div>
+
+<!-- Bottom sheet for mobile booking detail -->
+<div class="sheet-overlay" id="sheetOverlay" onclick="closeSheet()"></div>
+<div class="sheet" id="detailSheet">
+  <div class="sheet__handle"></div>
+  <div class="sheet__body" id="sheetBody"></div>
+</div>
+
+<!-- ========== MOBILE TAB BAR ========== -->
+<nav class="tab-bar" aria-label="Admin mobile navigation">
+  <div class="tab-bar__inner">
+    <a href="dashboard.html" class="tab-bar__item">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><rect x="3" y="3" width="7" height="7" rx="1"/><rect x="14" y="3" width="7" height="7" rx="1"/><rect x="3" y="14" width="7" height="7" rx="1"/><rect x="14" y="14" width="7" height="7" rx="1"/></svg>
+      Home
+    </a>
+    <a href="calendar.html" class="tab-bar__item">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><rect x="3" y="4" width="18" height="18" rx="2"/><path d="M16 2v4M8 2v4M3 10h18"/></svg>
+      Calendar
+    </a>
+    <a href="bookings.html" class="tab-bar__item active">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2"/></svg>
+      Bookings
+    </a>
+    <a href="clients.html" class="tab-bar__item">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><circle cx="9" cy="7" r="4"/><path d="M3 21v-2a4 4 0 014-4h4a4 4 0 014 4v2"/></svg>
+      Clients
+    </a>
+    <a href="revenue.html" class="tab-bar__item">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M12 2v20M17 5H9.5a3.5 3.5 0 000 7h5a3.5 3.5 0 010 7H6"/></svg>
+      Revenue
+    </a>
+  </div>
+</nav>
+
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2/dist/umd/supabase.js"></script>
+<script src="../js/supabase-config.js"></script>
+<script src="../js/auth.js"></script>
+<script>
+/* ── State ──────────────────────────────────────────────────── */
+let allBookings    = [];
+let currentFilter  = 'all';
+let searchTerm     = '';
+
+/* ── Init ───────────────────────────────────────────────────── */
+(async () => {
+  const profile = await requireAdmin();
+  if (!profile) return;
+
+  document.getElementById('userName').textContent  = profile.full_name || 'Admin';
+  document.getElementById('userEmail').textContent = profile.email || '';
+  document.getElementById('userAvatar').textContent = (profile.full_name || 'A').charAt(0).toUpperCase();
+
+  await loadBookings();
+})();
+
+/* ── Data ───────────────────────────────────────────────────── */
+async function loadBookings() {
+  const [bookingsRes, invoicesRes] = await Promise.all([
+    _supabase.from('bookings').select('*, profiles(full_name, phone, email)').order('preferred_date', { ascending: false }).order('preferred_time', { ascending: true }),
+    _supabase.from('invoices').select('id,booking_id,short_code,status,amount_cents,tip_cents,total_paid_cents,paid_at').order('created_at', { ascending: false }),
+  ]);
+  allBookings = (bookingsRes.data || []).map(b => {
+    const inv = (invoicesRes.data || []).find(i => i.booking_id === b.id);
+    return { ...b, _invoice: inv || null };
+  });
+  renderTable();
+}
+
+/* ── Filter + search ────────────────────────────────────────── */
+function setFilter(filter, btn) {
+  currentFilter = filter;
+  document.querySelectorAll('.filter-pill').forEach(p => p.classList.remove('active'));
+  btn.classList.add('active');
+  renderTable();
+}
+
+function onSearch(val) {
+  searchTerm = val.toLowerCase().trim();
+  renderTable();
+}
+
+function getFiltered() {
+  const today = new Date().toISOString().split('T')[0];
+  const now   = new Date(); now.setHours(0,0,0,0);
+  const wStart = new Date(now); wStart.setDate(now.getDate() - now.getDay());
+  const wEnd   = new Date(wStart); wEnd.setDate(wStart.getDate() + 6);
+  const wStartStr = wStart.toISOString().split('T')[0];
+  const wEndStr   = wEnd.toISOString().split('T')[0];
+
+  let list = [...allBookings];
+
+  if      (currentFilter === 'today') list = list.filter(b => b.preferred_date === today);
+  else if (currentFilter === 'week')  list = list.filter(b => b.preferred_date >= wStartStr && b.preferred_date <= wEndStr);
+  else if (currentFilter !== 'all')   list = list.filter(b => b.status === currentFilter);
+
+  if (searchTerm) {
+    list = list.filter(b => {
+      const name  = (b.profiles?.full_name || '').toLowerCase();
+      const phone = (b.profiles?.phone || '').toLowerCase();
+      return name.includes(searchTerm) || phone.includes(searchTerm);
+    });
+  }
+
+  return list;
+}
+
+/* ── Render ─────────────────────────────────────────────────── */
+function renderTable() {
+  const list = getFiltered();
+  const wrap = document.getElementById('bookingsWrap');
+
+  document.getElementById('bookingsCount').textContent =
+    `${list.length} booking${list.length !== 1 ? 's' : ''}`;
+
+  if (list.length === 0) {
+    wrap.innerHTML = `
+      <div class="empty-state" style="border:1px solid var(--clr-border);border-radius:var(--radius-lg);padding:2.5rem">
+        <div class="empty-state__title">No bookings found</div>
+        <div class="empty-state__sub">Try adjusting your filters or search</div>
+      </div>`;
+    return;
+  }
+
+  const rows = list.map(b => {
+    const depositBadge = b.deposit_paid
+      ? `<span class="badge badge--deposit-paid">Paid $${((b.deposit_amount || 0) / 100).toFixed(0)}</span>`
+      : `<span class="badge badge--deposit-unpaid">Unpaid</span>`;
+
+    const rowActions = [];
+    if (b.status === 'pending')   rowActions.push(`<button class="btn btn--primary btn--sm" onclick="updateStatus('${b.id}','confirmed');event.stopPropagation()">Confirm</button>`);
+    if (b.status === 'confirmed') rowActions.push(`<button class="btn btn--primary btn--sm" onclick="updateStatus('${b.id}','completed');event.stopPropagation()">Complete</button>`);
+    if (['pending','confirmed'].includes(b.status)) rowActions.push(`<button class="btn btn--ghost btn--sm" onclick="cancelBooking('${b.id}');event.stopPropagation()">Cancel</button>`);
+    if (b.status !== 'cancelled') rowActions.push(`<button class="btn btn--ghost btn--sm" style="color:#e91e8c;border-color:#e91e8c44" onclick="sendInvoice('${b.id}');event.stopPropagation()">◆ Invoice</button>`);
+
+    return `
+      <!-- Main row -->
+      <tr class="expandable-row" onclick="toggleDetail('${b.id}')">
+        <td>${formatDate(b.preferred_date)}</td>
+        <td>${formatTime(b.preferred_time)}</td>
+        <td style="font-weight:500">${clientName(b)}</td>
+        <td>${clientPhone(b)}</td>
+        <td>${b.service_name || '—'}</td>
+        <td>${b.vehicle_type || '—'}</td>
+        <td><span class="badge badge--${b.status}">${b.status}</span></td>
+        <td>${depositBadge}</td>
+        <td>${b._invoice ? `<span style="font-size:.72rem;padding:2px 7px;border-radius:4px;font-weight:600;background:${b._invoice.status==='paid'?'#4ade8022':b._invoice.status==='viewed'?'#f59e0b22':'#e91e8c22'};color:${b._invoice.status==='paid'?'#4ade80':b._invoice.status==='viewed'?'#f59e0b':'#e91e8c'};border:1px solid ${b._invoice.status==='paid'?'#4ade8044':b._invoice.status==='viewed'?'#f59e0b44':'#e91e8c44'}">${b._invoice.status==='paid'?'✓ Paid':b._invoice.status==='viewed'?'👁 Viewed':'⬡ Sent'}</span>` : ''}</td>
+        <td>
+          <div class="row-actions">
+            ${rowActions.join('')}
+          </div>
+        </td>
+      </tr>
+      <!-- Expanded: Receipt + Edit -->
+      <tr class="row-detail" id="detail-${b.id}">
+        <td colspan="10">
+          <div class="row-detail-inner">
+
+            <!-- LEFT: Itemized Receipt -->
+            <div>
+              <div class="receipt">
+                <div class="receipt__header">
+                  <div class="receipt__title">◆ Booking Receipt</div>
+                  <div class="receipt__id">#${b.id.slice(-8).toUpperCase()}</div>
+                </div>
+
+                <div class="receipt__section">
+                  <div class="receipt__label">Client</div>
+                  <div class="receipt__row"><span class="receipt__row-label">Name</span><span class="receipt__row-val">${clientName(b)}</span></div>
+                  <div class="receipt__row"><span class="receipt__row-label">Email</span><span class="receipt__row-val">${clientEmail(b)}</span></div>
+                  <div class="receipt__row"><span class="receipt__row-label">Phone</span><span class="receipt__row-val">${clientPhone(b)}</span></div>
+                </div>
+
+                <div class="receipt__section">
+                  <div class="receipt__label">Appointment</div>
+                  <div class="receipt__row"><span class="receipt__row-label">Date</span><span class="receipt__row-val">${formatDate(b.preferred_date)}</span></div>
+                  <div class="receipt__row"><span class="receipt__row-label">Time</span><span class="receipt__row-val">${formatTime(b.preferred_time)}</span></div>
+                  ${parseNotesField(b.notes,'Address') !== '—' ? `<div class="receipt__row"><span class="receipt__row-label">Address</span><span class="receipt__row-val">${parseNotesField(b.notes,'Address')}</span></div>` : ''}
+                  <div class="receipt__row"><span class="receipt__row-label">Status</span><span class="receipt__row-val"><span class="receipt__badge">${b.status}</span></span></div>
+                  <div class="receipt__row"><span class="receipt__row-label">Booked on</span><span class="receipt__row-val dim">${formatDate(b.created_at?.split('T')[0])}</span></div>
+                </div>
+
+                <div class="receipt__section">
+                  <div class="receipt__label">Vehicle</div>
+                  ${parseNotesField(b.notes,'Vehicle') !== '—' ? `<div class="receipt__row"><span class="receipt__row-label">Details</span><span class="receipt__row-val">${parseNotesField(b.notes,'Vehicle')}</span></div>` : ''}
+                  <div class="receipt__row"><span class="receipt__row-label">Type</span><span class="receipt__row-val" style="text-transform:capitalize">${b.vehicle_type || '—'}</span></div>
+                </div>
+
+                <div class="receipt__section">
+                  <div class="receipt__label">Services &amp; Add-ons</div>
+                  <div class="receipt__row"><span class="receipt__row-label">${b.service_name || 'Detail Service'}</span><span class="receipt__row-val">${b.total_amount ? '$' + (b.total_amount/100).toFixed(2) : '—'}</span></div>
+                  ${(() => { const a = parseNotesField(b.notes,'Addons'); if(a==='—'||!a) return ''; return a.split(',').map(x=>x.trim()).filter(Boolean).map(x=>`<div class="receipt__row"><span class="receipt__row-label" style="padding-left:.75rem;font-size:.8rem">+ ${x}</span><span class="receipt__row-val dim">included</span></div>`).join(''); })()}
+                </div>
+
+                <div class="receipt__section">
+                  <div class="receipt__label">Payment Breakdown</div>
+                  ${b.total_amount ? `<div class="receipt__row"><span class="receipt__row-label">Service total</span><span class="receipt__row-val">$${(b.total_amount/100).toFixed(2)}</span></div>` : ''}
+                  ${b.deposit_paid ? `<div class="receipt__row"><span class="receipt__row-label">Deposit collected</span><span class="receipt__row-val green">− $${((b.deposit_amount||5000)/100).toFixed(2)} ✓</span></div>` : `<div class="receipt__row"><span class="receipt__row-label">Deposit</span><span class="receipt__row-val" style="color:#e91e8c">Not paid</span></div>`}
+                  ${b.square_payment_id ? `<div class="receipt__row"><span class="receipt__row-label">Square ref</span><span class="receipt__row-val dim">…${b.square_payment_id.slice(-10)}</span></div>` : ''}
+                </div>
+
+                <div class="receipt__divider"></div>
+                <div class="receipt__total">
+                  <div>
+                    <div class="receipt__total-label">Balance Due at Service</div>
+                    <div style="font-size:.73rem;color:#444;margin-top:.15rem">Collected day of appointment</div>
+                  </div>
+                  <div class="receipt__total-val">
+                    ${b.total_amount ? '$' + Math.max(0, (b.total_amount - (b.deposit_amount||5000)) / 100).toFixed(2) : '—'}
+                  </div>
+                </div>
+              </div>
+            </div>
+
+            <!-- RIGHT: Edit Form -->
+            <div>
+              <div style="font-size:.72rem;color:#555;text-transform:uppercase;letter-spacing:.08em;margin-bottom:.875rem">Edit Booking</div>
+              <div class="edit-grid">
+                <div class="edit-field">
+                  <label>Service</label>
+                  <input id="ef-service-${b.id}" value="${(b.service_name||'').replace(/"/g,'&quot;')}" onclick="event.stopPropagation()" />
+                </div>
+                <div class="edit-field">
+                  <label>Vehicle Type</label>
+                  <select id="ef-vtype-${b.id}" onclick="event.stopPropagation()">
+                    <option value="sedan" ${b.vehicle_type==='sedan'?'selected':''}>Sedan</option>
+                    <option value="suv" ${b.vehicle_type==='suv'?'selected':''}>SUV</option>
+                    <option value="truck" ${b.vehicle_type==='truck'?'selected':''}>Truck</option>
+                  </select>
+                </div>
+                <div class="edit-field">
+                  <label>Date</label>
+                  <input type="date" id="ef-date-${b.id}" value="${b.preferred_date||''}" onclick="event.stopPropagation()" />
+                </div>
+                <div class="edit-field">
+                  <label>Time</label>
+                  <input type="time" id="ef-time-${b.id}" value="${b.preferred_time||''}" onclick="event.stopPropagation()" />
+                </div>
+                <div class="edit-field">
+                  <label>Status</label>
+                  <select id="ef-status-${b.id}" onclick="event.stopPropagation()">
+                    <option value="pending" ${b.status==='pending'?'selected':''}>Pending</option>
+                    <option value="confirmed" ${b.status==='confirmed'?'selected':''}>Confirmed</option>
+                    <option value="completed" ${b.status==='completed'?'selected':''}>Completed</option>
+                    <option value="cancelled" ${b.status==='cancelled'?'selected':''}>Cancelled</option>
+                  </select>
+                </div>
+                <div class="edit-field">
+                  <label>Service Total ($)</label>
+                  <input type="number" id="ef-total-${b.id}" value="${b.total_amount ? (b.total_amount/100).toFixed(0) : ''}" onclick="event.stopPropagation()" />
+                </div>
+                <div class="edit-field" style="grid-column:span 2">
+                  <label>Client Notes</label>
+                  <textarea id="ef-notes-${b.id}" onclick="event.stopPropagation()">${b.notes||''}</textarea>
+                </div>
+                <div class="edit-field" style="grid-column:span 2">
+                  <label>Admin Notes (private)</label>
+                  <textarea id="ef-adminnotes-${b.id}" onclick="event.stopPropagation()">${b.admin_notes||''}</textarea>
+                </div>
+              </div>
+              <div class="edit-actions">
+                <button class="btn btn--primary btn--sm" onclick="saveEdit('${b.id}');event.stopPropagation()">Save Changes</button>
+                <button class="btn btn--ghost btn--sm" onclick="toggleDetail('${b.id}');event.stopPropagation()">Close</button>
+                <span class="edit-save-msg" id="ef-msg-${b.id}"></span>
+              </div>
+            </div>
+
+          </div>
+        </td>
+      </tr>`;
+  }).join('');
+
+  // Mobile cards
+  const mobileCards = list.map(b => {
+    const rowActions = [];
+    if (b.status === 'pending')   rowActions.push(`<button class="btn btn--primary btn--sm" onclick="updateStatus('${b.id}','confirmed');event.stopPropagation()">Confirm</button>`);
+    if (b.status === 'confirmed') rowActions.push(`<button class="btn btn--primary btn--sm" onclick="updateStatus('${b.id}','completed');event.stopPropagation()">Complete</button>`);
+    if (['pending','confirmed'].includes(b.status)) rowActions.push(`<button class="btn btn--ghost btn--sm" onclick="cancelBooking('${b.id}');event.stopPropagation()">Cancel</button>`);
+    return `
+      <div class="booking-card-mobile" onclick="openSheet('${b.id}')">
+        <div class="booking-card-mobile__top">
+          <div>
+            <div class="booking-card-mobile__name">${clientName(b)}</div>
+            <div class="booking-card-mobile__service">${b.service_name || '—'} &middot; ${b.vehicle_type || ''}</div>
+          </div>
+          <span class="badge badge--${b.status}">${b.status}</span>
+        </div>
+        <div class="booking-card-mobile__meta">
+          <span>&#128197; ${formatDate(b.preferred_date)}</span>
+          <span>&#128336; ${formatTime(b.preferred_time)}</span>
+          <span>${b.deposit_paid ? '✓ $'+((b.deposit_amount||5000)/100).toFixed(0)+' paid' : 'No deposit'}</span>
+          ${b._invoice ? `<span style="color:${b._invoice.status==='paid'?'#4ade80':b._invoice.status==='viewed'?'#f59e0b':'#e91e8c'}">${b._invoice.status==='paid'?'✓ Invoice Paid':b._invoice.status==='viewed'?'👁 Invoice Viewed':'⬡ Invoice Sent'}</span>` : ''}
+        </div>
+        <div class="booking-card-mobile__actions" onclick="event.stopPropagation()">${rowActions.join('')}</div>
+      </div>`;
+  }).join('');
+
+  wrap.innerHTML = `
+    <!-- Mobile cards (hidden on desktop) -->
+    <div id="mobileCards">${mobileCards}</div>
+    <!-- Desktop table (hidden on mobile) -->
+    <div class="table-wrap">
+      <table>
+        <thead>
+          <tr>
+            <th>Date</th><th>Time</th><th>Client</th><th>Phone</th><th>Service</th><th>Vehicle</th><th>Status</th><th>Deposit</th><th>Invoice</th><th>Actions</th>
+          </tr>
+        </thead>
+        <tbody>${rows}</tbody>
+      </table>
+    </div>`;
+}
+
+/* ── Row toggle (desktop) ───────────────────────────────────── */
+function toggleDetail(id) {
+  const detail = document.getElementById(`detail-${id}`);
+  const wasOpen = detail.classList.contains('open');
+  document.querySelectorAll('.row-detail.open').forEach(r => r.classList.remove('open'));
+  if (!wasOpen) detail.classList.add('open');
+}
+
+/* ── Bottom sheet (mobile detail) ──────────────────────────── */
+function openSheet(id) {
+  const b = allBookings.find(x => x.id === id);
+  if (!b) return;
+  const rowActions = [];
+  if (b.status === 'pending')   rowActions.push(`<button class="btn btn--primary" style="width:100%" onclick="updateStatus('${b.id}','confirmed');closeSheet()">Confirm Booking</button>`);
+  if (b.status === 'confirmed') rowActions.push(`<button class="btn btn--primary" style="width:100%" onclick="updateStatus('${b.id}','completed');closeSheet()">Mark Complete</button>`);
+  if (['pending','confirmed'].includes(b.status)) rowActions.push(`<button class="btn btn--ghost" style="width:100%" onclick="cancelBooking('${b.id}');closeSheet()">Cancel Booking</button>`);
+
+  const name    = clientName(b);
+  const email   = clientEmail(b);
+  const phone   = clientPhone(b);
+  const address = parseNotesField(b.notes,'Address');
+  const vehicle = parseNotesField(b.notes,'Vehicle');
+  const addons  = parseNotesField(b.notes,'Addons');
+  const dep     = (b.deposit_amount||5000)/100;
+  const tot     = b.total_amount ? b.total_amount/100 : null;
+  const bal     = tot ? Math.max(0,tot-dep) : null;
+  const R = (lbl,val,c='') => `<div style="display:flex;justify-content:space-between;align-items:baseline;padding:9px 0;border-bottom:1px solid #1a1a1a;font-size:14px;gap:1rem"><span style="color:#666;flex-shrink:0">${lbl}</span><span style="color:${c==='g'?'#4ade80':c==='p'?'#e91e8c':'#f5f5f5'};text-align:right;word-break:break-word">${val}</span></div>`;
+  const SH = (t) => `<div style="font-size:10px;text-transform:uppercase;letter-spacing:.1em;color:#555;padding:14px 0 4px;margin-top:4px">${t}</div>`;
+
+  document.getElementById('sheetBody').innerHTML = `
+    <div style="display:flex;justify-content:space-between;align-items:flex-start;margin-bottom:1.25rem">
+      <div><div style="font-size:1.125rem;font-weight:700;color:#f5f5f5">${name}</div><div style="font-size:.8rem;color:#888;margin-top:3px">${b.service_name||''} · ${b.vehicle_type||''}</div></div>
+      <div style="display:flex;flex-direction:column;align-items:flex-end;gap:.35rem">
+        <span class="badge badge--${b.status}">${b.status}</span>
+        ${b._invoice ? `<span style="font-size:.72rem;padding:2px 7px;border-radius:4px;font-weight:600;background:${b._invoice.status==='paid'?'#4ade8022':b._invoice.status==='viewed'?'#f59e0b22':'#e91e8c22'};color:${b._invoice.status==='paid'?'#4ade80':b._invoice.status==='viewed'?'#f59e0b':'#e91e8c'};border:1px solid ${b._invoice.status==='paid'?'#4ade8044':b._invoice.status==='viewed'?'#f59e0b44':'#e91e8c44'}">${b._invoice.status==='paid'?'✓ Invoice Paid':b._invoice.status==='viewed'?'👁 Invoice Viewed':'⬡ Invoice Sent'}</span>` : ''}
+      </div>
+    </div>
+    ${SH('Client')}${R('Phone',phone)}${R('Email',email)}
+    ${SH('Appointment')}${R('Date',formatDate(b.preferred_date))}${R('Time',formatTime(b.preferred_time))}${address?R('Address',address):''}
+    ${vehicle?SH('Vehicle')+R('Details',vehicle)+R('Type',(b.vehicle_type||'').charAt(0).toUpperCase()+(b.vehicle_type||'').slice(1)):''}
+    ${SH('Services')}${R(b.service_name||'Service',tot?'$'+tot.toFixed(2):'—')}${addons?addons.split(',').map(a=>`<div style="display:flex;justify-content:space-between;padding:7px 0 7px 12px;font-size:13px;color:#777;border-bottom:1px solid #1a1a1a"><span>+ ${a.trim()}</span><span>Add-on</span></div>`).join(''):''}
+    ${SH('Payment')}${tot?R('Service total','$'+tot.toFixed(2)):''}${R('Deposit collected','− $'+dep.toFixed(2)+' ✓','g')}${b.square_payment_id?R('Square ref','…'+b.square_payment_id.slice(-8)):''}
+    <div style="display:flex;justify-content:space-between;align-items:center;padding:16px 0;margin-top:.5rem;border-top:2px solid #1e1e1e">
+      <div><div style="font-size:15px;font-weight:700;color:#f5f5f5">Balance Due at Service</div><div style="font-size:11px;color:#444;margin-top:2px">Collected day of appointment</div></div>
+      <div style="font-size:22px;font-weight:700;color:#e91e8c">${bal!==null?'$'+bal.toFixed(2):'—'}</div>
+    </div>
+    ${rowActions.length ? `<div style="display:flex;flex-direction:column;gap:.5rem;margin-top:.75rem">${rowActions.join('')}</div>` : ''}
+    <div style="text-align:center;margin-top:1rem"><button class="btn btn--ghost btn--sm" onclick="closeSheet()" style="width:100%">Close</button></div>
+  `;
+  document.getElementById('sheetOverlay').classList.add('open');
+  setTimeout(() => document.getElementById('detailSheet').classList.add('open'), 10);
+  document.body.style.overflow = 'hidden';
+}
+
+function closeSheet() {
+  document.getElementById('detailSheet').classList.remove('open');
+  document.getElementById('sheetOverlay').classList.remove('open');
+  document.body.style.overflow = '';
+}
+
+/* ── Actions ────────────────────────────────────────────────── */
+async function sendInvoice(id) {
+  const { data: { session } } = await _supabase.auth.getSession();
+  if (!session) { alert('Not logged in'); return; }
+
+  const btn = event?.target;
+  const origText = btn?.textContent;
+  if (btn) { btn.disabled = true; btn.textContent = 'Sending…'; }
+
+  try {
+    const res = await fetch('https://fjafmptbzydqizafuaru.supabase.co/functions/v1/process-invoice', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json', 'Authorization': `Bearer ${session.access_token}` },
+      body: JSON.stringify({ action: 'create', bookingId: id, adminToken: session.access_token }),
+    });
+    const data = await res.json();
+    if (!data.success) throw new Error(data.error || 'Failed to create invoice');
+
+    if (btn) { btn.textContent = 'Invoice Sent ✓'; btn.style.color = '#4ade80'; }
+    // Show invoice URL
+    const urlBox = document.createElement('div');
+    urlBox.style.cssText = 'position:fixed;top:20px;right:20px;background:#111;border:1px solid #e91e8c;border-radius:10px;padding:1rem 1.25rem;z-index:1000;max-width:360px;font-size:.875rem';
+    urlBox.innerHTML = `<div style="color:#e91e8c;font-weight:600;margin-bottom:.5rem">Invoice Sent! ✓</div><div style="color:#aaa;margin-bottom:.75rem;font-size:.8rem">Client has been emailed the payment link.</div><a href="${data.invoiceUrl}" target="_blank" style="color:#e91e8c;word-break:break-all;font-size:.78rem">${data.invoiceUrl}</a><div style="margin-top:.75rem"><button onclick="this.closest('div[style]').remove()" style="background:none;border:1px solid #333;border-radius:6px;color:#888;padding:4px 12px;cursor:pointer;font-size:.8rem">Dismiss</button></div>`;
+    document.body.appendChild(urlBox);
+    setTimeout(() => urlBox.remove(), 12000);
+
+  } catch(err) {
+    alert('Error: ' + err.message);
+    if (btn) { btn.disabled = false; btn.textContent = origText; }
+  }
+}
+
+async function updateStatus(id, status) {
+  const { error } = await _supabase.from('bookings').update({ status }).eq('id', id);
+  if (!error) await loadBookings();
+}
+
+async function cancelBooking(id) {
+  if (!confirm('Cancel this booking?')) return;
+  await updateStatus(id, 'cancelled');
+}
+
+async function saveNote(id) {
+  const textarea = document.getElementById(`admin-note-${id}`);
+  if (!textarea) return;
+  const admin_notes = textarea.value;
+  const { error } = await _supabase.from('bookings').update({ admin_notes }).eq('id', id);
+
+  const btn = event?.target;
+  if (btn) {
+    const orig = btn.textContent;
+    btn.textContent = error ? 'Error!' : 'Saved!';
+    setTimeout(() => { btn.textContent = orig; }, 1500);
+  }
+}
+
+/* ── Client info helpers (parse from notes) ─────────────────── */
+function parseNotesField(notes, key) {
+  if (!notes) return '—';
+  const parts = notes.split('|').map(p => p.trim());
+  const match = parts.find(p => p.startsWith(key + ':'));
+  return match ? match.replace(key + ':', '').trim() : '—';
+}
+function clientName(b)  { return b.profiles?.full_name  || parseNotesField(b.notes, 'Customer') || '—'; }
+function clientEmail(b) { return b.profiles?.email       || parseNotesField(b.notes, 'Email')    || '—'; }
+function clientPhone(b) { return b.profiles?.phone       || parseNotesField(b.notes, 'Phone')    || '—'; }
+
+/* ── Save full edit ─────────────────────────────────────────── */
+async function saveEdit(id) {
+  const get = field => document.getElementById(`ef-${field}-${id}`)?.value;
+  const totalDollars = parseFloat(get('total'));
+  const updates = {
+    service_name:   get('service'),
+    vehicle_type:   get('vtype'),
+    preferred_date: get('date') || null,
+    preferred_time: get('time') || null,
+    status:         get('status'),
+    notes:          get('notes'),
+    admin_notes:    get('adminnotes'),
+    total_amount:   isNaN(totalDollars) ? null : Math.round(totalDollars * 100),
+  };
+  const msgEl = document.getElementById(`ef-msg-${id}`);
+  const { error } = await _supabase.from('bookings').update(updates).eq('id', id);
+  if (error) {
+    msgEl.textContent = 'Error saving!';
+    msgEl.style.color = '#e91e8c';
+  } else {
+    msgEl.textContent = 'Saved ✓';
+    msgEl.style.color = '#4ade80';
+    setTimeout(() => { msgEl.textContent = ''; }, 2000);
+    await loadBookings();
+  }
+}
+
+/* ── Helpers ────────────────────────────────────────────────── */
+function formatTime(t) {
+  if (!t) return '—';
+  const [h, m] = t.split(':');
+  const hour = parseInt(h);
+  return `${hour > 12 ? hour - 12 : hour || 12}:${m} ${hour >= 12 ? 'PM' : 'AM'}`;
+}
+</script>
+</body>
+</html>

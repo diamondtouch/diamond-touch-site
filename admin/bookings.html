@@ -13,14 +13,71 @@
   <link rel="icon" type="image/png" sizes="16x16" href="/favicon-16x16.png">
   <link rel="shortcut icon" href="/favicon.ico">
 <style>
+/* ── View switch ─────────────────────────────────────────────── */
+.view-switch {
+  display: flex;
+  gap: .375rem;
+  margin-bottom: 1.5rem;
+  background: #111;
+  border: 1px solid #1e1e1e;
+  border-radius: 10px;
+  padding: .3rem;
+  width: fit-content;
+}
+.view-switch-btn {
+  display: flex;
+  align-items: center;
+  gap: .4rem;
+  padding: .45rem 1rem;
+  border-radius: 7px;
+  border: none;
+  background: none;
+  color: #666;
+  font-family: inherit;
+  font-size: .875rem;
+  font-weight: 500;
+  cursor: pointer;
+  transition: background .15s, color .15s;
+  white-space: nowrap;
+}
+.view-switch-btn.active {
+  background: #e91e8c;
+  color: #fff;
+}
+.view-switch-btn:not(.active):hover { background: #1a1a1a; color: #ccc; }
+
+/* ── List view: row detail ───────────────────────────────────── */
 .row-detail { display: none; }
 .row-detail.open { display: table-row; }
 .row-detail td { padding: 0 !important; }
-.row-detail-inner { padding: 1.5rem; background: #0d0d0d; border-bottom: 2px solid #1e1e1e; display: grid; grid-template-columns: 1fr 1fr; gap: 2rem; }
+.row-detail-inner {
+  padding: 1.5rem;
+  background: #0d0d0d;
+  border-bottom: 2px solid #1e1e1e;
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 2rem;
+}
 @media(max-width:768px){.row-detail-inner{grid-template-columns:1fr}}
 
-/* Mobile: hide table, show cards */
-.booking-card-mobile { display:none; background:#111; border:1px solid #1e1e1e; border-radius:10px; padding:1rem; margin-bottom:.75rem; cursor:pointer; }
+/* ── List view: row actions (wrapping) ───────────────────────── */
+.row-actions {
+  display: flex;
+  flex-wrap: wrap;
+  gap: .375rem;
+  align-items: center;
+}
+
+/* ── Mobile: hide table, show cards ─────────────────────────── */
+.booking-card-mobile {
+  display: none;
+  background: #111;
+  border: 1px solid #1e1e1e;
+  border-radius: 10px;
+  padding: 1rem;
+  margin-bottom: .75rem;
+  cursor: pointer;
+}
 .booking-card-mobile__top { display:flex; justify-content:space-between; align-items:flex-start; margin-bottom:.5rem; }
 .booking-card-mobile__name { font-weight:600; color:#f5f5f5; font-size:.9375rem; }
 .booking-card-mobile__service { font-size:.8rem; color:#888; margin-top:.15rem; }
@@ -33,44 +90,90 @@
   .edit-grid { grid-template-columns:1fr; }
   .edit-field { grid-column:auto !important; }
 }
-/* Bottom sheet */
+
+/* ── Bottom sheet ────────────────────────────────────────────── */
 .sheet-overlay { display:none; position:fixed; inset:0; background:#000a; z-index:500; }
 .sheet-overlay.open { display:block; }
-.sheet { position:fixed; bottom:0; left:0; right:0; background:#111; border-radius:16px 16px 0 0; z-index:501; max-height:90vh; overflow-y:auto; transform:translateY(100%); transition:transform .3s ease; padding-bottom:env(safe-area-inset-bottom,0); }
-.sheet.open { transform:translateY(0); }
+.sheet {
+  position: fixed;
+  bottom: 0; left: 0; right: 0;
+  background: #111;
+  border-radius: 16px 16px 0 0;
+  z-index: 501;
+  max-height: 90vh;
+  overflow-y: auto;
+  transform: translateY(100%);
+  transition: transform .3s ease;
+  padding-bottom: env(safe-area-inset-bottom,0);
+}
+.sheet.open { transform: translateY(0); }
 .sheet__handle { width:36px; height:4px; background:#333; border-radius:2px; margin:12px auto 0; }
 .sheet__body { padding:1rem 1rem 2rem; }
 
-/* Receipt */
-.receipt { background: #111; border: 1px solid #1e1e1e; border-radius: 10px; overflow: hidden; }
-.receipt__header { padding: 1rem 1.25rem; border-bottom: 1px solid #1e1e1e; display: flex; justify-content: space-between; align-items: center; }
-.receipt__title { font-size: .7rem; text-transform: uppercase; letter-spacing: .12em; color: #666; }
-.receipt__id { font-size: .7rem; color: #444; font-family: monospace; }
-.receipt__section { padding: .875rem 1.25rem; border-bottom: 1px solid #1a1a1a; }
-.receipt__section:last-child { border-bottom: none; }
-.receipt__label { font-size: .7rem; text-transform: uppercase; letter-spacing: .08em; color: #555; margin-bottom: .625rem; }
-.receipt__row { display: flex; justify-content: space-between; align-items: baseline; font-size: .875rem; margin-bottom: .35rem; gap: 1rem; }
-.receipt__row:last-child { margin-bottom: 0; }
-.receipt__row-label { color: #aaa; }
-.receipt__row-val { color: #f5f5f5; text-align: right; }
-.receipt__row-val.accent { color: #e91e8c; }
-.receipt__row-val.green { color: #4ade80; }
-.receipt__row-val.dim { color: #555; font-size: .8rem; }
-.receipt__divider { height: 1px; background: #1e1e1e; margin: 0; }
-.receipt__total { padding: 1rem 1.25rem; display: flex; justify-content: space-between; align-items: center; }
-.receipt__total-label { font-size: .875rem; font-weight: 600; color: #f5f5f5; }
-.receipt__total-val { font-size: 1.25rem; font-weight: 700; color: #e91e8c; }
-.receipt__badge { display: inline-flex; align-items: center; gap: .3rem; background: #e91e8c1a; color: #e91e8c; border-radius: 4px; padding: 2px 8px; font-size: .72rem; font-weight: 600; }
+/* ── Receipt ─────────────────────────────────────────────────── */
+.receipt { background:#111; border:1px solid #1e1e1e; border-radius:10px; overflow:hidden; }
+.receipt__header { padding:1rem 1.25rem; border-bottom:1px solid #1e1e1e; display:flex; justify-content:space-between; align-items:center; }
+.receipt__title { font-size:.7rem; text-transform:uppercase; letter-spacing:.12em; color:#666; }
+.receipt__id { font-size:.7rem; color:#444; font-family:monospace; }
+.receipt__section { padding:.875rem 1.25rem; border-bottom:1px solid #1a1a1a; }
+.receipt__section:last-child { border-bottom:none; }
+.receipt__label { font-size:.7rem; text-transform:uppercase; letter-spacing:.08em; color:#555; margin-bottom:.625rem; }
+.receipt__row { display:flex; justify-content:space-between; align-items:baseline; font-size:.875rem; margin-bottom:.35rem; gap:1rem; }
+.receipt__row:last-child { margin-bottom:0; }
+.receipt__row-label { color:#aaa; }
+.receipt__row-val { color:#f5f5f5; text-align:right; }
+.receipt__row-val.accent { color:#e91e8c; }
+.receipt__row-val.green { color:#4ade80; }
+.receipt__row-val.dim { color:#555; font-size:.8rem; }
+.receipt__divider { height:1px; background:#1e1e1e; margin:0; }
+.receipt__total { padding:1rem 1.25rem; display:flex; justify-content:space-between; align-items:center; }
+.receipt__total-label { font-size:.875rem; font-weight:600; color:#f5f5f5; }
+.receipt__total-val { font-size:1.25rem; font-weight:700; color:#e91e8c; }
+.receipt__badge { display:inline-flex; align-items:center; gap:.3rem; background:#e91e8c1a; color:#e91e8c; border-radius:4px; padding:2px 8px; font-size:.72rem; font-weight:600; }
 
-/* Edit form */
-.edit-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 0.75rem; }
-.edit-field { display: flex; flex-direction: column; gap: 0.35rem; }
-.edit-field label { font-size: 0.72rem; color: #666; text-transform: uppercase; letter-spacing: 0.05em; }
-.edit-field input, .edit-field select, .edit-field textarea { background: #1a1a1a; border: 1px solid #2a2a2a; border-radius: 6px; color: #f5f5f5; padding: 0.5rem 0.75rem; font-size: 0.875rem; font-family: inherit; width: 100%; box-sizing: border-box; }
-.edit-field textarea { resize: vertical; min-height: 70px; }
-.edit-field input:focus, .edit-field select:focus, .edit-field textarea:focus { outline: none; border-color: #e91e8c; }
-.edit-actions { display: flex; gap: 0.5rem; margin-top: 1rem; align-items: center; flex-wrap: wrap; }
-.edit-save-msg { font-size: 0.8rem; color: #4ade80; }
+/* ── Edit form ───────────────────────────────────────────────── */
+.edit-grid { display:grid; grid-template-columns:1fr 1fr; gap:.75rem; }
+.edit-field { display:flex; flex-direction:column; gap:.35rem; }
+.edit-field label { font-size:.72rem; color:#666; text-transform:uppercase; letter-spacing:.05em; }
+.edit-field input, .edit-field select, .edit-field textarea {
+  background:#1a1a1a; border:1px solid #2a2a2a; border-radius:6px;
+  color:#f5f5f5; padding:.5rem .75rem; font-size:.875rem; font-family:inherit;
+  width:100%; box-sizing:border-box;
+}
+.edit-field textarea { resize:vertical; min-height:70px; }
+.edit-field input:focus, .edit-field select:focus, .edit-field textarea:focus { outline:none; border-color:#e91e8c; }
+.edit-actions { display:flex; gap:.5rem; margin-top:1rem; align-items:center; flex-wrap:wrap; }
+.edit-save-msg { font-size:.8rem; color:#4ade80; }
+
+/* ── Invoice badge helper ────────────────────────────────────── */
+.inv-badge {
+  display: inline-flex;
+  align-items: center;
+  gap: .2rem;
+  font-size: .72rem;
+  padding: 2px 7px;
+  border-radius: 4px;
+  font-weight: 600;
+  white-space: nowrap;
+}
+.inv-badge--sent   { background:#e91e8c22; color:#e91e8c; border:1px solid #e91e8c44; }
+.inv-badge--viewed { background:#f59e0b22; color:#f59e0b; border:1px solid #f59e0b44; }
+.inv-badge--paid   { background:#4ade8022; color:#4ade80; border:1px solid #4ade8044; }
+
+/* ── Toast notification ──────────────────────────────────────── */
+.toast {
+  position: fixed;
+  top: 20px; right: 20px;
+  background: #111;
+  border: 1px solid #e91e8c;
+  border-radius: 10px;
+  padding: 1rem 1.25rem;
+  z-index: 9999;
+  max-width: 360px;
+  font-size: .875rem;
+  animation: toastIn .2s ease;
+}
+@keyframes toastIn { from { opacity:0; transform:translateY(-8px) } to { opacity:1; transform:translateY(0) } }
 </style>
 </head>
 <body>
@@ -89,11 +192,11 @@
         <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><rect x="3" y="3" width="7" height="7" rx="1"/><rect x="14" y="3" width="7" height="7" rx="1"/><rect x="3" y="14" width="7" height="7" rx="1"/><rect x="14" y="14" width="7" height="7" rx="1"/></svg>
         Dashboard
       </a>
-      <a href="calendar.html" class="sidebar__link">
+      <a href="bookings.html?view=calendar" class="sidebar__link" id="navCalendar">
         <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><rect x="3" y="4" width="18" height="18" rx="2"/><path d="M16 2v4M8 2v4M3 10h18"/></svg>
         Calendar
       </a>
-      <a href="bookings.html" class="sidebar__link active">
+      <a href="bookings.html" class="sidebar__link active" id="navBookings">
         <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2"/></svg>
         Bookings
       </a>
@@ -105,8 +208,14 @@
         <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z"/></svg>
         Memberships
       </a>
-      <a href="invoices.html" class="sidebar__link"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M14 2H6a2 2 0 00-2 2v16a2 2 0 002 2h12a2 2 0 002-2V8z"/><polyline points="14 2 14 8 20 8"/><line x1="16" y1="13" x2="8" y2="13"/><line x1="16" y1="17" x2="8" y2="17"/><polyline points="10 9 9 9 8 9"/></svg>Invoices</a>
-      <a href="coupons.html" class="sidebar__link"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M20.59 13.41l-7.17 7.17a2 2 0 01-2.83 0L2 12V2h10l8.59 8.59a2 2 0 010 2.82z"/><circle cx="7" cy="7" r="1.5" fill="currentColor"/></svg>Coupons</a>
+      <a href="invoices.html" class="sidebar__link">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M14 2H6a2 2 0 00-2 2v16a2 2 0 002 2h12a2 2 0 002-2V8z"/><polyline points="14 2 14 8 20 8"/><line x1="16" y1="13" x2="8" y2="13"/><line x1="16" y1="17" x2="8" y2="17"/><polyline points="10 9 9 9 8 9"/></svg>
+        Invoices
+      </a>
+      <a href="coupons.html" class="sidebar__link">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M20.59 13.41l-7.17 7.17a2 2 0 01-2.83 0L2 12V2h10l8.59 8.59a2 2 0 010 2.82z"/><circle cx="7" cy="7" r="1.5" fill="currentColor"/></svg>
+        Coupons
+      </a>
       <a href="availability.html" class="sidebar__link">
         <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><circle cx="12" cy="12" r="10"/><path d="M12 6v6l4 2"/></svg>
         Availability
@@ -138,49 +247,125 @@
 
       <div class="page-header">
         <p class="page-header__eyebrow">Admin Panel</p>
-        <h1 class="page-header__title">All Bookings</h1>
-        <p class="page-header__sub" id="bookingsCount">Loading…</p>
+        <h1 class="page-header__title" id="pageTitle">All Bookings</h1>
+        <p class="page-header__sub" id="pageSubtitle">Loading…</p>
       </div>
 
-      <!-- Filter bar -->
-      <div class="filter-bar" role="group" aria-label="Filter bookings">
-        <button class="filter-pill active" data-filter="all"       onclick="setFilter('all',this)">All</button>
-        <button class="filter-pill"        data-filter="pending"   onclick="setFilter('pending',this)">Pending</button>
-        <button class="filter-pill"        data-filter="confirmed" onclick="setFilter('confirmed',this)">Confirmed</button>
-        <button class="filter-pill"        data-filter="completed" onclick="setFilter('completed',this)">Completed</button>
-        <button class="filter-pill"        data-filter="cancelled" onclick="setFilter('cancelled',this)">Cancelled</button>
-        <button class="filter-pill"        data-filter="today"     onclick="setFilter('today',this)">Today</button>
-        <button class="filter-pill"        data-filter="week"      onclick="setFilter('week',this)">This Week</button>
+      <!-- ── View toggle ── -->
+      <div class="view-switch">
+        <button class="view-switch-btn active" id="btnListView" onclick="switchView('list')">📋 List</button>
+        <button class="view-switch-btn" id="btnCalendarView" onclick="switchView('calendar')">📅 Calendar</button>
       </div>
 
-      <!-- Search -->
-      <div class="search-row">
-        <input
-          class="search-input"
-          type="search"
-          id="searchInput"
-          placeholder="Search by client name or phone…"
-          oninput="onSearch(this.value)"
-        />
-      </div>
+      <!-- ══════════════════════════════════════════════════════ -->
+      <!-- LIST VIEW                                            -->
+      <!-- ══════════════════════════════════════════════════════ -->
+      <div id="listView">
 
-      <!-- Bookings table -->
-      <div id="bookingsWrap">
-        <div class="empty-state" style="border:1px solid var(--clr-border);border-radius:var(--radius-lg);padding:2.5rem">
-          <div class="empty-state__title">Loading bookings…</div>
+        <!-- Filter pills -->
+        <div class="filter-bar" role="group" aria-label="Filter bookings">
+          <button class="filter-pill active" data-filter="all"       onclick="setFilter('all',this)">All</button>
+          <button class="filter-pill"        data-filter="pending"   onclick="setFilter('pending',this)">Pending</button>
+          <button class="filter-pill"        data-filter="confirmed" onclick="setFilter('confirmed',this)">Confirmed</button>
+          <button class="filter-pill"        data-filter="completed" onclick="setFilter('completed',this)">Completed</button>
+          <button class="filter-pill"        data-filter="cancelled" onclick="setFilter('cancelled',this)">Cancelled</button>
+          <button class="filter-pill"        data-filter="today"     onclick="setFilter('today',this)">Today</button>
+          <button class="filter-pill"        data-filter="week"      onclick="setFilter('week',this)">This Week</button>
         </div>
-      </div>
+
+        <!-- Search -->
+        <div class="search-row">
+          <input
+            class="search-input"
+            type="search"
+            id="searchInput"
+            placeholder="Search by client name or phone…"
+            oninput="onSearch(this.value)"
+          />
+        </div>
+
+        <!-- Table / cards -->
+        <div id="bookingsWrap">
+          <div class="empty-state" style="border:1px solid var(--clr-border);border-radius:var(--radius-lg);padding:2.5rem">
+            <div class="empty-state__title">Loading bookings…</div>
+          </div>
+        </div>
+
+      </div><!-- #listView -->
+
+      <!-- ══════════════════════════════════════════════════════ -->
+      <!-- CALENDAR VIEW                                        -->
+      <!-- ══════════════════════════════════════════════════════ -->
+      <div id="calendarView" style="display:none">
+
+        <!-- Calendar controls -->
+        <div class="cal-header">
+          <div class="cal-nav">
+            <button class="cal-nav-btn" id="prevBtn" aria-label="Previous">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M15 18l-6-6 6-6"/></svg>
+            </button>
+            <button class="cal-today-btn" id="todayBtn">Today</button>
+            <button class="cal-nav-btn" id="nextBtn" aria-label="Next">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M9 18l6-6-6-6"/></svg>
+            </button>
+            <h2 class="cal-title" id="calTitle">Loading…</h2>
+          </div>
+          <div class="view-toggle">
+            <button class="view-toggle-btn active" id="monthBtn">Month</button>
+            <button class="view-toggle-btn" id="weekBtn">Week</button>
+          </div>
+        </div>
+
+        <!-- Month view -->
+        <div id="monthView">
+          <div class="cal-day-headers">
+            <div class="cal-day-header">Sun</div>
+            <div class="cal-day-header">Mon</div>
+            <div class="cal-day-header">Tue</div>
+            <div class="cal-day-header">Wed</div>
+            <div class="cal-day-header">Thu</div>
+            <div class="cal-day-header">Fri</div>
+            <div class="cal-day-header">Sat</div>
+          </div>
+          <div class="cal-grid" id="calGrid"></div>
+        </div>
+
+        <!-- Week view -->
+        <div id="weekView" style="display:none">
+          <div class="week-container">
+            <div class="week-grid" id="weekGrid"></div>
+          </div>
+        </div>
+
+      </div><!-- #calendarView -->
 
     </div>
   </main>
 
-</div>
+</div><!-- .portal-layout -->
 
-<!-- Bottom sheet for mobile booking detail -->
+<!-- ========== BOTTOM SHEET (mobile, list view) ========== -->
 <div class="sheet-overlay" id="sheetOverlay" onclick="closeSheet()"></div>
 <div class="sheet" id="detailSheet">
   <div class="sheet__handle"></div>
   <div class="sheet__body" id="sheetBody"></div>
+</div>
+
+<!-- ========== DAY PANEL (calendar view) ========== -->
+<div class="day-panel-overlay" id="dayOverlay"></div>
+<div class="day-panel" id="dayPanel" role="dialog" aria-modal="true" aria-label="Day detail">
+  <div class="day-panel__head">
+    <div class="day-panel__date" id="dayPanelDate"></div>
+    <button class="day-panel__close" id="dayPanelClose" aria-label="Close">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M18 6L6 18M6 6l12 12"/></svg>
+    </button>
+  </div>
+  <div class="day-panel__body" id="dayPanelBody"></div>
+</div>
+
+<!-- ========== BOOKING MODAL (week view) ========== -->
+<div class="modal-overlay" id="bookingModal" role="dialog" aria-modal="true">
+  <div class="modal" id="modalContent"></div>
 </div>
 
 <!-- ========== MOBILE TAB BAR ========== -->
@@ -190,11 +375,11 @@
       <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><rect x="3" y="3" width="7" height="7" rx="1"/><rect x="14" y="3" width="7" height="7" rx="1"/><rect x="3" y="14" width="7" height="7" rx="1"/><rect x="14" y="14" width="7" height="7" rx="1"/></svg>
       Home
     </a>
-    <a href="calendar.html" class="tab-bar__item">
+    <a href="bookings.html?view=calendar" class="tab-bar__item" id="tabCalendar">
       <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><rect x="3" y="4" width="18" height="18" rx="2"/><path d="M16 2v4M8 2v4M3 10h18"/></svg>
       Calendar
     </a>
-    <a href="bookings.html" class="tab-bar__item active">
+    <a href="bookings.html" class="tab-bar__item active" id="tabBookings">
       <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2"/></svg>
       Bookings
     </a>
@@ -213,37 +398,100 @@
 <script src="../js/supabase-config.js"></script>
 <script src="../js/auth.js"></script>
 <script>
-/* ── State ──────────────────────────────────────────────────── */
-let allBookings    = [];
-let currentFilter  = 'all';
-let searchTerm     = '';
+/* ════════════════════════════════════════════════════════════════
+   STATE
+═══════════════════════════════════════════════════════════════ */
+let allBookings   = [];
+let currentFilter = 'all';
+let searchTerm    = '';
+let pageView      = 'list'; // 'list' | 'calendar'
 
-/* ── Init ───────────────────────────────────────────────────── */
+/* Calendar state */
+let currentDate  = new Date();
+let calViewMode  = 'month'; // 'month' | 'week'
+let blockedDates = [];
+let activeDayStr = null;
+
+/* ════════════════════════════════════════════════════════════════
+   INIT
+═══════════════════════════════════════════════════════════════ */
 (async () => {
   const profile = await requireAdmin();
   if (!profile) return;
 
-  document.getElementById('userName').textContent  = profile.full_name || 'Admin';
-  document.getElementById('userEmail').textContent = profile.email || '';
+  document.getElementById('userName').textContent   = profile.full_name || 'Admin';
+  document.getElementById('userEmail').textContent  = profile.email || '';
   document.getElementById('userAvatar').textContent = (profile.full_name || 'A').charAt(0).toUpperCase();
+
+  /* Check ?view= param */
+  const params = new URLSearchParams(window.location.search);
+  if (params.get('view') === 'calendar') {
+    _applyView('calendar');
+  }
 
   await loadBookings();
 })();
 
-/* ── Data ───────────────────────────────────────────────────── */
+/* ════════════════════════════════════════════════════════════════
+   DATA
+═══════════════════════════════════════════════════════════════ */
 async function loadBookings() {
-  const [bookingsRes, invoicesRes] = await Promise.all([
-    _supabase.from('bookings').select('*, profiles(full_name, phone, email)').order('preferred_date', { ascending: false }).order('preferred_time', { ascending: true }),
-    _supabase.from('invoices').select('id,booking_id,short_code,status,amount_cents,tip_cents,total_paid_cents,paid_at').order('created_at', { ascending: false }),
+  const [bookingsRes, invoicesRes, blockedRes] = await Promise.all([
+    _supabase.from('bookings')
+      .select('*, profiles(full_name, phone, email)')
+      .order('preferred_date', { ascending: false })
+      .order('preferred_time', { ascending: true }),
+    _supabase.from('invoices')
+      .select('id,booking_id,short_code,status,amount_cents,tip_cents,total_paid_cents,paid_at')
+      .order('created_at', { ascending: false }),
+    _supabase.from('blocked_dates').select('date'),
   ]);
-  allBookings = (bookingsRes.data || []).map(b => {
-    const inv = (invoicesRes.data || []).find(i => i.booking_id === b.id);
-    return { ...b, _invoice: inv || null };
-  });
-  renderTable();
+
+  allBookings = (bookingsRes.data || []).map(b => ({
+    ...b,
+    _invoice: (invoicesRes.data || []).find(i => i.booking_id === b.id) || null,
+  }));
+  blockedDates = (blockedRes.data || []).map(d => d.date);
+
+  if (pageView === 'list') {
+    renderTable();
+  } else {
+    renderCalendar();
+  }
 }
 
-/* ── Filter + search ────────────────────────────────────────── */
+/* ════════════════════════════════════════════════════════════════
+   VIEW SWITCHING
+═══════════════════════════════════════════════════════════════ */
+function switchView(v) {
+  _applyView(v);
+  if (v === 'calendar' && allBookings.length > 0) renderCalendar();
+  if (v === 'list' && allBookings.length > 0) renderTable();
+}
+
+function _applyView(v) {
+  pageView = v;
+  document.getElementById('listView').style.display     = v === 'list'     ? '' : 'none';
+  document.getElementById('calendarView').style.display = v === 'calendar' ? '' : 'none';
+
+  document.getElementById('btnListView').classList.toggle('active',     v === 'list');
+  document.getElementById('btnCalendarView').classList.toggle('active', v === 'calendar');
+
+  /* Sidebar active state */
+  document.getElementById('navBookings').classList.toggle('active', v === 'list');
+  document.getElementById('navCalendar').classList.toggle('active', v === 'calendar');
+
+  /* Tab bar active state */
+  document.getElementById('tabBookings').classList.toggle('active', v === 'list');
+  document.getElementById('tabCalendar').classList.toggle('active', v === 'calendar');
+
+  /* Page header */
+  document.getElementById('pageTitle').textContent = v === 'list' ? 'All Bookings' : 'Calendar';
+}
+
+/* ════════════════════════════════════════════════════════════════
+   LIST VIEW — FILTER + SEARCH
+═══════════════════════════════════════════════════════════════ */
 function setFilter(filter, btn) {
   currentFilter = filter;
   document.querySelectorAll('.filter-pill').forEach(p => p.classList.remove('active'));
@@ -257,15 +505,14 @@ function onSearch(val) {
 }
 
 function getFiltered() {
-  const today = new Date().toISOString().split('T')[0];
-  const now   = new Date(); now.setHours(0,0,0,0);
+  const today  = new Date().toISOString().split('T')[0];
+  const now    = new Date(); now.setHours(0,0,0,0);
   const wStart = new Date(now); wStart.setDate(now.getDate() - now.getDay());
   const wEnd   = new Date(wStart); wEnd.setDate(wStart.getDate() + 6);
   const wStartStr = wStart.toISOString().split('T')[0];
   const wEndStr   = wEnd.toISOString().split('T')[0];
 
   let list = [...allBookings];
-
   if      (currentFilter === 'today') list = list.filter(b => b.preferred_date === today);
   else if (currentFilter === 'week')  list = list.filter(b => b.preferred_date >= wStartStr && b.preferred_date <= wEndStr);
   else if (currentFilter !== 'all')   list = list.filter(b => b.status === currentFilter);
@@ -277,17 +524,40 @@ function getFiltered() {
       return name.includes(searchTerm) || phone.includes(searchTerm);
     });
   }
-
   return list;
 }
 
-/* ── Render ─────────────────────────────────────────────────── */
+/* ════════════════════════════════════════════════════════════════
+   LIST VIEW — RENDER
+═══════════════════════════════════════════════════════════════ */
+function invBadgeHTML(inv) {
+  if (!inv) return '';
+  const cls = inv.status === 'paid' ? 'paid' : inv.status === 'viewed' ? 'viewed' : 'sent';
+  const lbl = inv.status === 'paid' ? '✓ Paid' : inv.status === 'viewed' ? '👁 Viewed' : '⬡ Sent';
+  return `<span class="inv-badge inv-badge--${cls}">${lbl}</span>`;
+}
+
+function rowActionsHTML(b, stopProp = true) {
+  const sp = stopProp ? 'event.stopPropagation()' : '';
+  const actions = [];
+  if (b.status === 'pending')
+    actions.push(`<button class="btn btn--primary btn--sm" onclick="updateStatus('${b.id}','confirmed');${sp}">Confirm</button>`);
+  if (b.status === 'confirmed')
+    actions.push(`<button class="btn btn--primary btn--sm" onclick="updateStatus('${b.id}','completed');${sp}">Complete</button>`);
+  if (['pending','confirmed'].includes(b.status))
+    actions.push(`<button class="btn btn--ghost btn--sm" onclick="cancelBooking('${b.id}');${sp}">Cancel</button>`);
+  if (b.status !== 'cancelled')
+    actions.push(`<button class="btn btn--ghost btn--sm" style="color:#e91e8c;border-color:#e91e8c44" onclick="sendInvoice('${b.id}');${sp}">◆ Invoice</button>`);
+  actions.push(`<button class="btn btn--ghost btn--sm" onclick="toggleDetail('${b.id}');${sp}">Edit</button>`);
+  return actions.join('');
+}
+
 function renderTable() {
   const list = getFiltered();
   const wrap = document.getElementById('bookingsWrap');
 
-  document.getElementById('bookingsCount').textContent =
-    `${list.length} booking${list.length !== 1 ? 's' : ''}`;
+  const count = `${list.length} booking${list.length !== 1 ? 's' : ''}`;
+  document.getElementById('pageSubtitle').textContent = count;
 
   if (list.length === 0) {
     wrap.innerHTML = `
@@ -300,17 +570,10 @@ function renderTable() {
 
   const rows = list.map(b => {
     const depositBadge = b.deposit_paid
-      ? `<span class="badge badge--deposit-paid">Paid $${((b.deposit_amount || 0) / 100).toFixed(0)}</span>`
+      ? `<span class="badge badge--deposit-paid">Paid $${((b.deposit_amount||0)/100).toFixed(0)}</span>`
       : `<span class="badge badge--deposit-unpaid">Unpaid</span>`;
 
-    const rowActions = [];
-    if (b.status === 'pending')   rowActions.push(`<button class="btn btn--primary btn--sm" onclick="updateStatus('${b.id}','confirmed');event.stopPropagation()">Confirm</button>`);
-    if (b.status === 'confirmed') rowActions.push(`<button class="btn btn--primary btn--sm" onclick="updateStatus('${b.id}','completed');event.stopPropagation()">Complete</button>`);
-    if (['pending','confirmed'].includes(b.status)) rowActions.push(`<button class="btn btn--ghost btn--sm" onclick="cancelBooking('${b.id}');event.stopPropagation()">Cancel</button>`);
-    if (b.status !== 'cancelled') rowActions.push(`<button class="btn btn--ghost btn--sm" style="color:#e91e8c;border-color:#e91e8c44" onclick="sendInvoice('${b.id}');event.stopPropagation()">◆ Invoice</button>`);
-
     return `
-      <!-- Main row -->
       <tr class="expandable-row" onclick="toggleDetail('${b.id}')">
         <td>${formatDate(b.preferred_date)}</td>
         <td>${formatTime(b.preferred_time)}</td>
@@ -320,33 +583,31 @@ function renderTable() {
         <td>${b.vehicle_type || '—'}</td>
         <td><span class="badge badge--${b.status}">${b.status}</span></td>
         <td>${depositBadge}</td>
-        <td>${b._invoice ? `<span style="font-size:.72rem;padding:2px 7px;border-radius:4px;font-weight:600;background:${b._invoice.status==='paid'?'#4ade8022':b._invoice.status==='viewed'?'#f59e0b22':'#e91e8c22'};color:${b._invoice.status==='paid'?'#4ade80':b._invoice.status==='viewed'?'#f59e0b':'#e91e8c'};border:1px solid ${b._invoice.status==='paid'?'#4ade8044':b._invoice.status==='viewed'?'#f59e0b44':'#e91e8c44'}">${b._invoice.status==='paid'?'✓ Paid':b._invoice.status==='viewed'?'👁 Viewed':'⬡ Sent'}</span>` : ''}</td>
-        <td>
-          <div class="row-actions">
-            ${rowActions.join('')}
-          </div>
+        <td>${invBadgeHTML(b._invoice)}</td>
+        <td style="min-width:220px">
+          <div class="row-actions">${rowActionsHTML(b)}</div>
         </td>
       </tr>
-      <!-- Expanded: Receipt + Edit -->
       <tr class="row-detail" id="detail-${b.id}">
         <td colspan="10">
           <div class="row-detail-inner">
 
-            <!-- LEFT: Itemized Receipt -->
+            <!-- Receipt -->
             <div>
               <div class="receipt">
                 <div class="receipt__header">
                   <div class="receipt__title">◆ Booking Receipt</div>
-                  <div class="receipt__id">#${b.id.slice(-8).toUpperCase()}</div>
+                  <div style="display:flex;align-items:center;gap:.5rem">
+                    ${invBadgeHTML(b._invoice)}
+                    <div class="receipt__id">#${b.id.slice(-8).toUpperCase()}</div>
+                  </div>
                 </div>
-
                 <div class="receipt__section">
                   <div class="receipt__label">Client</div>
                   <div class="receipt__row"><span class="receipt__row-label">Name</span><span class="receipt__row-val">${clientName(b)}</span></div>
                   <div class="receipt__row"><span class="receipt__row-label">Email</span><span class="receipt__row-val">${clientEmail(b)}</span></div>
                   <div class="receipt__row"><span class="receipt__row-label">Phone</span><span class="receipt__row-val">${clientPhone(b)}</span></div>
                 </div>
-
                 <div class="receipt__section">
                   <div class="receipt__label">Appointment</div>
                   <div class="receipt__row"><span class="receipt__row-label">Date</span><span class="receipt__row-val">${formatDate(b.preferred_date)}</span></div>
@@ -355,26 +616,22 @@ function renderTable() {
                   <div class="receipt__row"><span class="receipt__row-label">Status</span><span class="receipt__row-val"><span class="receipt__badge">${b.status}</span></span></div>
                   <div class="receipt__row"><span class="receipt__row-label">Booked on</span><span class="receipt__row-val dim">${formatDate(b.created_at?.split('T')[0])}</span></div>
                 </div>
-
                 <div class="receipt__section">
                   <div class="receipt__label">Vehicle</div>
                   ${parseNotesField(b.notes,'Vehicle') !== '—' ? `<div class="receipt__row"><span class="receipt__row-label">Details</span><span class="receipt__row-val">${parseNotesField(b.notes,'Vehicle')}</span></div>` : ''}
                   <div class="receipt__row"><span class="receipt__row-label">Type</span><span class="receipt__row-val" style="text-transform:capitalize">${b.vehicle_type || '—'}</span></div>
                 </div>
-
                 <div class="receipt__section">
                   <div class="receipt__label">Services &amp; Add-ons</div>
                   <div class="receipt__row"><span class="receipt__row-label">${b.service_name || 'Detail Service'}</span><span class="receipt__row-val">${b.total_amount ? '$' + (b.total_amount/100).toFixed(2) : '—'}</span></div>
                   ${(() => { const a = parseNotesField(b.notes,'Addons'); if(a==='—'||!a) return ''; return a.split(',').map(x=>x.trim()).filter(Boolean).map(x=>`<div class="receipt__row"><span class="receipt__row-label" style="padding-left:.75rem;font-size:.8rem">+ ${x}</span><span class="receipt__row-val dim">included</span></div>`).join(''); })()}
                 </div>
-
                 <div class="receipt__section">
                   <div class="receipt__label">Payment Breakdown</div>
                   ${b.total_amount ? `<div class="receipt__row"><span class="receipt__row-label">Service total</span><span class="receipt__row-val">$${(b.total_amount/100).toFixed(2)}</span></div>` : ''}
                   ${b.deposit_paid ? `<div class="receipt__row"><span class="receipt__row-label">Deposit collected</span><span class="receipt__row-val green">− $${((b.deposit_amount||5000)/100).toFixed(2)} ✓</span></div>` : `<div class="receipt__row"><span class="receipt__row-label">Deposit</span><span class="receipt__row-val" style="color:#e91e8c">Not paid</span></div>`}
                   ${b.square_payment_id ? `<div class="receipt__row"><span class="receipt__row-label">Square ref</span><span class="receipt__row-val dim">…${b.square_payment_id.slice(-10)}</span></div>` : ''}
                 </div>
-
                 <div class="receipt__divider"></div>
                 <div class="receipt__total">
                   <div>
@@ -382,13 +639,13 @@ function renderTable() {
                     <div style="font-size:.73rem;color:#444;margin-top:.15rem">Collected day of appointment</div>
                   </div>
                   <div class="receipt__total-val">
-                    ${b.total_amount ? '$' + Math.max(0, (b.total_amount - (b.deposit_amount||5000)) / 100).toFixed(2) : '—'}
+                    ${b.total_amount ? '$' + Math.max(0,(b.total_amount - (b.deposit_amount||5000))/100).toFixed(2) : '—'}
                   </div>
                 </div>
               </div>
             </div>
 
-            <!-- RIGHT: Edit Form -->
+            <!-- Edit form -->
             <div>
               <div style="font-size:.72rem;color:#555;text-transform:uppercase;letter-spacing:.08em;margin-bottom:.875rem">Edit Booking</div>
               <div class="edit-grid">
@@ -400,7 +657,7 @@ function renderTable() {
                   <label>Vehicle Type</label>
                   <select id="ef-vtype-${b.id}" onclick="event.stopPropagation()">
                     <option value="sedan" ${b.vehicle_type==='sedan'?'selected':''}>Sedan</option>
-                    <option value="suv" ${b.vehicle_type==='suv'?'selected':''}>SUV</option>
+                    <option value="suv"   ${b.vehicle_type==='suv'?'selected':''}>SUV</option>
                     <option value="truck" ${b.vehicle_type==='truck'?'selected':''}>Truck</option>
                   </select>
                 </div>
@@ -415,7 +672,7 @@ function renderTable() {
                 <div class="edit-field">
                   <label>Status</label>
                   <select id="ef-status-${b.id}" onclick="event.stopPropagation()">
-                    <option value="pending" ${b.status==='pending'?'selected':''}>Pending</option>
+                    <option value="pending"   ${b.status==='pending'?'selected':''}>Pending</option>
                     <option value="confirmed" ${b.status==='confirmed'?'selected':''}>Confirmed</option>
                     <option value="completed" ${b.status==='completed'?'selected':''}>Completed</option>
                     <option value="cancelled" ${b.status==='cancelled'?'selected':''}>Cancelled</option>
@@ -446,12 +703,18 @@ function renderTable() {
       </tr>`;
   }).join('');
 
-  // Mobile cards
+  /* Mobile cards */
   const mobileCards = list.map(b => {
-    const rowActions = [];
-    if (b.status === 'pending')   rowActions.push(`<button class="btn btn--primary btn--sm" onclick="updateStatus('${b.id}','confirmed');event.stopPropagation()">Confirm</button>`);
-    if (b.status === 'confirmed') rowActions.push(`<button class="btn btn--primary btn--sm" onclick="updateStatus('${b.id}','completed');event.stopPropagation()">Complete</button>`);
-    if (['pending','confirmed'].includes(b.status)) rowActions.push(`<button class="btn btn--ghost btn--sm" onclick="cancelBooking('${b.id}');event.stopPropagation()">Cancel</button>`);
+    const actions = [];
+    if (b.status === 'pending')
+      actions.push(`<button class="btn btn--primary btn--sm" onclick="updateStatus('${b.id}','confirmed');event.stopPropagation()">Confirm</button>`);
+    if (b.status === 'confirmed')
+      actions.push(`<button class="btn btn--primary btn--sm" onclick="updateStatus('${b.id}','completed');event.stopPropagation()">Complete</button>`);
+    if (['pending','confirmed'].includes(b.status))
+      actions.push(`<button class="btn btn--ghost btn--sm" onclick="cancelBooking('${b.id}');event.stopPropagation()">Cancel</button>`);
+    if (b.status !== 'cancelled')
+      actions.push(`<button class="btn btn--ghost btn--sm" style="color:#e91e8c;border-color:#e91e8c44" onclick="sendInvoice('${b.id}');event.stopPropagation()">◆ Invoice</button>`);
+
     return `
       <div class="booking-card-mobile" onclick="openSheet('${b.id}')">
         <div class="booking-card-mobile__top">
@@ -459,27 +722,29 @@ function renderTable() {
             <div class="booking-card-mobile__name">${clientName(b)}</div>
             <div class="booking-card-mobile__service">${b.service_name || '—'} &middot; ${b.vehicle_type || ''}</div>
           </div>
-          <span class="badge badge--${b.status}">${b.status}</span>
+          <div style="display:flex;flex-direction:column;align-items:flex-end;gap:.3rem">
+            <span class="badge badge--${b.status}">${b.status}</span>
+            ${invBadgeHTML(b._invoice)}
+          </div>
         </div>
         <div class="booking-card-mobile__meta">
           <span>&#128197; ${formatDate(b.preferred_date)}</span>
           <span>&#128336; ${formatTime(b.preferred_time)}</span>
           <span>${b.deposit_paid ? '✓ $'+((b.deposit_amount||5000)/100).toFixed(0)+' paid' : 'No deposit'}</span>
-          ${b._invoice ? `<span style="color:${b._invoice.status==='paid'?'#4ade80':b._invoice.status==='viewed'?'#f59e0b':'#e91e8c'}">${b._invoice.status==='paid'?'✓ Invoice Paid':b._invoice.status==='viewed'?'👁 Invoice Viewed':'⬡ Invoice Sent'}</span>` : ''}
         </div>
-        <div class="booking-card-mobile__actions" onclick="event.stopPropagation()">${rowActions.join('')}</div>
+        <div class="booking-card-mobile__actions" onclick="event.stopPropagation()">${actions.join('')}</div>
       </div>`;
   }).join('');
 
   wrap.innerHTML = `
-    <!-- Mobile cards (hidden on desktop) -->
     <div id="mobileCards">${mobileCards}</div>
-    <!-- Desktop table (hidden on mobile) -->
     <div class="table-wrap">
       <table>
         <thead>
           <tr>
-            <th>Date</th><th>Time</th><th>Client</th><th>Phone</th><th>Service</th><th>Vehicle</th><th>Status</th><th>Deposit</th><th>Invoice</th><th>Actions</th>
+            <th>Date</th><th>Time</th><th>Client</th><th>Phone</th>
+            <th>Service</th><th>Vehicle</th><th>Status</th><th>Deposit</th>
+            <th>Invoice</th><th>Actions</th>
           </tr>
         </thead>
         <tbody>${rows}</tbody>
@@ -487,7 +752,7 @@ function renderTable() {
     </div>`;
 }
 
-/* ── Row toggle (desktop) ───────────────────────────────────── */
+/* ── Row toggle (desktop expand) ────────────────────────────── */
 function toggleDetail(id) {
   const detail = document.getElementById(`detail-${id}`);
   const wasOpen = detail.classList.contains('open');
@@ -495,14 +760,20 @@ function toggleDetail(id) {
   if (!wasOpen) detail.classList.add('open');
 }
 
-/* ── Bottom sheet (mobile detail) ──────────────────────────── */
+/* ── Bottom sheet (mobile) ──────────────────────────────────── */
 function openSheet(id) {
   const b = allBookings.find(x => x.id === id);
   if (!b) return;
+
   const rowActions = [];
-  if (b.status === 'pending')   rowActions.push(`<button class="btn btn--primary" style="width:100%" onclick="updateStatus('${b.id}','confirmed');closeSheet()">Confirm Booking</button>`);
-  if (b.status === 'confirmed') rowActions.push(`<button class="btn btn--primary" style="width:100%" onclick="updateStatus('${b.id}','completed');closeSheet()">Mark Complete</button>`);
-  if (['pending','confirmed'].includes(b.status)) rowActions.push(`<button class="btn btn--ghost" style="width:100%" onclick="cancelBooking('${b.id}');closeSheet()">Cancel Booking</button>`);
+  if (b.status === 'pending')
+    rowActions.push(`<button class="btn btn--primary" style="width:100%" onclick="updateStatus('${b.id}','confirmed');closeSheet()">Confirm Booking</button>`);
+  if (b.status === 'confirmed')
+    rowActions.push(`<button class="btn btn--primary" style="width:100%" onclick="updateStatus('${b.id}','completed');closeSheet()">Mark Complete</button>`);
+  if (['pending','confirmed'].includes(b.status))
+    rowActions.push(`<button class="btn btn--ghost" style="width:100%" onclick="cancelBooking('${b.id}');closeSheet()">Cancel Booking</button>`);
+  if (b.status !== 'cancelled')
+    rowActions.push(`<button class="btn btn--ghost" style="width:100%;color:#e91e8c;border-color:#e91e8c44" onclick="sendInvoice('${b.id}')">◆ Send Invoice</button>`);
 
   const name    = clientName(b);
   const email   = clientEmail(b);
@@ -514,28 +785,37 @@ function openSheet(id) {
   const tot     = b.total_amount ? b.total_amount/100 : null;
   const bal     = tot ? Math.max(0,tot-dep) : null;
   const R = (lbl,val,c='') => `<div style="display:flex;justify-content:space-between;align-items:baseline;padding:9px 0;border-bottom:1px solid #1a1a1a;font-size:14px;gap:1rem"><span style="color:#666;flex-shrink:0">${lbl}</span><span style="color:${c==='g'?'#4ade80':c==='p'?'#e91e8c':'#f5f5f5'};text-align:right;word-break:break-word">${val}</span></div>`;
-  const SH = (t) => `<div style="font-size:10px;text-transform:uppercase;letter-spacing:.1em;color:#555;padding:14px 0 4px;margin-top:4px">${t}</div>`;
+  const SH = t => `<div style="font-size:10px;text-transform:uppercase;letter-spacing:.1em;color:#555;padding:14px 0 4px;margin-top:4px">${t}</div>`;
 
   document.getElementById('sheetBody').innerHTML = `
     <div style="display:flex;justify-content:space-between;align-items:flex-start;margin-bottom:1.25rem">
-      <div><div style="font-size:1.125rem;font-weight:700;color:#f5f5f5">${name}</div><div style="font-size:.8rem;color:#888;margin-top:3px">${b.service_name||''} · ${b.vehicle_type||''}</div></div>
+      <div>
+        <div style="font-size:1.125rem;font-weight:700;color:#f5f5f5">${name}</div>
+        <div style="font-size:.8rem;color:#888;margin-top:3px">${b.service_name||''} · ${b.vehicle_type||''}</div>
+      </div>
       <div style="display:flex;flex-direction:column;align-items:flex-end;gap:.35rem">
         <span class="badge badge--${b.status}">${b.status}</span>
-        ${b._invoice ? `<span style="font-size:.72rem;padding:2px 7px;border-radius:4px;font-weight:600;background:${b._invoice.status==='paid'?'#4ade8022':b._invoice.status==='viewed'?'#f59e0b22':'#e91e8c22'};color:${b._invoice.status==='paid'?'#4ade80':b._invoice.status==='viewed'?'#f59e0b':'#e91e8c'};border:1px solid ${b._invoice.status==='paid'?'#4ade8044':b._invoice.status==='viewed'?'#f59e0b44':'#e91e8c44'}">${b._invoice.status==='paid'?'✓ Invoice Paid':b._invoice.status==='viewed'?'👁 Invoice Viewed':'⬡ Invoice Sent'}</span>` : ''}
+        ${invBadgeHTML(b._invoice)}
       </div>
     </div>
     ${SH('Client')}${R('Phone',phone)}${R('Email',email)}
-    ${SH('Appointment')}${R('Date',formatDate(b.preferred_date))}${R('Time',formatTime(b.preferred_time))}${address?R('Address',address):''}
-    ${vehicle?SH('Vehicle')+R('Details',vehicle)+R('Type',(b.vehicle_type||'').charAt(0).toUpperCase()+(b.vehicle_type||'').slice(1)):''}
-    ${SH('Services')}${R(b.service_name||'Service',tot?'$'+tot.toFixed(2):'—')}${addons?addons.split(',').map(a=>`<div style="display:flex;justify-content:space-between;padding:7px 0 7px 12px;font-size:13px;color:#777;border-bottom:1px solid #1a1a1a"><span>+ ${a.trim()}</span><span>Add-on</span></div>`).join(''):''}
+    ${SH('Appointment')}${R('Date',formatDate(b.preferred_date))}${R('Time',formatTime(b.preferred_time))}${address&&address!=='—'?R('Address',address):''}
+    ${vehicle&&vehicle!=='—'?SH('Vehicle')+R('Details',vehicle)+R('Type',(b.vehicle_type||'').charAt(0).toUpperCase()+(b.vehicle_type||'').slice(1)):''}
+    ${SH('Services')}${R(b.service_name||'Service',tot?'$'+tot.toFixed(2):'—')}${addons&&addons!=='—'?addons.split(',').map(a=>`<div style="display:flex;justify-content:space-between;padding:7px 0 7px 12px;font-size:13px;color:#777;border-bottom:1px solid #1a1a1a"><span>+ ${a.trim()}</span><span>Add-on</span></div>`).join(''):''}
     ${SH('Payment')}${tot?R('Service total','$'+tot.toFixed(2)):''}${R('Deposit collected','− $'+dep.toFixed(2)+' ✓','g')}${b.square_payment_id?R('Square ref','…'+b.square_payment_id.slice(-8)):''}
     <div style="display:flex;justify-content:space-between;align-items:center;padding:16px 0;margin-top:.5rem;border-top:2px solid #1e1e1e">
-      <div><div style="font-size:15px;font-weight:700;color:#f5f5f5">Balance Due at Service</div><div style="font-size:11px;color:#444;margin-top:2px">Collected day of appointment</div></div>
+      <div>
+        <div style="font-size:15px;font-weight:700;color:#f5f5f5">Balance Due at Service</div>
+        <div style="font-size:11px;color:#444;margin-top:2px">Collected day of appointment</div>
+      </div>
       <div style="font-size:22px;font-weight:700;color:#e91e8c">${bal!==null?'$'+bal.toFixed(2):'—'}</div>
     </div>
     ${rowActions.length ? `<div style="display:flex;flex-direction:column;gap:.5rem;margin-top:.75rem">${rowActions.join('')}</div>` : ''}
-    <div style="text-align:center;margin-top:1rem"><button class="btn btn--ghost btn--sm" onclick="closeSheet()" style="width:100%">Close</button></div>
+    <div style="text-align:center;margin-top:.75rem">
+      <button class="btn btn--ghost btn--sm" onclick="closeSheet()" style="width:100%">Close</button>
+    </div>
   `;
+
   document.getElementById('sheetOverlay').classList.add('open');
   setTimeout(() => document.getElementById('detailSheet').classList.add('open'), 10);
   document.body.style.overflow = 'hidden';
@@ -547,7 +827,291 @@ function closeSheet() {
   document.body.style.overflow = '';
 }
 
-/* ── Actions ────────────────────────────────────────────────── */
+/* ════════════════════════════════════════════════════════════════
+   CALENDAR VIEW — RENDER
+═══════════════════════════════════════════════════════════════ */
+function renderCalendar() {
+  updateCalTitle();
+  if (calViewMode === 'month') renderMonth();
+  else renderWeek();
+}
+
+function updateCalTitle() {
+  if (calViewMode === 'month') {
+    document.getElementById('calTitle').textContent = currentDate.toLocaleDateString('en-US', {
+      month: 'long', year: 'numeric'
+    });
+  } else {
+    const ws = weekStart(currentDate);
+    const we = new Date(ws); we.setDate(we.getDate() + 6);
+    const opts = { month: 'short', day: 'numeric' };
+    document.getElementById('calTitle').textContent =
+      ws.toLocaleDateString('en-US', opts) + ' – ' +
+      we.toLocaleDateString('en-US', { ...opts, year: 'numeric' });
+  }
+}
+
+function renderMonth() {
+  const year  = currentDate.getFullYear();
+  const month = currentDate.getMonth();
+  const firstDay = new Date(year, month, 1);
+  const lastDay  = new Date(year, month + 1, 0);
+  const gridStart = new Date(firstDay); gridStart.setDate(gridStart.getDate() - firstDay.getDay());
+  const gridEnd   = new Date(lastDay);  gridEnd.setDate(gridEnd.getDate() + (6 - lastDay.getDay()));
+  const today     = new Date(); today.setHours(0,0,0,0);
+
+  const grid = document.getElementById('calGrid');
+  grid.innerHTML = '';
+
+  for (let d = new Date(gridStart); d <= gridEnd; d.setDate(d.getDate() + 1)) {
+    const dateStr      = toDateStr(d);
+    const dayBookings  = allBookings.filter(b => b.preferred_date === dateStr);
+    const isToday      = d.getTime() === today.getTime();
+    const isOtherMonth = d.getMonth() !== month;
+    const isBlocked    = blockedDates.includes(dateStr);
+
+    const cell = document.createElement('div');
+    cell.className = 'cal-cell' +
+      (isToday      ? ' cal-cell--today'       : '') +
+      (isOtherMonth ? ' cal-cell--other-month'  : '') +
+      (isBlocked    ? ' cal-cell--blocked'      : '');
+
+    const pills = dayBookings.slice(0,3).map(b => {
+      const active = ['pending','confirmed'].includes(b.status);
+      return `<div class="booking-pill booking-pill--${active?'active':'gray'}">${b.profiles?.full_name || 'Client'}</div>`;
+    }).join('');
+    const more = dayBookings.length > 3 ? `<div class="cal-cell__more">+${dayBookings.length - 3} more</div>` : '';
+    const countBadge = dayBookings.length > 0
+      ? `<span style="font-size:.6rem;color:var(--clr-muted-2);font-weight:400">${dayBookings.length}</span>` : '';
+
+    cell.innerHTML = `
+      <div class="cal-cell__num"><span>${d.getDate()}</span>${countBadge}</div>
+      <div class="cal-cell__pills">${pills}${more}</div>
+    `;
+    const ds = dateStr;
+    cell.addEventListener('click', () => openDayPanel(ds));
+    grid.appendChild(cell);
+  }
+
+  document.getElementById('monthView').style.display = '';
+  document.getElementById('weekView').style.display  = 'none';
+}
+
+function renderWeek() {
+  const ws      = weekStart(currentDate);
+  const today   = new Date(); today.setHours(0,0,0,0);
+  const DAY_NAMES = ['Sun','Mon','Tue','Wed','Thu','Fri','Sat'];
+  const days    = Array.from({ length:7 }, (_,i) => { const d = new Date(ws); d.setDate(d.getDate()+i); return d; });
+
+  const grid = document.getElementById('weekGrid');
+  grid.innerHTML = '';
+
+  /* Corner */
+  const corner = document.createElement('div');
+  corner.className = 'week-corner';
+  grid.appendChild(corner);
+
+  /* Day headers */
+  days.forEach(d => {
+    const isToday = d.getTime() === today.getTime();
+    const h = document.createElement('div');
+    h.className = 'week-col-header' + (isToday ? ' week-col-header--today' : '');
+    h.innerHTML = `<div class="week-col-header__day">${DAY_NAMES[d.getDay()]}</div><div class="week-col-header__date">${d.getDate()}</div>`;
+    grid.appendChild(h);
+  });
+
+  /* Time rows 8am–5pm */
+  for (let h = 8; h <= 17; h++) {
+    const label = document.createElement('div');
+    label.className = 'week-time-label';
+    label.textContent = h < 12 ? `${h}am` : h === 12 ? '12pm' : `${h-12}pm`;
+    grid.appendChild(label);
+
+    days.forEach(d => {
+      const dateStr     = toDateStr(d);
+      const slotBookings = allBookings.filter(b => {
+        if (b.preferred_date !== dateStr || !b.preferred_time) return false;
+        return parseInt(b.preferred_time.split(':')[0]) === h;
+      });
+
+      const slot = document.createElement('div');
+      slot.className = 'week-slot';
+
+      slotBookings.forEach(b => {
+        const active = ['pending','confirmed'].includes(b.status);
+        const block  = document.createElement('div');
+        block.className = 'week-booking-block' + (active ? '' : ' week-booking-block--gray');
+        block.innerHTML = `<strong>${b.profiles?.full_name || 'Client'}</strong><br>${b.service_name || ''}`;
+        block.addEventListener('click', e => { e.stopPropagation(); openBookingModal(b); });
+        slot.appendChild(block);
+      });
+
+      grid.appendChild(slot);
+    });
+  }
+
+  document.getElementById('monthView').style.display = 'none';
+  document.getElementById('weekView').style.display  = '';
+}
+
+/* ── Day panel ──────────────────────────────────────────────── */
+function openDayPanel(dateStr) {
+  activeDayStr = dateStr;
+  const date = new Date(dateStr + 'T00:00:00');
+  const dayBookings = allBookings
+    .filter(b => b.preferred_date === dateStr)
+    .sort((a,b) => (a.preferred_time||'').localeCompare(b.preferred_time||''));
+
+  document.getElementById('dayPanelDate').textContent = date.toLocaleDateString('en-US', {
+    weekday:'long', month:'long', day:'numeric', year:'numeric'
+  });
+
+  const body = document.getElementById('dayPanelBody');
+  if (dayBookings.length === 0) {
+    body.innerHTML = `
+      <div class="empty-state" style="padding:2rem 1rem">
+        <div class="empty-state__title">No bookings</div>
+        <div class="empty-state__sub">No appointments scheduled for this day</div>
+      </div>`;
+  } else {
+    body.innerHTML = dayBookings.map(renderCalDetailCard).join('');
+  }
+
+  document.getElementById('dayPanel').classList.add('open');
+  document.getElementById('dayOverlay').classList.add('open');
+  document.body.style.overflow = 'hidden';
+}
+
+function closeDayPanel() {
+  activeDayStr = null;
+  document.getElementById('dayPanel').classList.remove('open');
+  document.getElementById('dayOverlay').classList.remove('open');
+  document.body.style.overflow = '';
+}
+
+function renderCalReceiptHTML(b) {
+  const name    = clientName(b);
+  const email   = clientEmail(b);
+  const phone   = clientPhone(b);
+  const address = parseNotesField(b.notes,'Address');
+  const vehicle = parseNotesField(b.notes,'Vehicle');
+  const addons  = parseNotesField(b.notes,'Addons');
+  const dep     = (b.deposit_amount||5000)/100;
+  const tot     = b.total_amount ? b.total_amount/100 : null;
+  const bal     = tot ? Math.max(0,tot-dep) : null;
+  const R = (label, val, cls='') => `<div style="display:flex;justify-content:space-between;padding:9px 16px;border-bottom:1px solid #1a1a1a;font-size:13px"><span style="color:#666">${label}</span><span style="color:${cls==='green'?'#4ade80':cls==='pink'?'#e91e8c':'#f5f5f5'};text-align:right;max-width:60%">${val}</span></div>`;
+  const SH = title => `<div style="padding:8px 16px 3px;font-size:10px;text-transform:uppercase;letter-spacing:.1em;color:#444;border-bottom:1px solid #1a1a1a">${title}</div>`;
+  return `
+    <div style="background:#0d0d0d;border:1px solid #1e1e1e;border-radius:10px;overflow:hidden;margin-bottom:1rem">
+      <div style="display:flex;justify-content:space-between;align-items:center;padding:12px 16px;border-bottom:1px solid #1e1e1e;background:#111">
+        <div style="display:flex;align-items:center;gap:.5rem">
+          <div style="font-size:11px;text-transform:uppercase;letter-spacing:.1em;color:#555">◆ Receipt #${b.id.slice(-6).toUpperCase()}</div>
+          ${invBadgeHTML(b._invoice)}
+        </div>
+        <span class="badge badge--${b.status}">${b.status}</span>
+      </div>
+      ${SH('Client')}${R('Name',name)}${R('Phone',phone)}${R('Email',email)}
+      ${SH('Appointment')}${R('Date',formatDate(b.preferred_date))}${R('Time',formatTime(b.preferred_time))}${address&&address!=='—'?R('Address',address):''}
+      ${vehicle&&vehicle!=='—'?SH('Vehicle')+R('Details',vehicle)+R('Type',(b.vehicle_type||'').charAt(0).toUpperCase()+(b.vehicle_type||'').slice(1)):''}
+      ${SH('Services')}${R(b.service_name||'Detail Service',tot?'$'+tot.toFixed(2):'—')}${addons&&addons!=='—'?addons.split(',').map(a=>`<div style="display:flex;justify-content:space-between;padding:7px 16px 7px 28px;font-size:12px;color:#666;border-bottom:1px solid #1a1a1a"><span>+ ${a.trim()}</span><span>Add-on</span></div>`).join(''):''}
+      ${SH('Payment')}${tot?R('Service total','$'+tot.toFixed(2)):''}${R('Deposit paid','− $'+dep.toFixed(2)+' ✓','green')}
+      <div style="display:flex;justify-content:space-between;align-items:center;padding:14px 16px;background:#0a0a0a">
+        <div>
+          <div style="font-size:14px;font-weight:600;color:#f5f5f5">Balance Due at Service</div>
+          <div style="font-size:11px;color:#444;margin-top:2px">Collected day of appointment</div>
+        </div>
+        <div style="font-size:20px;font-weight:700;color:#e91e8c">${bal!==null?'$'+bal.toFixed(2):'—'}</div>
+      </div>
+    </div>`;
+}
+
+function renderCalDetailCard(b) {
+  const actionBtns = [];
+  if (b.status === 'pending') {
+    actionBtns.push(`<button onclick="updateStatus('${b.id}','confirmed')" class="btn btn--primary btn--sm">Confirm</button>`);
+    actionBtns.push(`<button onclick="cancelBooking('${b.id}')" class="btn btn--ghost btn--sm">Cancel</button>`);
+  } else if (b.status === 'confirmed') {
+    actionBtns.push(`<button onclick="updateStatus('${b.id}','completed')" class="btn btn--primary btn--sm">Complete</button>`);
+    actionBtns.push(`<button onclick="cancelBooking('${b.id}')" class="btn btn--ghost btn--sm">Cancel</button>`);
+  } else {
+    actionBtns.push(`<span class="badge badge--${b.status}">${b.status}</span>`);
+  }
+  if (b.status !== 'cancelled') {
+    actionBtns.push(`<button onclick="sendInvoice('${b.id}');event.stopPropagation()" style="background:none;border:1px solid #e91e8c44;border-radius:6px;color:#e91e8c;padding:.4rem .875rem;font-size:.8rem;cursor:pointer;font-family:inherit">◆ Send Invoice</button>`);
+  }
+  return `<div class="booking-detail-card" style="padding:0;background:transparent;border:none">${renderCalReceiptHTML(b)}<div style="display:flex;gap:.5rem;flex-wrap:wrap;padding:.5rem 0 .25rem">${actionBtns.join('')}</div></div>`;
+}
+
+/* ── Booking modal (week view) ──────────────────────────────── */
+function openBookingModal(b) {
+  const actionBtns = [];
+  if (b.status === 'pending') {
+    actionBtns.push(`<button onclick="updateStatus('${b.id}','confirmed');closeModal()" class="btn btn--primary btn--sm">Confirm</button>`);
+    actionBtns.push(`<button onclick="cancelBooking('${b.id}');closeModal()" class="btn btn--ghost btn--sm">Cancel</button>`);
+  } else if (b.status === 'confirmed') {
+    actionBtns.push(`<button onclick="updateStatus('${b.id}','completed');closeModal()" class="btn btn--primary btn--sm">Complete</button>`);
+    actionBtns.push(`<button onclick="cancelBooking('${b.id}');closeModal()" class="btn btn--ghost btn--sm">Cancel</button>`);
+  } else {
+    actionBtns.push(`<span class="badge badge--${b.status}">${b.status}</span>`);
+  }
+  if (b.status !== 'cancelled') {
+    actionBtns.push(`<button onclick="sendInvoice('${b.id}')" style="background:none;border:1px solid #e91e8c44;border-radius:6px;color:#e91e8c;padding:.5rem 1rem;font-size:.875rem;cursor:pointer;font-family:inherit">◆ Send Invoice</button>`);
+  }
+
+  document.getElementById('modalContent').innerHTML = `
+    <div class="modal__head">
+      <div class="modal__title">${b.profiles?.full_name || 'Client'}</div>
+      <button class="modal__close" onclick="closeModal()" aria-label="Close">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M18 6L6 18M6 6l12 12"/></svg>
+      </button>
+    </div>
+    <div class="modal__body" style="padding:1rem">${renderCalReceiptHTML(b)}</div>
+    <div class="modal__actions" style="display:flex;gap:.5rem;flex-wrap:wrap">${actionBtns.join('')}</div>
+  `;
+  document.getElementById('bookingModal').classList.add('open');
+  document.body.style.overflow = 'hidden';
+}
+
+function closeModal(e) {
+  if (e && e.target !== document.getElementById('bookingModal')) return;
+  document.getElementById('bookingModal').classList.remove('open');
+  document.body.style.overflow = '';
+}
+
+/* ── Calendar nav ───────────────────────────────────────────── */
+document.getElementById('prevBtn').addEventListener('click', () => {
+  if (calViewMode === 'month') currentDate.setMonth(currentDate.getMonth() - 1);
+  else currentDate.setDate(currentDate.getDate() - 7);
+  renderCalendar();
+});
+document.getElementById('nextBtn').addEventListener('click', () => {
+  if (calViewMode === 'month') currentDate.setMonth(currentDate.getMonth() + 1);
+  else currentDate.setDate(currentDate.getDate() + 7);
+  renderCalendar();
+});
+document.getElementById('todayBtn').addEventListener('click', () => {
+  currentDate = new Date();
+  renderCalendar();
+});
+document.getElementById('monthBtn').addEventListener('click', () => {
+  calViewMode = 'month';
+  document.getElementById('monthBtn').classList.add('active');
+  document.getElementById('weekBtn').classList.remove('active');
+  renderCalendar();
+});
+document.getElementById('weekBtn').addEventListener('click', () => {
+  calViewMode = 'week';
+  document.getElementById('weekBtn').classList.add('active');
+  document.getElementById('monthBtn').classList.remove('active');
+  renderCalendar();
+});
+document.getElementById('dayOverlay').addEventListener('click', closeDayPanel);
+document.getElementById('dayPanelClose').addEventListener('click', closeDayPanel);
+document.getElementById('bookingModal').addEventListener('click', closeModal);
+
+/* ════════════════════════════════════════════════════════════════
+   SHARED ACTIONS
+═══════════════════════════════════════════════════════════════ */
 async function sendInvoice(id) {
   const { data: { session } } = await _supabase.auth.getSession();
   if (!session) { alert('Not logged in'); return; }
@@ -559,20 +1123,30 @@ async function sendInvoice(id) {
   try {
     const res = await fetch('https://fjafmptbzydqizafuaru.supabase.co/functions/v1/process-invoice', {
       method: 'POST',
-      headers: { 'Content-Type': 'application/json', 'Authorization': `Bearer ${session.access_token}` },
+      headers: {
+        'Content-Type': 'application/json',
+        'Authorization': `Bearer ${session.access_token}`,
+      },
       body: JSON.stringify({ action: 'create', bookingId: id, adminToken: session.access_token }),
     });
     const data = await res.json();
     if (!data.success) throw new Error(data.error || 'Failed to create invoice');
 
-    if (btn) { btn.textContent = 'Invoice Sent ✓'; btn.style.color = '#4ade80'; }
-    // Show invoice URL
-    const urlBox = document.createElement('div');
-    urlBox.style.cssText = 'position:fixed;top:20px;right:20px;background:#111;border:1px solid #e91e8c;border-radius:10px;padding:1rem 1.25rem;z-index:1000;max-width:360px;font-size:.875rem';
-    urlBox.innerHTML = `<div style="color:#e91e8c;font-weight:600;margin-bottom:.5rem">Invoice Sent! ✓</div><div style="color:#aaa;margin-bottom:.75rem;font-size:.8rem">Client has been emailed the payment link.</div><a href="${data.invoiceUrl}" target="_blank" style="color:#e91e8c;word-break:break-all;font-size:.78rem">${data.invoiceUrl}</a><div style="margin-top:.75rem"><button onclick="this.closest('div[style]').remove()" style="background:none;border:1px solid #333;border-radius:6px;color:#888;padding:4px 12px;cursor:pointer;font-size:.8rem">Dismiss</button></div>`;
-    document.body.appendChild(urlBox);
-    setTimeout(() => urlBox.remove(), 12000);
+    if (btn) { btn.textContent = '✓ Invoice Sent'; btn.style.color = '#4ade80'; }
 
+    const toast = document.createElement('div');
+    toast.className = 'toast';
+    toast.innerHTML = `
+      <div style="color:#e91e8c;font-weight:600;margin-bottom:.5rem">Invoice Sent ✓</div>
+      <div style="color:#aaa;margin-bottom:.75rem;font-size:.8rem">Client has been emailed the payment link.</div>
+      <a href="${data.invoiceUrl}" target="_blank" style="color:#e91e8c;word-break:break-all;font-size:.78rem">${data.invoiceUrl}</a>
+      <div style="margin-top:.75rem">
+        <button onclick="this.closest('.toast').remove()" style="background:none;border:1px solid #333;border-radius:6px;color:#888;padding:4px 12px;cursor:pointer;font-size:.8rem">Dismiss</button>
+      </div>`;
+    document.body.appendChild(toast);
+    setTimeout(() => toast.remove(), 12000);
+
+    await loadBookings();
   } catch(err) {
     alert('Error: ' + err.message);
     if (btn) { btn.disabled = false; btn.textContent = origText; }
@@ -580,8 +1154,9 @@ async function sendInvoice(id) {
 }
 
 async function updateStatus(id, status) {
-  const { error } = await _supabase.from('bookings').update({ status }).eq('id', id);
-  if (!error) await loadBookings();
+  await _supabase.from('bookings').update({ status }).eq('id', id);
+  await loadBookings();
+  if (activeDayStr) openDayPanel(activeDayStr);
 }
 
 async function cancelBooking(id) {
@@ -589,32 +1164,6 @@ async function cancelBooking(id) {
   await updateStatus(id, 'cancelled');
 }
 
-async function saveNote(id) {
-  const textarea = document.getElementById(`admin-note-${id}`);
-  if (!textarea) return;
-  const admin_notes = textarea.value;
-  const { error } = await _supabase.from('bookings').update({ admin_notes }).eq('id', id);
-
-  const btn = event?.target;
-  if (btn) {
-    const orig = btn.textContent;
-    btn.textContent = error ? 'Error!' : 'Saved!';
-    setTimeout(() => { btn.textContent = orig; }, 1500);
-  }
-}
-
-/* ── Client info helpers (parse from notes) ─────────────────── */
-function parseNotesField(notes, key) {
-  if (!notes) return '—';
-  const parts = notes.split('|').map(p => p.trim());
-  const match = parts.find(p => p.startsWith(key + ':'));
-  return match ? match.replace(key + ':', '').trim() : '—';
-}
-function clientName(b)  { return b.profiles?.full_name  || parseNotesField(b.notes, 'Customer') || '—'; }
-function clientEmail(b) { return b.profiles?.email       || parseNotesField(b.notes, 'Email')    || '—'; }
-function clientPhone(b) { return b.profiles?.phone       || parseNotesField(b.notes, 'Phone')    || '—'; }
-
-/* ── Save full edit ─────────────────────────────────────────── */
 async function saveEdit(id) {
   const get = field => document.getElementById(`ef-${field}-${id}`)?.value;
   const totalDollars = parseFloat(get('total'));
@@ -641,12 +1190,44 @@ async function saveEdit(id) {
   }
 }
 
-/* ── Helpers ────────────────────────────────────────────────── */
+/* ════════════════════════════════════════════════════════════════
+   HELPERS
+═══════════════════════════════════════════════════════════════ */
+function parseNotesField(notes, key) {
+  if (!notes) return '—';
+  const parts = notes.split('|').map(p => p.trim());
+  const match = parts.find(p => p.startsWith(key + ':'));
+  return match ? match.replace(key + ':', '').trim() : '—';
+}
+function clientName(b)  { return b.profiles?.full_name || parseNotesField(b.notes,'Customer') || '—'; }
+function clientEmail(b) { return b.profiles?.email      || parseNotesField(b.notes,'Email')    || '—'; }
+function clientPhone(b) { return b.profiles?.phone      || parseNotesField(b.notes,'Phone')    || '—'; }
+
+function toDateStr(d) { return d.toISOString().split('T')[0]; }
+
+function weekStart(d) {
+  const ws = new Date(d);
+  ws.setDate(ws.getDate() - ws.getDay());
+  ws.setHours(0,0,0,0);
+  return ws;
+}
+
 function formatTime(t) {
   if (!t) return '—';
   const [h, m] = t.split(':');
   const hour = parseInt(h);
   return `${hour > 12 ? hour - 12 : hour || 12}:${m} ${hour >= 12 ? 'PM' : 'AM'}`;
+}
+
+/* formatDate may already be provided by auth.js / supabase-config.js;
+   define a fallback so it always works */
+if (typeof formatDate === 'undefined') {
+  window.formatDate = function(d) {
+    if (!d) return '—';
+    const [y, mo, day] = d.split('-');
+    const months = ['Jan','Feb','Mar','Apr','May','Jun','Jul','Aug','Sep','Oct','Nov','Dec'];
+    return `${months[parseInt(mo)-1]} ${parseInt(day)}, ${y}`;
+  };
 }
 </script>
 </body>
