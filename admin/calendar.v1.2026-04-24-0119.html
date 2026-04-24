@@ -380,52 +380,38 @@ function openDayPanel(dateStr) {
   document.body.style.overflow = 'hidden';
 }
 
-function parseNoteField(notes, key) {
-  if (!notes) return '';
-  const m = notes.match(new RegExp(key + ':\\s*([^|]+)'));
-  return m ? m[1].trim() : '';
-}
-
-function renderReceiptHTML(b) {
-  const name    = b.profiles?.full_name  || parseNoteField(b.notes,'Customer') || '—';
-  const email   = b.profiles?.email       || parseNoteField(b.notes,'Email')    || '—';
-  const phone   = b.profiles?.phone       || parseNoteField(b.notes,'Phone')    || '—';
-  const address = parseNoteField(b.notes, 'Address');
-  const vehicle = parseNoteField(b.notes, 'Vehicle');
-  const addons  = parseNoteField(b.notes, 'Addons');
-  const dep     = (b.deposit_amount || 5000) / 100;
-  const tot     = b.total_amount ? b.total_amount / 100 : null;
-  const bal     = tot ? Math.max(0, tot - dep) : null;
-  const R = (label, val, cls='') => `<div style="display:flex;justify-content:space-between;padding:9px 16px;border-bottom:1px solid #1a1a1a;font-size:13px"><span style="color:#666">${label}</span><span style="color:${cls==='green'?'#4ade80':cls==='pink'?'#e91e8c':'#f5f5f5'};text-align:right;max-width:60%">${val}</span></div>`;
-  const SH = (title) => `<div style="padding:8px 16px 3px;font-size:10px;text-transform:uppercase;letter-spacing:.1em;color:#444;border-bottom:1px solid #1a1a1a">${title}</div>`;
-  return `
-    <div style="background:#0d0d0d;border:1px solid #1e1e1e;border-radius:10px;overflow:hidden;margin-bottom:1rem">
-      <div style="display:flex;justify-content:space-between;align-items:center;padding:12px 16px;border-bottom:1px solid #1e1e1e;background:#111">
-        <div style="font-size:11px;text-transform:uppercase;letter-spacing:.1em;color:#555">◆ Receipt #${b.id.slice(-6).toUpperCase()}</div>
-        <span class="badge badge--${b.status}">${b.status}</span>
-      </div>
-      ${SH('Client')}${R('Name',name)}${R('Phone',phone)}${R('Email',email)}
-      ${SH('Appointment')}${R('Date',formatDate(b.preferred_date))}${R('Time',formatTime(b.preferred_time))}${address?R('Address',address):''}
-      ${vehicle?SH('Vehicle')+R('Details',vehicle)+R('Type',(b.vehicle_type||'').charAt(0).toUpperCase()+(b.vehicle_type||'').slice(1)):''}
-      ${SH('Services')}${R(b.service_name||'Detail Service',tot?'$'+tot.toFixed(2):'—')}${addons?addons.split(',').map(a=>`<div style="display:flex;justify-content:space-between;padding:7px 16px 7px 28px;font-size:12px;color:#666;border-bottom:1px solid #1a1a1a"><span>+ ${a.trim()}</span><span>Add-on</span></div>`).join(''):''}
-      ${SH('Payment')}${tot?R('Service total','$'+tot.toFixed(2)):''}${R('Deposit paid','− $'+dep.toFixed(2)+' ✓','green')}
-      <div style="display:flex;justify-content:space-between;align-items:center;padding:14px 16px;background:#0a0a0a">
-        <div><div style="font-size:14px;font-weight:600;color:#f5f5f5">Balance Due at Service</div><div style="font-size:11px;color:#444;margin-top:2px">Collected day of appointment</div></div>
-        <div style="font-size:20px;font-weight:700;color:#e91e8c">${bal!==null?'$'+bal.toFixed(2):'—'}</div>
-      </div>
-    </div>`;
-}
-
 function renderDetailCard(b) {
   const actionMap = {
-    pending:   `<button onclick="updateStatus('${b.id}','confirmed')" class="btn btn--primary btn--sm">Confirm</button>
-                <button onclick="updateStatus('${b.id}','cancelled')" class="btn btn--ghost btn--sm">Cancel</button>`,
-    confirmed: `<button onclick="updateStatus('${b.id}','completed')" class="btn btn--primary btn--sm">Complete</button>
-                <button onclick="updateStatus('${b.id}','cancelled')" class="btn btn--ghost btn--sm">Cancel</button>`,
+    pending: `
+      <button onclick="updateStatus('${b.id}','confirmed')" class="btn btn--primary btn--sm">Confirm</button>
+      <button onclick="updateStatus('${b.id}','cancelled')" class="btn btn--ghost btn--sm">Cancel</button>`,
+    confirmed: `
+      <button onclick="updateStatus('${b.id}','completed')" class="btn btn--primary btn--sm">Complete</button>
+      <button onclick="updateStatus('${b.id}','cancelled')" class="btn btn--ghost btn--sm">Cancel</button>`,
     completed: `<span class="badge badge--completed">Completed</span>`,
     cancelled: `<span class="badge badge--cancelled">Cancelled</span>`
   };
-  return `<div class="booking-detail-card" style="padding:0;background:transparent;border:none">${renderReceiptHTML(b)}<div style="padding:.5rem 0 .25rem">${actionMap[b.status]||''}</div></div>`;
+
+  const deposit = b.deposit_paid
+    ? `Deposit paid — $${((b.deposit_amount || 0) / 100).toFixed(0)}`
+    : 'No deposit on file';
+
+  return `
+    <div class="booking-detail-card">
+      <div style="display:flex;align-items:flex-start;justify-content:space-between;margin-bottom:0.5rem">
+        <div class="booking-detail-card__name">${b.profiles?.full_name || 'Unknown Client'}</div>
+        <span class="badge badge--${b.status}">${b.status}</span>
+      </div>
+      <div class="booking-detail-card__meta">
+        <span>📞 ${b.profiles?.phone || '—'}</span>
+        <span>🔧 ${b.service_name || '—'}</span>
+        <span>🚗 ${b.vehicle_type || '—'}</span>
+        <span>🕐 ${formatTime(b.preferred_time)}</span>
+        <span>💳 ${deposit}</span>
+        ${b.notes ? `<span style="font-style:italic">"${b.notes}"</span>` : ''}
+      </div>
+      <div class="booking-detail-card__actions">${actionMap[b.status] || ''}</div>
+    </div>`;
 }
 
 function closeDayPanel() {
@@ -448,13 +434,22 @@ function openBookingModal(b) {
 
   document.getElementById('modalContent').innerHTML = `
     <div class="modal__head">
-      <div class="modal__title">${b.profiles?.full_name || 'Client'}</div>
+      <div>
+        <div class="modal__title">${b.profiles?.full_name || 'Client'}</div>
+        <div style="margin-top:0.35rem"><span class="badge badge--${b.status}">${b.status}</span></div>
+      </div>
       <button class="modal__close" onclick="closeModal()" aria-label="Close">
         <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M18 6L6 18M6 6l12 12"/></svg>
       </button>
     </div>
-    <div class="modal__body" style="padding:1rem">
-      ${renderReceiptHTML(b)}
+    <div class="modal__body">
+      <div class="modal__row"><span class="modal__label">Phone</span><span class="modal__value">${b.profiles?.phone || '—'}</span></div>
+      <div class="modal__row"><span class="modal__label">Service</span><span class="modal__value">${b.service_name || '—'}</span></div>
+      <div class="modal__row"><span class="modal__label">Vehicle</span><span class="modal__value">${b.vehicle_type || '—'}</span></div>
+      <div class="modal__row"><span class="modal__label">Date</span><span class="modal__value">${formatDate(b.preferred_date)}</span></div>
+      <div class="modal__row"><span class="modal__label">Time</span><span class="modal__value">${formatTime(b.preferred_time)}</span></div>
+      <div class="modal__row"><span class="modal__label">Deposit</span><span class="modal__value">${b.deposit_paid ? `Paid — $${((b.deposit_amount || 0) / 100).toFixed(0)}` : 'Not paid'}</span></div>
+      ${b.notes ? `<div class="modal__row"><span class="modal__label">Notes</span><span class="modal__value" style="font-style:italic">"${b.notes}"</span></div>` : ''}
     </div>
     <div class="modal__actions">${actionMap[b.status] || ''}</div>
   `;

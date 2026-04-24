@@ -19,21 +19,6 @@
 .row-detail-inner { padding: 1.5rem; background: #0d0d0d; border-bottom: 2px solid #1e1e1e; display: grid; grid-template-columns: 1fr 1fr; gap: 2rem; }
 @media(max-width:768px){.row-detail-inner{grid-template-columns:1fr}}
 
-/* Mobile: hide table, show cards */
-.booking-card-mobile { display:none; background:#111; border:1px solid #1e1e1e; border-radius:10px; padding:1rem; margin-bottom:.75rem; cursor:pointer; }
-.booking-card-mobile__top { display:flex; justify-content:space-between; align-items:flex-start; margin-bottom:.5rem; }
-.booking-card-mobile__name { font-weight:600; color:#f5f5f5; font-size:.9375rem; }
-.booking-card-mobile__service { font-size:.8rem; color:#888; margin-top:.15rem; }
-.booking-card-mobile__meta { display:flex; gap:.75rem; flex-wrap:wrap; font-size:.8rem; color:#888; margin-top:.35rem; }
-.booking-card-mobile__actions { display:flex; gap:.5rem; margin-top:.875rem; flex-wrap:wrap; }
-@media(max-width:640px) {
-  .table-wrap table { display:none; }
-  .booking-card-mobile { display:block; }
-  .row-detail-inner { padding:1rem; gap:1rem; }
-  .edit-grid { grid-template-columns:1fr; }
-  .edit-field { grid-column:auto !important; }
-}
-
 /* Receipt */
 .receipt { background: #111; border: 1px solid #1e1e1e; border-radius: 10px; overflow: hidden; }
 .receipt__header { padding: 1rem 1.25rem; border-bottom: 1px solid #1e1e1e; display: flex; justify-content: space-between; align-items: center; }
@@ -428,44 +413,20 @@ function renderTable() {
       </tr>`;
   }).join('');
 
-  // Mobile cards
-  const mobileCards = list.map(b => {
-    const rowActions = [];
-    if (b.status === 'pending')   rowActions.push(`<button class="btn btn--primary btn--sm" onclick="updateStatus('${b.id}','confirmed');event.stopPropagation()">Confirm</button>`);
-    if (b.status === 'confirmed') rowActions.push(`<button class="btn btn--primary btn--sm" onclick="updateStatus('${b.id}','completed');event.stopPropagation()">Complete</button>`);
-    if (['pending','confirmed'].includes(b.status)) rowActions.push(`<button class="btn btn--ghost btn--sm" onclick="cancelBooking('${b.id}');event.stopPropagation()">Cancel</button>`);
-    return `
-      <div class="booking-card-mobile" onclick="toggleDetail('${b.id}')">
-        <div class="booking-card-mobile__top">
-          <div>
-            <div class="booking-card-mobile__name">${clientName(b)}</div>
-            <div class="booking-card-mobile__service">${b.service_name || '—'} &middot; ${b.vehicle_type || ''}</div>
-          </div>
-          <span class="badge badge--${b.status}">${b.status}</span>
-        </div>
-        <div class="booking-card-mobile__meta">
-          <span>&#128197; ${formatDate(b.preferred_date)}</span>
-          <span>&#128336; ${formatTime(b.preferred_time)}</span>
-          <span>${b.deposit_paid ? '&#10003; $'+((b.deposit_amount||5000)/100).toFixed(0)+' paid' : 'Deposit unpaid'}</span>
-        </div>
-        <div class="booking-card-mobile__actions" onclick="event.stopPropagation()">${rowActions.join('')}</div>
-      </div>
-      <div class="row-detail" id="detail-${b.id}" style="display:none">
-        <div class="row-detail-inner" style="display:block;padding:1rem;background:#0d0d0d;border-radius:0 0 10px 10px;margin-top:-.75rem;margin-bottom:.75rem;border:1px solid #1e1e1e;border-top:none">
-          ${document.createElement('div').innerHTML}
-        </div>
-      </div>`;
-  }).join('');
-
   wrap.innerHTML = `
-    <!-- Mobile cards (hidden on desktop) -->
-    <div id="mobileCards">${mobileCards}</div>
-    <!-- Desktop table (hidden on mobile) -->
     <div class="table-wrap">
       <table>
         <thead>
           <tr>
-            <th>Date</th><th>Time</th><th>Client</th><th>Phone</th><th>Service</th><th>Vehicle</th><th>Status</th><th>Deposit</th><th>Actions</th>
+            <th>Date</th>
+            <th>Time</th>
+            <th>Client</th>
+            <th>Phone</th>
+            <th>Service</th>
+            <th>Vehicle</th>
+            <th>Status</th>
+            <th>Deposit</th>
+            <th>Actions</th>
           </tr>
         </thead>
         <tbody>${rows}</tbody>
