@@ -1355,19 +1355,10 @@
 
   // ─── Square inline card payment ─────────────────────────────
   const EDGE_FN_URL = "https://fjafmptbzydqizafuaru.supabase.co/functions/v1/process-payment";
-  // Terms checkbox enables button + member booking label
+  // Terms checkbox enables button
   document.getElementById("embed-terms-agree").addEventListener("change", function() {
     document.getElementById("embed-confirm-btn").disabled = !this.checked;
   });
-
-  // If member booking: update step 4 UI
-  if (state.isMemberBooking) {
-    document.getElementById('embed-confirm-btn').textContent = 'Confirm Booking →';
-    const cardWrap = document.getElementById('embed-card-container');
-    if (cardWrap) cardWrap.style.display = 'none';
-    const depositNote = document.querySelector('.embed-deposit-note');
-    if (depositNote) depositNote.textContent = 'Your monthly Signature Detail is included with your Diamond Club membership. No charge today.';
-  }
 
   document.getElementById("embed-confirm-btn").addEventListener("click", async () => {
     const btn = document.getElementById("embed-confirm-btn");
@@ -1406,7 +1397,7 @@
         throw new Error(msg);
       }
 
-      btn.textContent = state.isMemberBooking ? "Confirming booking..." : "Charging $50 deposit...";
+      btn.textContent = "Charging $50 deposit...";
 
       // 2. Charge via edge function + save booking
       // Get session token to link booking to user account
@@ -1439,50 +1430,27 @@
         notes: ['Vehicle: ' + [vYear, vMake, vModel, vColor].filter(Boolean).join(' '), state.address ? 'Address: ' + state.address : '', state.addons.length ? 'Addons: ' + state.addons.map(a=>a.name).join(', ') : ''].filter(Boolean).join(' | ')
       };
 
-      let data;
-      if (state.isMemberBooking) {
-        // Member booking — no charge, save directly to Supabase
-        const { error: bookErr } = await fetch(SUPABASE_URL + '/rest/v1/bookings', {
-          method: 'POST',
-          headers: { 'apikey': SUPABASE_KEY, 'Authorization': 'Bearer ' + (userToken || SUPABASE_KEY), 'Content-Type': 'application/json', 'Prefer': 'return=minimal' },
-          body: JSON.stringify({
-            user_id: null, // will be set via RLS from userToken if logged in
-            service_name: bookingPayload.service,
-            vehicle_type: bookingPayload.vehicle_type,
-            preferred_date: bookingPayload.preferred_date,
-            preferred_time: bookingPayload.preferred_time,
-            notes: (bookingPayload.notes || '') + ' | MEMBER BOOKING — no deposit',
-            deposit_paid: true,
-            deposit_amount: 0,
-            total_amount: 0,
-            status: 'confirmed',
-          })
-        }).then(() => ({})).catch(() => ({}));
-        data = { success: true };
-      } else {
-        const res = await fetch(EDGE_FN_URL, {
-          method: 'POST',
-          headers: { 'Content-Type': 'application/json', 'Authorization': 'Bearer ' + SUPABASE_KEY },
-          body: JSON.stringify({
-            sourceId: tokenResult.token,
-            amount: 5000,
-            currency: 'USD',
-            locationId: LOCATION_ID,
-            note: 'Diamond Touch Detailing deposit — ' + state.serviceName + ' for ' + state.name,
-            buyerEmail: state.email,
-            bookingData: bookingPayload,
-            userToken
-          })
-        });
-        data = await res.json();
-      }
+      const res = await fetch(EDGE_FN_URL, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json', 'Authorization': 'Bearer ' + SUPABASE_KEY },
+        body: JSON.stringify({
+          sourceId: tokenResult.token,
+          amount: 5000,
+          currency: 'USD',
+          locationId: LOCATION_ID,
+          note: 'Diamond Touch Detailing deposit — ' + state.serviceName + ' for ' + state.name,
+          buyerEmail: state.email,
+          bookingData: bookingPayload,
+          userToken
+        })
+      });
 
+      const data = await res.json();
       if (!data.success) throw new Error(data.error || 'Payment failed. Please try again.');
 
       // 3. Success
-      document.getElementById('embed-success-msg').textContent = state.isMemberBooking
-        ? 'Your appointment is confirmed! We\'ll reach out to ' + state.email + ' with details.'
-        : 'Your $50 deposit is confirmed! We\'ll text/email ' + state.email + ' with your appointment details.';
+      document.getElementById('embed-success-msg').textContent =
+        'Your $50 deposit is confirmed! We\'ll text/email ' + state.email + ' with your appointment details.';
       document.getElementById('embed-success').style.display = 'block';
       document.getElementById('embed-confirm-btn').style.display = 'none';
       document.getElementById('embed-step4-back').style.display = 'none';
@@ -1497,40 +1465,6 @@
       btn.textContent = 'Pay $50 Deposit →';
     }
   });
-  // ─── Member booking detection ──────────────────────────────
-  (function() {
-    const params = new URLSearchParams(window.location.search);
-    if (!params.get('member')) return;
-
-    // Scroll to booking section
-    const bookingSection = document.getElementById('booking');
-    if (bookingSection) setTimeout(() => bookingSection.scrollIntoView({ behavior: 'smooth', block: 'start' }), 400);
-
-    // Show member booking banner above the wizard
-    setTimeout(() => {
-      const wizard = document.querySelector('.booking-panels') || document.querySelector('.embed-steps');
-      const insertTarget = document.getElementById('embed-step1') || document.querySelector('.booking-panel');
-      if (insertTarget && insertTarget.parentNode) {
-        const memberBanner = document.createElement('div');
-        memberBanner.style.cssText = 'background:linear-gradient(135deg,#1a0a10,#0d0d0d);border:1px solid #e91e8c44;border-radius:8px;padding:.875rem 1.25rem;margin-bottom:1rem;font-size:.875rem;color:#e91e8c;display:flex;align-items:center;gap:.5rem';
-        memberBanner.innerHTML = '&#9670; <strong style="color:#e91e8c">Diamond Club Booking</strong>&nbsp;&mdash; Your monthly Signature Detail is included. No deposit charged.';
-        insertTarget.parentNode.insertBefore(memberBanner, insertTarget);
-      }
-    }, 300);
-
-    // Pre-select The Signature and advance to step 2
-    setTimeout(() => {
-      const sigCard = document.querySelector('.embed-service-card[data-service="signature"]');
-      if (sigCard) sigCard.click();
-      setTimeout(() => {
-        const nextBtn = document.getElementById('embed-step1-next');
-        if (nextBtn && !nextBtn.disabled) nextBtn.click();
-      }, 200);
-    }, 700);
-
-    // Mark as member booking (no deposit)
-    state.isMemberBooking = true;
-  })();
 })();
 </script>
 

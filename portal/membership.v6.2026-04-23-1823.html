@@ -730,72 +730,6 @@
         </div>
       </div>
 
-      <!-- Book Monthly Appointment -->
-      <div class="section-card" style="margin-top:1.5rem;border-color:#e91e8c44;background:linear-gradient(135deg,#0d0a0d,#110a0d)">
-        <div style="display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:1rem">
-          <div>
-            <h2 class="section-card__title" style="color:#e91e8c;margin-bottom:.25rem">Book This Month\'s Detail</h2>
-            <p style="font-size:.875rem;color:#888;margin:0">Your monthly Signature Detail is included. No deposit charged.</p>
-          </div>
-          <a href="../#booking?member=1" class="btn btn--primary">Book Now →</a>
-        </div>
-      </div>
-
-      <!-- Auto-Schedule -->
-      <div class="section-card" style="margin-top:1rem" id="autoScheduleSection">
-        <h2 class="section-card__title">Auto-Schedule</h2>
-        <p style="font-size:.875rem;color:#888;margin:0 0 1.25rem">Set a recurring schedule and we\'ll automatically book your monthly detail for you.</p>
-        <div style="display:flex;align-items:center;gap:.75rem;margin-bottom:1.25rem">
-          <label style="display:flex;align-items:center;gap:.5rem;cursor:pointer;font-size:.875rem">
-            <input type="checkbox" id="autoScheduleToggle" ${m.auto_schedule ? 'checked' : ''} style="accent-color:#e91e8c;width:16px;height:16px" />
-            Enable auto-scheduling
-          </label>
-        </div>
-        <div id="scheduleOptions" style="display:${m.auto_schedule ? 'block' : 'none'}">
-          <div style="display:grid;grid-template-columns:1fr 1fr;gap:.875rem;margin-bottom:1rem">
-            <div>
-              <label style="display:block;font-size:.75rem;color:#888;text-transform:uppercase;letter-spacing:.05em;margin-bottom:.35rem">Schedule type</label>
-              <select id="scheduleType" style="width:100%;background:#1a1a1a;border:1px solid #2a2a2a;border-radius:6px;color:#f5f5f5;padding:.5rem .75rem;font-size:.875rem;font-family:inherit">
-                <option value="day_of_month" ${(m.schedule_type||'day_of_month')==='day_of_month'?'selected':''}>Day of month (e.g. the 5th)</option>
-                <option value="day_of_week" ${m.schedule_type==='day_of_week'?'selected':''}>Day of week (e.g. first Monday)</option>
-              </select>
-            </div>
-            <div id="dayOfMonthWrap" style="display:${m.schedule_type==='day_of_week'?'none':'block'}">
-              <label style="display:block;font-size:.75rem;color:#888;text-transform:uppercase;letter-spacing:.05em;margin-bottom:.35rem">Day of month</label>
-              <select id="scheduleDayOfMonth" style="width:100%;background:#1a1a1a;border:1px solid #2a2a2a;border-radius:6px;color:#f5f5f5;padding:.5rem .75rem;font-size:.875rem;font-family:inherit">
-                ${Array.from({length:28},(_,i)=>i+1).map(d=>`<option value="${d}" ${(m.schedule_day||1)===d?'selected':''}>${d}${['','st','nd','rd'][d]||'th'} of each month</option>`).join('')}
-              </select>
-            </div>
-            <div id="dayOfWeekWrap" style="display:${m.schedule_type==='day_of_week'?'block':'none'}">
-              <label style="display:block;font-size:.75rem;color:#888;text-transform:uppercase;letter-spacing:.05em;margin-bottom:.35rem">Day of week</label>
-              <select id="scheduleDayOfWeek" style="width:100%;background:#1a1a1a;border:1px solid #2a2a2a;border-radius:6px;color:#f5f5f5;padding:.5rem .75rem;font-size:.875rem;font-family:inherit">
-                <option value="1" ${(m.schedule_weekday||1)===1?'selected':''}>Monday</option>
-                <option value="2" ${m.schedule_weekday===2?'selected':''}>Tuesday</option>
-                <option value="3" ${m.schedule_weekday===3?'selected':''}>Wednesday</option>
-                <option value="4" ${m.schedule_weekday===4?'selected':''}>Thursday</option>
-                <option value="5" ${m.schedule_weekday===5?'selected':''}>Friday</option>
-                <option value="6" ${m.schedule_weekday===6?'selected':''}>Saturday</option>
-                <option value="0" ${m.schedule_weekday===0?'selected':''}>Sunday</option>
-              </select>
-            </div>
-            <div>
-              <label style="display:block;font-size:.75rem;color:#888;text-transform:uppercase;letter-spacing:.05em;margin-bottom:.35rem">Preferred time</label>
-              <select id="scheduleTime" style="width:100%;background:#1a1a1a;border:1px solid #2a2a2a;border-radius:6px;color:#f5f5f5;padding:.5rem .75rem;font-size:.875rem;font-family:inherit">
-                ${['08:00','09:00','10:00','11:00','12:00','13:00','14:00','15:00','16:00'].map(t=>{
-                  const [h] = t.split(':'); const hr=parseInt(h); const label=(hr>12?hr-12:hr)+':00 '+(hr>=12?'PM':'AM');
-                  return `<option value="${t}" ${(m.schedule_time||'10:00')===t?'selected':''}>${label}</option>`;
-                }).join('')}
-              </select>
-            </div>
-          </div>
-          <div id="schedulePreview" style="font-size:.8rem;color:#e91e8c;margin-bottom:1rem"></div>
-        </div>
-        <div style="display:flex;gap:.75rem;align-items:center">
-          <button class="btn btn--ghost btn--sm" id="saveScheduleBtn">Save Schedule</button>
-          <span id="scheduleSaveMsg" style="font-size:.8rem;color:#4ade80"></span>
-        </div>
-      </div>
-
       <div class="section-card" style="margin-top:1.5rem">
         <h2 class="section-card__title">Member Benefits</h2>
         <ul class="benefits-list">
@@ -828,60 +762,6 @@
 
     document.getElementById('openCancelMemberBtn').addEventListener('click', () => {
       document.getElementById('cancelMemberOverlay').classList.add('open');
-    });
-
-    // ── Auto-schedule wiring ────────────────────────────────────
-    const autoToggle   = document.getElementById('autoScheduleToggle');
-    const schedOptions = document.getElementById('scheduleOptions');
-    const schedType    = document.getElementById('scheduleType');
-    const preview      = document.getElementById('schedulePreview');
-
-    function updateSchedulePreview() {
-      if (!autoToggle.checked) { preview.textContent = ''; return; }
-      const type = schedType.value;
-      const time = document.getElementById('scheduleTime').value;
-      const [h]  = time.split(':'); const hr = parseInt(h);
-      const timeStr = (hr > 12 ? hr - 12 : hr) + ':00 ' + (hr >= 12 ? 'PM' : 'AM');
-      if (type === 'day_of_month') {
-        const d = parseInt(document.getElementById('scheduleDayOfMonth').value);
-        const sfx = ['','st','nd','rd'][d] || 'th';
-        preview.textContent = `Auto-booking: the ${d}${sfx} of each month at ${timeStr}`;
-      } else {
-        const days = ['Sunday','Monday','Tuesday','Wednesday','Thursday','Friday','Saturday'];
-        const wd = parseInt(document.getElementById('scheduleDayOfWeek').value);
-        preview.textContent = `Auto-booking: first ${days[wd]} of each month at ${timeStr}`;
-      }
-    }
-
-    autoToggle.addEventListener('change', () => {
-      schedOptions.style.display = autoToggle.checked ? 'block' : 'none';
-      updateSchedulePreview();
-    });
-
-    schedType.addEventListener('change', () => {
-      document.getElementById('dayOfMonthWrap').style.display = schedType.value === 'day_of_week' ? 'none' : 'block';
-      document.getElementById('dayOfWeekWrap').style.display  = schedType.value === 'day_of_week' ? 'block' : 'none';
-      updateSchedulePreview();
-    });
-
-    ['scheduleDayOfMonth','scheduleDayOfWeek','scheduleTime'].forEach(id => {
-      document.getElementById(id)?.addEventListener('change', updateSchedulePreview);
-    });
-
-    updateSchedulePreview();
-
-    document.getElementById('saveScheduleBtn').addEventListener('click', async () => {
-      const msgEl = document.getElementById('scheduleSaveMsg');
-      const updates = {
-        auto_schedule:     autoToggle.checked,
-        schedule_type:     schedType.value,
-        schedule_day:      parseInt(document.getElementById('scheduleDayOfMonth').value),
-        schedule_weekday:  parseInt(document.getElementById('scheduleDayOfWeek').value),
-        schedule_time:     document.getElementById('scheduleTime').value,
-      };
-      const { error } = await _supabase.from('memberships').update(updates).eq('user_id', profile.id);
-      if (error) { msgEl.textContent = 'Error saving.'; msgEl.style.color = '#e91e8c'; }
-      else { msgEl.textContent = 'Saved ✓'; msgEl.style.color = '#4ade80'; setTimeout(() => { msgEl.textContent = ''; }, 2500); }
     });
 
     // Update payment — lazy Square init on hover/click
