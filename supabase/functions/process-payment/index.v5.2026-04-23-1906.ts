@@ -5,8 +5,8 @@ import { serve } from "https://deno.land/std@0.177.0/http/server.ts";
 import { createClient } from "https://esm.sh/@supabase/supabase-js@2";
 
 const SQUARE_ACCESS_TOKEN = Deno.env.get("SQUARE_ACCESS_TOKEN") ??
-  "EAAAl0s0I_kqtyH9ilnPy83_wv7c_ITJ_tWsFRI9_Htn9zeNdRO7kCTswXETh4I2";
-const SQUARE_API_URL = "https://connect.squareup.com/v2/payments";
+  "EAAAl20kKbk-2OoL11fzSd_cMosbjyAmaWnqstux8h8tsxd_7XKpDqkwOt1V62Rb";
+const SQUARE_API_URL = "https://connect.squareupsandbox.com/v2/payments";
 const SQUARE_VERSION = "2024-06-04";
 
 const SUPABASE_URL = "https://fjafmptbzydqizafuaru.supabase.co";
