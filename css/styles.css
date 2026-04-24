@@ -2740,3 +2740,70 @@ input[type="date"]::-webkit-calendar-picker-indicator {
   font-size: 0.8125rem;
   color: var(--clr-muted);
 }
+
+/* ─── BOOKING WIZARD — MOBILE RESPONSIVE FIXES ───────────── */
+
+/* Reduce padding so content fits on 390px screen */
+@media (max-width: 768px) {
+  .booking-embed {
+    padding: 1.25rem;
+    border-radius: 12px;
+    margin-top: 1.5rem;
+  }
+
+  /* Bump touch targets to 44px Apple HIG minimum */
+  .embed-cal-nav {
+    width: 44px;
+    height: 44px;
+  }
+
+  .embed-vehicle-btn {
+    min-height: 44px;
+    padding: 0.625rem 1.25rem;
+  }
+
+  .embed-addon {
+    min-height: 44px;
+  }
+
+  .embed-time-btn {
+    min-height: 44px;
+    padding: 0.75rem;
+    font-size: 0.875rem;
+  }
+
+  /* 3-col timeslot grid is more readable on mobile */
+  .embed-timeslots__grid {
+    grid-template-columns: repeat(3, 1fr);
+  }
+
+  /* Prevent iOS auto-zoom (must be >= 16px on focus) */
+  .embed-field input,
+  .embed-field select,
+  .embed-field textarea {
+    font-size: 1rem;
+  }
+
+  /* Actions row: both buttons full equal width */
+  .embed-actions {
+    gap: 0.5rem;
+  }
+
+  .embed-actions .btn {
+    flex: 1;
+    text-align: center;
+    justify-content: center;
+  }
+}
+
+@media (max-width: 480px) {
+  /* Single column service cards on very small screens */
+  .embed-services-grid {
+    grid-template-columns: 1fr;
+  }
+
+  /* Single column add-ons on very small screens */
+  .embed-addons__grid {
+    grid-template-columns: 1fr;
+  }
+}

@@ -2387,3 +2387,63 @@ tbody td {
   margin-bottom: 1.25rem;
   margin-top: 0.875rem;
 }
+
+/* ─── MOBILE TOUCH TARGETS & iOS ZOOM FIXES ─────────────── */
+@media (max-width: 768px) {
+
+  /* Prevent iOS auto-zoom: all inputs/selects must be >= 16px */
+  .search-input,
+  .time-select,
+  .max-bookings-input,
+  .form-input {
+    font-size: 1rem;
+  }
+
+  /* Apple HIG: interactive targets >= 44px */
+  .cal-nav-btn {
+    width: 44px;
+    height: 44px;
+  }
+
+  .cal-today-btn,
+  .view-toggle-btn {
+    height: 44px;
+    padding: 0 1rem;
+  }
+
+  .modal__close,
+  .day-panel__close {
+    width: 44px;
+    height: 44px;
+  }
+
+  .mini-cal__nav {
+    width: 44px;
+    height: 44px;
+  }
+
+  /* Filter pills: ensure 44px touch height */
+  .filter-pill {
+    min-height: 44px;
+    display: inline-flex;
+    align-items: center;
+    padding: 0 0.875rem;
+  }
+
+  /* Small action buttons: bring up to 44px on mobile */
+  .btn--sm {
+    min-height: 44px;
+    padding: 0.625rem 1rem;
+  }
+
+  /* Sign-out button touch target */
+  .btn-signout {
+    min-height: 44px;
+  }
+
+  /* Blocked item remove button */
+  .blocked-item__remove {
+    width: 44px;
+    height: 44px;
+  }
+}
