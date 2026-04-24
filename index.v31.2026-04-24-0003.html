@@ -610,27 +610,19 @@
               </div>
               <div class="embed-field" style="grid-column:1/-1">
                 <label>Service Address</label>
-                <!-- Saved address quick-fill (only shown when profile has one) -->
-                <div id="embed-saved-address-wrap" style="display:none;margin-bottom:.625rem">
-                  <button type="button" id="embed-use-saved-addr" style="width:100%;background:#1a1a1a;border:1px solid #e91e8c44;border-radius:6px;color:#f5f5f5;padding:.5rem 1rem;font-size:.8rem;font-family:inherit;cursor:pointer;text-align:left;display:flex;align-items:center;gap:.5rem">
-                    <span style="color:#e91e8c">&#128205;</span>
-                    <span id="embed-saved-addr-label">Use saved address</span>
-                  </button>
+                <div id="embed-saved-address-wrap" style="display:none;margin-bottom:.5rem">
+                  <select id="embed-saved-address-select" style="width:100%;background:#1a1a1a;border:1px solid #2a2a2a;border-radius:6px;color:#f5f5f5;padding:.45rem .75rem;font-size:.875rem;font-family:inherit">
+                    <option value="">Use a saved address…</option>
+                  </select>
                 </div>
-                <!-- Street -->
-                <div style="position:relative;margin-bottom:.5rem">
-                  <input type="text" id="embed-address" placeholder="Street address (e.g. 123 Main St)" autocomplete="off"
-                    style="width:100%;background:#1a1a1a;border:1px solid #2a2a2a;border-radius:6px;color:#f5f5f5;padding:.5rem .875rem;font-size:.875rem;font-family:inherit;box-sizing:border-box" />
-                  <div id="embed-address-suggestions" style="position:absolute;top:100%;left:0;right:0;background:#1a1a1a;border:1px solid #333;border-radius:6px;z-index:200;display:none;max-height:220px;overflow-y:auto;box-shadow:0 8px 24px #000a"></div>
+                <div style="position:relative">
+                  <input type="text" id="embed-address" placeholder="Street address" autocomplete="off" />
+                  <div id="embed-address-suggestions" style="position:absolute;top:100%;left:0;right:0;background:#1a1a1a;border:1px solid #2a2a2a;border-radius:6px;z-index:200;display:none;max-height:200px;overflow-y:auto"></div>
                 </div>
-                <!-- City / State / ZIP -->
-                <div style="display:grid;grid-template-columns:1fr 80px 90px;gap:.5rem">
-                  <input type="text" id="embed-address-city" placeholder="City"
-                    style="background:#1a1a1a;border:1px solid #2a2a2a;border-radius:6px;color:#f5f5f5;padding:.5rem .75rem;font-size:.875rem;font-family:inherit" />
-                  <input type="text" id="embed-address-state" placeholder="ST" maxlength="2"
-                    style="background:#1a1a1a;border:1px solid #2a2a2a;border-radius:6px;color:#f5f5f5;padding:.5rem .75rem;font-size:.875rem;font-family:inherit;text-transform:uppercase;text-align:center" />
-                  <input type="text" id="embed-address-zip" placeholder="ZIP" maxlength="5" inputmode="numeric"
-                    style="background:#1a1a1a;border:1px solid #2a2a2a;border-radius:6px;color:#f5f5f5;padding:.5rem .75rem;font-size:.875rem;font-family:inherit" />
+                <div style="display:grid;grid-template-columns:2fr 1fr 1fr;gap:.5rem;margin-top:.5rem">
+                  <input type="text" id="embed-address-city" placeholder="City" style="background:#1a1a1a;border:1px solid #2a2a2a;border-radius:6px;color:#f5f5f5;padding:.45rem .75rem;font-size:.875rem;font-family:inherit" />
+                  <input type="text" id="embed-address-state" placeholder="State" maxlength="2" style="background:#1a1a1a;border:1px solid #2a2a2a;border-radius:6px;color:#f5f5f5;padding:.45rem .75rem;font-size:.875rem;font-family:inherit;text-transform:uppercase" />
+                  <input type="text" id="embed-address-zip" placeholder="ZIP" maxlength="5" style="background:#1a1a1a;border:1px solid #2a2a2a;border-radius:6px;color:#f5f5f5;padding:.45rem .75rem;font-size:.875rem;font-family:inherit" />
                 </div>
               </div>
             </div>
@@ -1149,33 +1141,37 @@
         state.name = profile.full_name || "";
         state.email = profile.email || session.user.email || "";
         state.phone = profile.phone || "";
-        // Autofill address from profile
+        // Autofill address from profile + populate saved address dropdown
         if (profile.address) {
-          // profile.address is stored as "Street, City, ST ZIP" format
-          function fillAddressFields(addr) {
-            const parts = addr.split(',').map(p => p.trim());
-            const street = parts[0] || '';
-            const city   = parts[1] || '';
-            const stzip  = (parts[2] || '').trim().split(' ');
-            const st     = stzip[0] || '';
-            const zip    = stzip[1] || '';
-            const a = document.getElementById('embed-address');       if(a) a.value = street;
-            const c = document.getElementById('embed-address-city');  if(c) c.value = city;
-            const s = document.getElementById('embed-address-state'); if(s) s.value = st.toUpperCase().slice(0,2);
-            const z = document.getElementById('embed-address-zip');   if(z) z.value = zip;
-            state.address = [street, city, st + ' ' + zip].filter(p=>p.trim()).join(', ');
-          }
-
-          // Show the quick-fill button
-          const wrap = document.getElementById('embed-saved-address-wrap');
-          const btn  = document.getElementById('embed-use-saved-addr');
-          const lbl  = document.getElementById('embed-saved-addr-label');
-          if (wrap && btn && lbl) {
-            // Show a clean version of the address
-            const cleanAddr = profile.address.split(',').slice(0,3).join(',');
-            lbl.textContent = cleanAddr.length > 50 ? cleanAddr.slice(0,50) + '…' : cleanAddr;
-            wrap.style.display = 'block';
-            btn.addEventListener('click', () => fillAddressFields(profile.address));
+          const addrEl = document.getElementById('embed-address');
+          if (addrEl && !addrEl.value) {
+            // Parse address into parts if possible ("123 Main St, Murrieta, CA 92562")
+            const parts = profile.address.split(',').map(p => p.trim());
+            if (parts.length >= 1) addrEl.value = parts[0];
+            if (parts.length >= 2) { const el = document.getElementById('embed-address-city'); if(el) el.value = parts[1]; }
+            if (parts.length >= 3) {
+              const stzip = parts[2].trim().split(' ');
+              const stEl = document.getElementById('embed-address-state'); if(stEl) stEl.value = stzip[0] || '';
+              const zipEl = document.getElementById('embed-address-zip'); if(zipEl) zipEl.value = stzip[1] || '';
+            }
+            state.address = profile.address;
+            // Show saved address dropdown
+            const wrap = document.getElementById('embed-saved-address-wrap');
+            const sel  = document.getElementById('embed-saved-address-select');
+            if (wrap && sel) {
+              sel.innerHTML = '<option value="">Use a different address…</option><option value="' + profile.address.replace(/"/g,'&quot;') + '" selected>\uD83D\uDCCD Saved: ' + profile.address + '</option>';
+              wrap.style.display = 'block';
+              sel.addEventListener('change', () => {
+                if (sel.value) {
+                  const ps = sel.value.split(',').map(p => p.trim());
+                  const a = document.getElementById('embed-address'); if(a) a.value = ps[0] || '';
+                  const c = document.getElementById('embed-address-city'); if(c) c.value = ps[1] || '';
+                  const sz = (ps[2] || '').trim().split(' ');
+                  const st = document.getElementById('embed-address-state'); if(st) st.value = sz[0] || '';
+                  const z  = document.getElementById('embed-address-zip');   if(z)  z.value  = sz[1] || '';
+                }
+              });
+            }
           }
         }
 
@@ -1846,34 +1842,11 @@ document.addEventListener('DOMContentLoaded', async function() {
   })();
   </script>
 <script>
-// Address autocomplete — Nominatim with structured address parsing
+// Address autocomplete — Nominatim (free, no API key)
 (function() {
   const input = document.getElementById('embed-address');
   const box   = document.getElementById('embed-address-suggestions');
   if (!input || !box) return;
-
-  // US state abbreviation map
-  const STATE_ABBR = {Alabama:'AL',Alaska:'AK',Arizona:'AZ',Arkansas:'AR',California:'CA',Colorado:'CO',Connecticut:'CT',Delaware:'DE','District of Columbia':'DC',Florida:'FL',Georgia:'GA',Hawaii:'HI',Idaho:'ID',Illinois:'IL',Indiana:'IN',Iowa:'IA',Kansas:'KS',Kentucky:'KY',Louisiana:'LA',Maine:'ME',Maryland:'MD',Massachusetts:'MA',Michigan:'MI',Minnesota:'MN',Mississippi:'MS',Missouri:'MO',Montana:'MT',Nebraska:'NE',Nevada:'NV','New Hampshire':'NH','New Jersey':'NJ','New Mexico':'NM','New York':'NY','North Carolina':'NC','North Dakota':'ND',Ohio:'OH',Oklahoma:'OK',Oregon:'OR',Pennsylvania:'PA','Rhode Island':'RI','South Carolina':'SC','South Dakota':'SD',Tennessee:'TN',Texas:'TX',Utah:'UT',Vermont:'VT',Virginia:'VA',Washington:'WA','West Virginia':'WV',Wisconsin:'WI',Wyoming:'WY'};
-
-  function fillFromNominatim(r) {
-    const a = r.address || {};
-    const houseNum  = a.house_number || '';
-    const road      = a.road || a.pedestrian || a.path || '';
-    const street    = [houseNum, road].filter(Boolean).join(' ');
-    const city      = a.city || a.town || a.village || a.suburb || a.hamlet || '';
-    const stateFull = a.state || '';
-    const stateAbbr = STATE_ABBR[stateFull] || stateFull.slice(0,2).toUpperCase();
-    const zip       = a.postcode || '';
-
-    input.value = street || r.display_name.split(',')[0].trim();
-    const cityEl = document.getElementById('embed-address-city');  if(cityEl)  cityEl.value  = city;
-    const stEl   = document.getElementById('embed-address-state'); if(stEl)    stEl.value    = stateAbbr;
-    const zipEl  = document.getElementById('embed-address-zip');   if(zipEl)   zipEl.value   = zip;
-    box.style.display = 'none';
-    // Trigger tax recalc
-    if (typeof updateOrderSummary === 'function') updateOrderSummary();
-  }
-
   let debounce;
   input.addEventListener('input', () => {
     clearTimeout(debounce);
@@ -1881,25 +1854,13 @@ document.addEventListener('DOMContentLoaded', async function() {
     if (q.length < 4) { box.style.display = 'none'; return; }
     debounce = setTimeout(async () => {
       try {
-        const res  = await fetch(`https://nominatim.openstreetmap.org/search?format=jsonv2&addressdetails=1&countrycodes=us&limit=5&q=${encodeURIComponent(q)}`, { headers: { 'Accept-Language': 'en' } });
+        const res = await fetch(`https://nominatim.openstreetmap.org/search?format=json&countrycodes=us&limit=5&q=${encodeURIComponent(q)}`, { headers: { 'Accept-Language': 'en' } });
         const data = await res.json();
         if (!data.length) { box.style.display = 'none'; return; }
-        box.innerHTML = data.map((r, i) => {
-          const a = r.address || {};
-          const hn   = a.house_number || '';
-          const road = a.road || a.pedestrian || '';
-          const city = a.city || a.town || a.village || a.suburb || '';
-          const st   = STATE_ABBR[a.state || ''] || (a.state || '').slice(0,2).toUpperCase();
-          const zip  = a.postcode || '';
-          const label = [hn && road ? hn + ' ' + road : (road || r.display_name.split(',')[0]), city, st + ' ' + zip].filter(p=>p.trim()).join(', ');
-          return `<div style="padding:10px 14px;cursor:pointer;font-size:.875rem;border-bottom:1px solid #1e1e1e;color:#f5f5f5;line-height:1.4" onmousedown="event.preventDefault()" data-idx="${i}">${label}</div>`;
-        }).join('');
-        box.querySelectorAll('[data-idx]').forEach(el => {
-          el.addEventListener('click', () => fillFromNominatim(data[parseInt(el.dataset.idx)]));
-        });
+        box.innerHTML = data.map(r => `<div style="padding:10px 14px;cursor:pointer;font-size:0.85rem;border-bottom:1px solid #222;color:#f5f5f5" onmousedown="event.preventDefault()" onclick="document.getElementById('embed-address').value=this.dataset.addr;document.getElementById('embed-address-suggestions').style.display='none'" data-addr="${r.display_name.replace(/"/g,'&quot;')}">${r.display_name}</div>`).join('');
         box.style.display = 'block';
       } catch(_) {}
-    }, 400);
+    }, 350);
   });
   input.addEventListener('blur', () => setTimeout(() => { box.style.display = 'none'; }, 200));
 })();
