@@ -727,24 +727,6 @@
             </ul>
             <a href="terms.html" target="_blank" class="booking-terms-box__link">Read full Terms of Service →</a>
           </div>
-          <!-- Order summary -->
-          <div id="embed-order-summary" style="background:#111;border:1px solid #222;border-radius:8px;padding:1rem;margin-bottom:1rem;font-size:.875rem">
-            <div style="font-size:.75rem;color:#888;text-transform:uppercase;letter-spacing:.05em;margin-bottom:.75rem">Order Summary</div>
-            <div style="display:flex;justify-content:space-between;margin-bottom:.4rem">
-              <span style="color:#aaa">Deposit (secures your appointment)</span>
-              <span id="order-original">$50.00</span>
-            </div>
-            <div id="order-discount-row" style="display:none;justify-content:space-between;margin-bottom:.4rem;color:#4ade80">
-              <span id="order-discount-label">Discount</span>
-              <span id="order-discount-amount"></span>
-            </div>
-            <div style="border-top:1px solid #222;margin:.75rem 0 .5rem"></div>
-            <div style="display:flex;justify-content:space-between;font-weight:600;font-size:1rem">
-              <span>Due today</span>
-              <span id="order-total" style="color:#e91e8c">$50.00</span>
-            </div>
-          </div>
-
           <!-- Coupon code -->
           <div style="margin-bottom:1rem">
             <div style="display:flex;gap:.5rem">
@@ -1362,10 +1344,9 @@
 
   function renderSummary() {
     const dateStr = state.date ? state.date.toLocaleDateString("en-US", { weekday:"long", month:"long", day:"numeric", year:"numeric" }) : "-";
-    const price   = isNaN(state.servicePrice) ? 0 : state.servicePrice;
-    const addons  = isNaN(state.addonTotal)   ? 0 : state.addonTotal;
-    const total   = price + addons;
-    const balance = Math.max(0, total - 50);
+    const price = isNaN(state.servicePrice) ? 0 : state.servicePrice;
+    const addons = isNaN(state.addonTotal) ? 0 : state.addonTotal;
+    const balance = Math.max(0, price + addons - 50);
     let addonsHtml = state.addons.length ? state.addons.filter(a => a.name).map(a => `<div>${a.name}: +$${a.price}</div>`).join("") : "<div>None</div>";
     document.getElementById("embed-summary").innerHTML = `
       <div><strong>Service:</strong> ${state.serviceName || "-"} (${state.vehicleType}) — $${price}</div>
@@ -1373,17 +1354,10 @@
       <div><strong>Date:</strong> ${dateStr} at ${state.time || "-"}</div>
       <div><strong>Name:</strong> ${state.name} &nbsp;|&nbsp; <strong>Phone:</strong> ${state.phone}</div>
       <div style="margin-top:0.75rem;padding-top:0.75rem;border-top:1px solid #2a2a2a">
-        <strong>Service total:</strong> $${total} &nbsp;&nbsp;
+        <strong>Total:</strong> $${price + addons} &nbsp;&nbsp;
+        <strong>Deposit due now:</strong> <span style="color:#e91e8c;font-size:1.1rem">$50</span> &nbsp;&nbsp;
         <strong>Balance at appointment:</strong> $${balance}
       </div>`;
-    // Update order summary box
-    document.getElementById('order-original').textContent = '$50.00';
-    document.getElementById('order-total').textContent = '$50.00';
-    document.getElementById('order-discount-row').style.display = 'none';
-    appliedCoupon = null;
-    document.getElementById('embed-coupon-input').value = '';
-    document.getElementById('embed-coupon-status').textContent = '';
-    document.getElementById('embed-confirm-btn').textContent = 'Pay $50 Deposit →';
   }
 
   document.getElementById("embed-step4-back").addEventListener("click", () => goStep(3));
@@ -1411,26 +1385,17 @@
         appliedCoupon = data;
         statusEl.textContent = '✓ ' + data.label + ' applied' + (data.description ? ' — ' + data.description : '');
         statusEl.style.color = '#4ade80';
-        // Update order summary
-        const discountRow = document.getElementById('order-discount-row');
-        document.getElementById('order-discount-label').textContent = data.label + ' (' + data.code + ')';
-        document.getElementById('order-discount-amount').textContent = '-$' + (data.discountAmount / 100).toFixed(2);
-        document.getElementById('order-total').textContent = data.finalAmount === 0 ? 'FREE' : '$' + (data.finalAmount / 100).toFixed(2);
-        discountRow.style.display = 'flex';
-        // Update button
+        // Update button label
         const btn = document.getElementById('embed-confirm-btn');
-        if (document.getElementById('embed-terms-agree').checked) {
-          btn.disabled = false;
+        if (data.finalAmount === 0) {
+          btn.textContent = 'Book Now (Free) →';
+        } else {
+          btn.textContent = 'Pay $' + (data.finalAmount / 100).toFixed(0) + ' Deposit →';
         }
-        btn.textContent = data.finalAmount === 0 ? 'Book Now (Free) →' : 'Pay $' + (data.finalAmount / 100).toFixed(2) + ' →';
       } else {
         appliedCoupon = null;
         statusEl.textContent = data.error || 'Invalid code.';
         statusEl.style.color = '#e91e8c';
-        // Reset order summary
-        document.getElementById('order-discount-row').style.display = 'none';
-        document.getElementById('order-total').textContent = '$50.00';
-        document.getElementById('embed-confirm-btn').textContent = 'Pay $50 Deposit →';
       }
     } catch(e) {
       statusEl.textContent = 'Could not check coupon.';
