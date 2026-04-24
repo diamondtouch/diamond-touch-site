@@ -57,17 +57,6 @@
           <input class="form-input" type="password" id="confirmPassword" name="confirmPassword" placeholder="••••••••" required autocomplete="new-password" />
         </div>
 
-        <!-- Marketing consent -->
-        <div style="margin:.75rem 0;display:flex;flex-direction:column;gap:.625rem">
-          <label style="display:flex;align-items:flex-start;gap:.625rem;cursor:pointer;font-size:.8rem;color:#888">
-            <input type="checkbox" id="emailConsent" checked style="margin-top:2px;accent-color:#e91e8c;flex-shrink:0" />
-            <span>I agree to receive booking confirmations, appointment reminders, and promotional emails from Diamond Touch Detailing.</span>
-          </label>
-          <label style="display:flex;align-items:flex-start;gap:.625rem;cursor:pointer;font-size:.8rem;color:#888">
-            <input type="checkbox" id="smsConsent" checked style="margin-top:2px;accent-color:#e91e8c;flex-shrink:0" />
-            <span>I agree to receive SMS/text notifications and offers from Diamond Touch Detailing. Message &amp; data rates may apply. Reply STOP to opt out.</span>
-          </label>
-        </div>
         <button type="submit" class="btn btn--primary btn--full" id="submitBtn">
           Create Account
         </button>
@@ -132,13 +121,12 @@
     submitBtn.disabled = true;
     submitBtn.innerHTML = '<span class="spinner"></span>';
 
-    const emailConsent = document.getElementById('emailConsent')?.checked ?? true;
-    const smsConsent   = document.getElementById('smsConsent')?.checked ?? true;
-
-    const { data: signUpData, error } = await _supabase.auth.signUp({
+    const { error } = await _supabase.auth.signUp({
       email,
       password,
-      options: { data: { full_name: fullName, phone } }
+      options: {
+        data: { full_name: fullName, phone }
+      }
     });
 
     if (error) {
@@ -148,25 +136,7 @@
       return;
     }
 
-    // Save marketing consent + phone to profile
-    if (signUpData?.user?.id) {
-      await _supabase.from('profiles').update({
-        phone,
-        email_marketing:        emailConsent,
-        sms_marketing:          smsConsent,
-        marketing_consent_at:   new Date().toISOString(),
-      }).eq('id', signUpData.user.id).catch(() => {});
-    }
-
-    // Handle redirect back to booking if came from there
-    const params = new URLSearchParams(window.location.search);
-    const redirect = params.get('redirect');
-    if (redirect) {
-      showSuccess('Account created! Redirecting you back to your booking…');
-      setTimeout(() => { window.location.href = redirect; }, 1500);
-    } else {
-      showSuccess('Account created! Check your email to confirm, then sign in.');
-    }
+    showSuccess('Account created! Check your email to confirm your account, then sign in.');
   });
 })();
 </script>

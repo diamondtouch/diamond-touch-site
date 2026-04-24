@@ -14,17 +14,6 @@ const SUPABASE_SERVICE_ROLE_KEY = Deno.env.get("SUPABASE_SERVICE_ROLE_KEY") ??
   "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImZqYWZtcHRienlkcWl6YWZ1YXJ1Iiwicm9sZSI6InNlcnZpY2Vfcm9sZSIsImlhdCI6MTc3NTUzMjY0NSwiZXhwIjoyMDkxMTA4NjQ1fQ.d33SmL7SpC28hZSNc6Uo5TRyUIKaILoIr13TEMXDPys";
 
 const RESEND_API_KEY = "re_jUFg2vy6_2572fxadFZLiMVk9dYvBon9E";
-const SQUARE_PROD_TOKEN = "EAAAl0s0I_kqtyH9ilnPy83_wv7c_ITJ_tWsFRI9_Htn9zeNdRO7kCTswXETh4I2";
-const SQUARE_LOCATION_ID = "LE683QS3VSGN7";
-// Square catalog service IDs
-const SQUARE_SERVICE_MAP: Record<string, string> = {
-  'signature': 'LD3KN4J4WL6FEIH4SY6VMBEE', // Signature Sedan
-  'the signature': 'LD3KN4J4WL6FEIH4SY6VMBEE',
-  'refresh': '35EERWBYJPRG34NY2AG4M65X',
-  'the refresh': '35EERWBYJPRG34NY2AG4M65X',
-  'diamond': 'MUIONPWBKUNIQLOIMJPJWDZL',
-  'the diamond': 'MUIONPWBKUNIQLOIMJPJWDZL',
-};
 
 const corsHeaders = {
   "Access-Control-Allow-Origin": "*",
@@ -181,41 +170,7 @@ serve(async (req: Request) => {
       } catch (_) { /* don't fail booking */ }
     }
 
-    // 5. Create appointment in Square Appointments
-    try {
-      const serviceKey = (bookingData.service || '').toLowerCase();
-      const squareServiceId = SQUARE_SERVICE_MAP[serviceKey];
-      if (squareServiceId && bookingData.preferred_date) {
-        const startTime = bookingData.preferred_time || '10:00';
-        const startAt = `${bookingData.preferred_date}T${startTime}:00`;
-        await fetch('https://connect.squareup.com/v2/bookings', {
-          method: 'POST',
-          headers: {
-            'Authorization': `Bearer ${SQUARE_PROD_TOKEN}`,
-            'Square-Version': '2024-06-04',
-            'Content-Type': 'application/json',
-          },
-          body: JSON.stringify({
-            idempotency_key: `dtd-appt-${Date.now()}-${Math.random().toString(36).slice(2)}`,
-            booking: {
-              location_id: SQUARE_LOCATION_ID,
-              start_at: startAt,
-              customer_note: `${bookingData.name} | ${bookingData.phone} | ${bookingData.notes || ''} | Deposit: $${(amount/100).toFixed(0)} paid`,
-              location_type: 'CUSTOMER_LOCATION',
-              appointment_segments: [{
-                duration_minutes: 120,
-                service_variation_id: squareServiceId,
-                team_member_id_filter: { any: [] },
-              }],
-            }
-          }),
-        });
-      }
-    } catch (sqErr) {
-      console.error('Square appointment creation error:', sqErr);
-    }
-
-    // 6. Send confirmation email + SMS
+    // 5. Send confirmation email + SMS
     const dateDisplay = bookingData.preferred_date
       ? new Date(bookingData.preferred_date + 'T12:00:00').toLocaleDateString('en-US', { weekday:'long', month:'long', day:'numeric', year:'numeric' })
       : 'To be confirmed';
