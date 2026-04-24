@@ -54,8 +54,7 @@ serve(async (req: Request) => {
   if (action === "create") {
     const { bookingId, adminToken } = body;
 
-    // Auth check: verify the request comes from an authenticated user
-    // Admin-only enforcement is handled client-side (requireAdmin())
+    // Auth check
     if (!adminToken) return new Response(JSON.stringify({ error: "Unauthorized" }), { status: 401, headers: { ...cors, "Content-Type": "application/json" } });
 
     // Fetch booking
@@ -67,29 +66,46 @@ serve(async (req: Request) => {
     const clientEmail = booking.profiles?.email || (booking.notes?.match(/Email:\s*([^\s|]+)/)?.[1]) || "";
     const clientName = booking.profiles?.full_name || (booking.notes?.match(/Customer:\s*([^|]+)/)?.[1]?.trim()) || "Valued Client";
 
-    // Generate unique code
-    let code = shortCode();
-    let attempt = 0;
-    while (attempt < 5) {
-      const { data: existing } = await supabase.from("invoices").select("id").eq("short_code", code).single();
-      if (!existing) break;
-      code = shortCode();
-      attempt++;
+    // Check if invoice already exists for this booking — reuse it
+    const { data: existingInv } = await supabase.from("invoices").select("id,short_code,status").eq("booking_id", bookingId).single();
+
+    let invoiceId: string;
+    let code: string;
+
+    if (existingInv) {
+      // Reuse existing invoice — just resend the email
+      invoiceId = existingInv.id;
+      code = existingInv.short_code;
+      // Reset status to "sent" if it was viewed but unpaid (keeps it active)
+      if (existingInv.status !== "paid") {
+        await supabase.from("invoices").update({ status: "sent" }).eq("id", invoiceId);
+      }
+    } else {
+      // Create new invoice
+      let newCode = shortCode();
+      let attempt = 0;
+      while (attempt < 5) {
+        const { data: taken } = await supabase.from("invoices").select("id").eq("short_code", newCode).single();
+        if (!taken) break;
+        newCode = shortCode();
+        attempt++;
+      }
+      code = newCode;
+      const { data: newInv, error: invErr } = await supabase.from("invoices").insert({
+        booking_id: bookingId,
+        user_id: booking.user_id,
+        short_code: code,
+        amount_cents: balance,
+        tax_cents: taxCents,
+        status: "sent",
+        sent_to_email: clientEmail,
+      }).select("id").single();
+      if (invErr) return new Response(JSON.stringify({ error: invErr.message }), { status: 500, headers: { ...cors, "Content-Type": "application/json" } });
+      invoiceId = newInv.id;
     }
 
-    const { data: invoice, error: invErr } = await supabase.from("invoices").insert({
-      booking_id: bookingId,
-      user_id: booking.user_id,
-      short_code: code,
-      amount_cents: balance,
-      tax_cents: taxCents,
-      status: "sent",
-      sent_to_email: clientEmail,
-    }).select("id").single();
-
-    if (invErr) return new Response(JSON.stringify({ error: invErr.message }), { status: 500, headers: { ...cors, "Content-Type": "application/json" } });
-
     const invoiceUrl = `https://diamondtouchdetails.com/invoice.html?code=${code}`;
+    const isResend = !!existingInv;
 
     // Send email
     if (clientEmail) {
@@ -132,7 +148,7 @@ serve(async (req: Request) => {
       }).catch(() => {});
     }
 
-    return new Response(JSON.stringify({ success: true, invoiceId: invoice.id, shortCode: code, invoiceUrl }), { headers: { ...cors, "Content-Type": "application/json" } });
+    return new Response(JSON.stringify({ success: true, invoiceId, shortCode: code, invoiceUrl, isResend }), { headers: { ...cors, "Content-Type": "application/json" } });
   }
 
   // ── PAY INVOICE ─────────────────────────────────────────────

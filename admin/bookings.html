@@ -547,7 +547,7 @@ function rowActionsHTML(b, stopProp = true) {
   if (['pending','confirmed'].includes(b.status))
     actions.push(`<button class="btn btn--ghost btn--sm" onclick="cancelBooking('${b.id}');${sp}">Cancel</button>`);
   if (b.status !== 'cancelled')
-    actions.push(`<button class="btn btn--ghost btn--sm" style="color:#e91e8c;border-color:#e91e8c44" onclick="sendInvoice('${b.id}');${sp}">◆ Invoice</button>`);
+    actions.push(`<button class="btn btn--ghost btn--sm" style="color:#e91e8c;border-color:#e91e8c44" onclick="sendInvoice('${b.id}');${sp}">${b._invoice ? (b._invoice.status==='paid' ? '✓ Invoice Paid' : '↺ Resend Invoice') : '◆ Send Invoice'}</button>`);
   actions.push(`<button class="btn btn--ghost btn--sm" onclick="toggleDetail('${b.id}');${sp}">Edit</button>`);
   return actions.join('');
 }
@@ -713,7 +713,7 @@ function renderTable() {
     if (['pending','confirmed'].includes(b.status))
       actions.push(`<button class="btn btn--ghost btn--sm" onclick="cancelBooking('${b.id}');event.stopPropagation()">Cancel</button>`);
     if (b.status !== 'cancelled')
-      actions.push(`<button class="btn btn--ghost btn--sm" style="color:#e91e8c;border-color:#e91e8c44" onclick="sendInvoice('${b.id}');event.stopPropagation()">◆ Invoice</button>`);
+      actions.push(`<button class="btn btn--ghost btn--sm" style="color:#e91e8c;border-color:#e91e8c44" onclick="sendInvoice('${b.id}');event.stopPropagation()">${b._invoice ? (b._invoice.status==='paid' ? '✓ Invoice Paid' : '↺ Resend Invoice') : '◆ Send Invoice'}</button>`);
 
     return `
       <div class="booking-card-mobile" onclick="openSheet('${b.id}')">
@@ -773,7 +773,7 @@ function openSheet(id) {
   if (['pending','confirmed'].includes(b.status))
     rowActions.push(`<button class="btn btn--ghost" style="width:100%" onclick="cancelBooking('${b.id}');closeSheet()">Cancel Booking</button>`);
   if (b.status !== 'cancelled')
-    rowActions.push(`<button class="btn btn--ghost" style="width:100%;color:#e91e8c;border-color:#e91e8c44" onclick="sendInvoice('${b.id}')">◆ Send Invoice</button>`);
+    rowActions.push(`<button class="btn btn--ghost" style="width:100%;color:#e91e8c;border-color:#e91e8c44" onclick="sendInvoice('${b.id}')">${b._invoice ? (b._invoice.status==='paid' ? '✓ Invoice Paid' : '↺ Resend Invoice') : '◆ Send Invoice'}</button>`);
 
   const name    = clientName(b);
   const email   = clientEmail(b);
