@@ -33,13 +33,6 @@
   .edit-grid { grid-template-columns:1fr; }
   .edit-field { grid-column:auto !important; }
 }
-/* Bottom sheet */
-.sheet-overlay { display:none; position:fixed; inset:0; background:#000a; z-index:500; }
-.sheet-overlay.open { display:block; }
-.sheet { position:fixed; bottom:0; left:0; right:0; background:#111; border-radius:16px 16px 0 0; z-index:501; max-height:90vh; overflow-y:auto; transform:translateY(100%); transition:transform .3s ease; padding-bottom:env(safe-area-inset-bottom,0); }
-.sheet.open { transform:translateY(0); }
-.sheet__handle { width:36px; height:4px; background:#333; border-radius:2px; margin:12px auto 0; }
-.sheet__body { padding:1rem 1rem 2rem; }
 
 /* Receipt */
 .receipt { background: #111; border: 1px solid #1e1e1e; border-radius: 10px; overflow: hidden; }
@@ -173,13 +166,6 @@
     </div>
   </main>
 
-</div>
-
-<!-- Bottom sheet for mobile booking detail -->
-<div class="sheet-overlay" id="sheetOverlay" onclick="closeSheet()"></div>
-<div class="sheet" id="detailSheet">
-  <div class="sheet__handle"></div>
-  <div class="sheet__body" id="sheetBody"></div>
 </div>
 
 <!-- ========== MOBILE TAB BAR ========== -->
@@ -449,7 +435,7 @@ function renderTable() {
     if (b.status === 'confirmed') rowActions.push(`<button class="btn btn--primary btn--sm" onclick="updateStatus('${b.id}','completed');event.stopPropagation()">Complete</button>`);
     if (['pending','confirmed'].includes(b.status)) rowActions.push(`<button class="btn btn--ghost btn--sm" onclick="cancelBooking('${b.id}');event.stopPropagation()">Cancel</button>`);
     return `
-      <div class="booking-card-mobile" onclick="openSheet('${b.id}')">
+      <div class="booking-card-mobile" onclick="toggleDetail('${b.id}')">
         <div class="booking-card-mobile__top">
           <div>
             <div class="booking-card-mobile__name">${clientName(b)}</div>
@@ -460,9 +446,14 @@ function renderTable() {
         <div class="booking-card-mobile__meta">
           <span>&#128197; ${formatDate(b.preferred_date)}</span>
           <span>&#128336; ${formatTime(b.preferred_time)}</span>
-          <span>${b.deposit_paid ? '✓ $'+((b.deposit_amount||5000)/100).toFixed(0)+' paid' : 'No deposit'}</span>
+          <span>${b.deposit_paid ? '&#10003; $'+((b.deposit_amount||5000)/100).toFixed(0)+' paid' : 'Deposit unpaid'}</span>
         </div>
         <div class="booking-card-mobile__actions" onclick="event.stopPropagation()">${rowActions.join('')}</div>
+      </div>
+      <div class="row-detail" id="detail-${b.id}" style="display:none">
+        <div class="row-detail-inner" style="display:block;padding:1rem;background:#0d0d0d;border-radius:0 0 10px 10px;margin-top:-.75rem;margin-bottom:.75rem;border:1px solid #1e1e1e;border-top:none">
+          ${document.createElement('div').innerHTML}
+        </div>
       </div>`;
   }).join('');
 
@@ -482,61 +473,12 @@ function renderTable() {
     </div>`;
 }
 
-/* ── Row toggle (desktop) ───────────────────────────────────── */
+/* ── Row toggle ─────────────────────────────────────────────── */
 function toggleDetail(id) {
   const detail = document.getElementById(`detail-${id}`);
   const wasOpen = detail.classList.contains('open');
   document.querySelectorAll('.row-detail.open').forEach(r => r.classList.remove('open'));
   if (!wasOpen) detail.classList.add('open');
-}
-
-/* ── Bottom sheet (mobile detail) ──────────────────────────── */
-function openSheet(id) {
-  const b = allBookings.find(x => x.id === id);
-  if (!b) return;
-  const rowActions = [];
-  if (b.status === 'pending')   rowActions.push(`<button class="btn btn--primary" style="width:100%" onclick="updateStatus('${b.id}','confirmed');closeSheet()">Confirm Booking</button>`);
-  if (b.status === 'confirmed') rowActions.push(`<button class="btn btn--primary" style="width:100%" onclick="updateStatus('${b.id}','completed');closeSheet()">Mark Complete</button>`);
-  if (['pending','confirmed'].includes(b.status)) rowActions.push(`<button class="btn btn--ghost" style="width:100%" onclick="cancelBooking('${b.id}');closeSheet()">Cancel Booking</button>`);
-
-  const name    = clientName(b);
-  const email   = clientEmail(b);
-  const phone   = clientPhone(b);
-  const address = parseNotesField(b.notes,'Address');
-  const vehicle = parseNotesField(b.notes,'Vehicle');
-  const addons  = parseNotesField(b.notes,'Addons');
-  const dep     = (b.deposit_amount||5000)/100;
-  const tot     = b.total_amount ? b.total_amount/100 : null;
-  const bal     = tot ? Math.max(0,tot-dep) : null;
-  const R = (lbl,val,c='') => `<div style="display:flex;justify-content:space-between;align-items:baseline;padding:9px 0;border-bottom:1px solid #1a1a1a;font-size:14px;gap:1rem"><span style="color:#666;flex-shrink:0">${lbl}</span><span style="color:${c==='g'?'#4ade80':c==='p'?'#e91e8c':'#f5f5f5'};text-align:right;word-break:break-word">${val}</span></div>`;
-  const SH = (t) => `<div style="font-size:10px;text-transform:uppercase;letter-spacing:.1em;color:#555;padding:14px 0 4px;margin-top:4px">${t}</div>`;
-
-  document.getElementById('sheetBody').innerHTML = `
-    <div style="display:flex;justify-content:space-between;align-items:flex-start;margin-bottom:1.25rem">
-      <div><div style="font-size:1.125rem;font-weight:700;color:#f5f5f5">${name}</div><div style="font-size:.8rem;color:#888;margin-top:3px">${b.service_name||''} · ${b.vehicle_type||''}</div></div>
-      <span class="badge badge--${b.status}">${b.status}</span>
-    </div>
-    ${SH('Client')}${R('Phone',phone)}${R('Email',email)}
-    ${SH('Appointment')}${R('Date',formatDate(b.preferred_date))}${R('Time',formatTime(b.preferred_time))}${address?R('Address',address):''}
-    ${vehicle?SH('Vehicle')+R('Details',vehicle)+R('Type',(b.vehicle_type||'').charAt(0).toUpperCase()+(b.vehicle_type||'').slice(1)):''}
-    ${SH('Services')}${R(b.service_name||'Service',tot?'$'+tot.toFixed(2):'—')}${addons?addons.split(',').map(a=>`<div style="display:flex;justify-content:space-between;padding:7px 0 7px 12px;font-size:13px;color:#777;border-bottom:1px solid #1a1a1a"><span>+ ${a.trim()}</span><span>Add-on</span></div>`).join(''):''}
-    ${SH('Payment')}${tot?R('Service total','$'+tot.toFixed(2)):''}${R('Deposit collected','− $'+dep.toFixed(2)+' ✓','g')}${b.square_payment_id?R('Square ref','…'+b.square_payment_id.slice(-8)):''}
-    <div style="display:flex;justify-content:space-between;align-items:center;padding:16px 0;margin-top:.5rem;border-top:2px solid #1e1e1e">
-      <div><div style="font-size:15px;font-weight:700;color:#f5f5f5">Balance Due at Service</div><div style="font-size:11px;color:#444;margin-top:2px">Collected day of appointment</div></div>
-      <div style="font-size:22px;font-weight:700;color:#e91e8c">${bal!==null?'$'+bal.toFixed(2):'—'}</div>
-    </div>
-    ${rowActions.length ? `<div style="display:flex;flex-direction:column;gap:.5rem;margin-top:.75rem">${rowActions.join('')}</div>` : ''}
-    <div style="text-align:center;margin-top:1rem"><button class="btn btn--ghost btn--sm" onclick="closeSheet()" style="width:100%">Close</button></div>
-  `;
-  document.getElementById('sheetOverlay').classList.add('open');
-  setTimeout(() => document.getElementById('detailSheet').classList.add('open'), 10);
-  document.body.style.overflow = 'hidden';
-}
-
-function closeSheet() {
-  document.getElementById('detailSheet').classList.remove('open');
-  document.getElementById('sheetOverlay').classList.remove('open');
-  document.body.style.overflow = '';
 }
 
 /* ── Actions ────────────────────────────────────────────────── */
