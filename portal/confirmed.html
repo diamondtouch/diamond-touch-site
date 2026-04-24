@@ -1,0 +1,63 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Email Confirmed — Diamond Touch Detailing</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:wght@300;400;500;600&family=DM+Sans:wght@300;400;500;600&display=swap" rel="stylesheet" />
+  <link rel="stylesheet" href="../css/portal.css" />
+</head>
+<body style="background:#0a0a0a;min-height:100vh;display:flex;align-items:center;justify-content:center;padding:2rem">
+
+<div style="max-width:480px;width:100%;text-align:center">
+  <a href="/" style="display:inline-block;margin-bottom:2rem">
+    <img src="../assets/logo-horizontal.png" alt="Diamond Touch Detailing" style="height:48px" />
+  </a>
+
+  <div style="background:#111;border:1px solid #1e1e1e;border-radius:16px;padding:48px 40px">
+    <div style="width:72px;height:72px;background:#e91e8c1a;border:1px solid #e91e8c44;border-radius:50%;margin:0 auto 24px;display:flex;align-items:center;justify-content:center">
+      <svg width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="#e91e8c" stroke-width="2"><path d="M22 11.08V12a10 10 0 11-5.93-9.14"/><polyline points="22 4 12 14.01 9 11.01"/></svg>
+    </div>
+
+    <h1 style="color:#f5f5f5;font-size:1.5rem;margin:0 0 12px;font-family:'Cormorant Garamond',serif;font-weight:500">Email Confirmed ◆</h1>
+    <p style="color:#888;font-size:.9375rem;line-height:1.65;margin:0 0 32px">Your account is verified and ready to go. Sign in to book your first detail.</p>
+
+    <a href="login.html" id="loginBtn" style="display:block;background:#e91e8c;color:#fff;text-decoration:none;padding:14px 32px;border-radius:8px;font-size:.9375rem;font-weight:600;margin-bottom:16px">Sign In to Your Account →</a>
+    <a href="/" style="display:block;color:#666;text-decoration:none;font-size:.875rem;padding:8px">Back to Homepage</a>
+  </div>
+
+  <p style="color:#333;font-size:.75rem;margin-top:24px">◆ Diamond Touch Detailing — Your Vehicle. Perfected.</p>
+</div>
+
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2/dist/umd/supabase.js"></script>
+<script src="../js/supabase-config.js"></script>
+<script>
+// Handle the confirmation token from Supabase redirect
+(async () => {
+  const hash = window.location.hash;
+  const params = new URLSearchParams(window.location.search);
+
+  // Supabase sends token in hash or query params
+  if (hash.includes('access_token') || params.get('token_hash')) {
+    try {
+      const { error } = await _supabase.auth.exchangeCodeForSession(
+        params.get('code') || ''
+      );
+      // Whether exchange works or not, show the confirmed screen
+      // The user is confirmed server-side already
+    } catch(_) {}
+  }
+
+  // Preserve redirect param if coming from booking flow
+  const redirect = params.get('redirect') || sessionStorage.getItem('booking_redirect');
+  if (redirect) {
+    const btn = document.getElementById('loginBtn');
+    btn.href = `login.html?redirect=${encodeURIComponent(redirect)}`;
+    btn.textContent = 'Sign In & Continue Booking →';
+  }
+})();
+</script>
+</body>
+</html>
