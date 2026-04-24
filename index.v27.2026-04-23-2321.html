@@ -377,8 +377,7 @@
           <div class="addon-item"><span class="addon-item__name">Ceramic Coating Upgrade</span><span class="addon-item__price">from $499</span></div>
           <div class="addon-item"><span class="addon-item__name">Rim Polish &amp; Dress</span><span class="addon-item__price">$40</span></div>
           <div class="addon-item"><span class="addon-item__name">Leather Conditioning</span><span class="addon-item__price">$50</span></div>
-          <div class="addon-item"><span class="addon-item__name">Carpet / Seat Shampoo</span><span class="addon-item__price">$99</span></div>
-          <div class="addon-item"><span class="addon-item__name">Wax Soap Upgrade</span><span class="addon-item__price">$20</span></div>
+          <div class="addon-item"><span class="addon-item__name">Carpet / Seat Shampoo</span><span class="addon-item__price">$75</span></div>
         </div>
       </div>
     </div>
@@ -608,21 +607,11 @@
                 <label>Phone *</label>
                 <input type="tel" id="embed-phone" placeholder="(555) 000-0000" />
               </div>
-              <div class="embed-field" style="grid-column:1/-1">
+              <div class="embed-field">
                 <label>Service Address</label>
-                <div id="embed-saved-address-wrap" style="display:none;margin-bottom:.5rem">
-                  <select id="embed-saved-address-select" style="width:100%;background:#1a1a1a;border:1px solid #2a2a2a;border-radius:6px;color:#f5f5f5;padding:.45rem .75rem;font-size:.875rem;font-family:inherit">
-                    <option value="">Use a saved address…</option>
-                  </select>
-                </div>
                 <div style="position:relative">
-                  <input type="text" id="embed-address" placeholder="Street address" autocomplete="off" />
+                  <input type="text" id="embed-address" placeholder="Where should we come?" autocomplete="off" />
                   <div id="embed-address-suggestions" style="position:absolute;top:100%;left:0;right:0;background:#1a1a1a;border:1px solid #2a2a2a;border-radius:6px;z-index:200;display:none;max-height:200px;overflow-y:auto"></div>
-                </div>
-                <div style="display:grid;grid-template-columns:2fr 1fr 1fr;gap:.5rem;margin-top:.5rem">
-                  <input type="text" id="embed-address-city" placeholder="City" style="background:#1a1a1a;border:1px solid #2a2a2a;border-radius:6px;color:#f5f5f5;padding:.45rem .75rem;font-size:.875rem;font-family:inherit" />
-                  <input type="text" id="embed-address-state" placeholder="State" maxlength="2" style="background:#1a1a1a;border:1px solid #2a2a2a;border-radius:6px;color:#f5f5f5;padding:.45rem .75rem;font-size:.875rem;font-family:inherit;text-transform:uppercase" />
-                  <input type="text" id="embed-address-zip" placeholder="ZIP" maxlength="5" style="background:#1a1a1a;border:1px solid #2a2a2a;border-radius:6px;color:#f5f5f5;padding:.45rem .75rem;font-size:.875rem;font-family:inherit" />
                 </div>
               </div>
             </div>
@@ -679,8 +668,6 @@
               <label class="embed-addon"><input type="checkbox" value="79" data-name="Headlights"> Headlight Restoration <span>+$79</span></label>
               <label class="embed-addon"><input type="checkbox" value="60" data-name="Clay Bar"> Clay Bar <span>+$60</span></label>
               <label class="embed-addon"><input type="checkbox" value="40" data-name="Rim Polish"> Rim Polish <span>+$40</span></label>
-              <label class="embed-addon"><input type="checkbox" value="99" data-name="Carpet Shampoo"> Carpet / Seat Shampoo <span>+$99</span></label>
-              <label class="embed-addon"><input type="checkbox" value="20" data-name="Wax Soap Upgrade"> Wax Soap Upgrade <span>+$20</span></label>
             </div>
           </div>
 
@@ -1121,38 +1108,10 @@
         state.name = profile.full_name || "";
         state.email = profile.email || session.user.email || "";
         state.phone = profile.phone || "";
-        // Autofill address from profile + populate saved address dropdown
+        // Autofill address from profile
         if (profile.address) {
           const addrEl = document.getElementById('embed-address');
-          if (addrEl && !addrEl.value) {
-            // Parse address into parts if possible ("123 Main St, Murrieta, CA 92562")
-            const parts = profile.address.split(',').map(p => p.trim());
-            if (parts.length >= 1) addrEl.value = parts[0];
-            if (parts.length >= 2) { const el = document.getElementById('embed-address-city'); if(el) el.value = parts[1]; }
-            if (parts.length >= 3) {
-              const stzip = parts[2].trim().split(' ');
-              const stEl = document.getElementById('embed-address-state'); if(stEl) stEl.value = stzip[0] || '';
-              const zipEl = document.getElementById('embed-address-zip'); if(zipEl) zipEl.value = stzip[1] || '';
-            }
-            state.address = profile.address;
-            // Show saved address dropdown
-            const wrap = document.getElementById('embed-saved-address-wrap');
-            const sel  = document.getElementById('embed-saved-address-select');
-            if (wrap && sel) {
-              sel.innerHTML = '<option value="">Use a different address…</option><option value="' + profile.address.replace(/"/g,'&quot;') + '" selected>\uD83D\uDCCD Saved: ' + profile.address + '</option>';
-              wrap.style.display = 'block';
-              sel.addEventListener('change', () => {
-                if (sel.value) {
-                  const ps = sel.value.split(',').map(p => p.trim());
-                  const a = document.getElementById('embed-address'); if(a) a.value = ps[0] || '';
-                  const c = document.getElementById('embed-address-city'); if(c) c.value = ps[1] || '';
-                  const sz = (ps[2] || '').trim().split(' ');
-                  const st = document.getElementById('embed-address-state'); if(st) st.value = sz[0] || '';
-                  const z  = document.getElementById('embed-address-zip');   if(z)  z.value  = sz[1] || '';
-                }
-              });
-            }
-          }
+          if (addrEl && !addrEl.value) { addrEl.value = profile.address; state.address = profile.address; }
         }
 
         // Show autofill banner
@@ -1308,11 +1267,7 @@
     state.name = document.getElementById("embed-name").value;
     state.email = document.getElementById("embed-email").value;
     state.phone = document.getElementById("embed-phone").value;
-    const addrStreet = document.getElementById('embed-address')?.value?.trim() || '';
-    const addrCity   = document.getElementById('embed-address-city')?.value?.trim() || '';
-    const addrState  = document.getElementById('embed-address-state')?.value?.trim() || '';
-    const addrZip    = document.getElementById('embed-address-zip')?.value?.trim() || '';
-    state.address = [addrStreet, addrCity, addrState + ' ' + addrZip].filter(p => p.trim()).join(', ');
+    state.address = document.getElementById("embed-address")?.value || "";
     // If new vehicle form is visible, use those values
     const newVehicleForm = document.getElementById("embed-new-vehicle-form");
     if (newVehicleForm && newVehicleForm.style.display !== "none") {
