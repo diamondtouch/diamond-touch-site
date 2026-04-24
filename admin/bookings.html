@@ -232,13 +232,14 @@ let searchTerm     = '';
 
 /* ── Data ───────────────────────────────────────────────────── */
 async function loadBookings() {
-  const { data } = await _supabase
-    .from('bookings')
-    .select('*, profiles(full_name, phone, email)')
-    .order('preferred_date', { ascending: false })
-    .order('preferred_time', { ascending: true });
-
-  allBookings = data || [];
+  const [bookingsRes, invoicesRes] = await Promise.all([
+    _supabase.from('bookings').select('*, profiles(full_name, phone, email)').order('preferred_date', { ascending: false }).order('preferred_time', { ascending: true }),
+    _supabase.from('invoices').select('id,booking_id,short_code,status,amount_cents,tip_cents,total_paid_cents,paid_at').order('created_at', { ascending: false }),
+  ]);
+  allBookings = (bookingsRes.data || []).map(b => {
+    const inv = (invoicesRes.data || []).find(i => i.booking_id === b.id);
+    return { ...b, _invoice: inv || null };
+  });
   renderTable();
 }
 
@@ -319,6 +320,7 @@ function renderTable() {
         <td>${b.vehicle_type || '—'}</td>
         <td><span class="badge badge--${b.status}">${b.status}</span></td>
         <td>${depositBadge}</td>
+        <td>${b._invoice ? `<span style="font-size:.72rem;padding:2px 7px;border-radius:4px;font-weight:600;background:${b._invoice.status==='paid'?'#4ade8022':b._invoice.status==='viewed'?'#f59e0b22':'#e91e8c22'};color:${b._invoice.status==='paid'?'#4ade80':b._invoice.status==='viewed'?'#f59e0b':'#e91e8c'};border:1px solid ${b._invoice.status==='paid'?'#4ade8044':b._invoice.status==='viewed'?'#f59e0b44':'#e91e8c44'}">${b._invoice.status==='paid'?'✓ Paid':b._invoice.status==='viewed'?'👁 Viewed':'⬡ Sent'}</span>` : ''}</td>
         <td>
           <div class="row-actions">
             ${rowActions.join('')}
@@ -327,7 +329,7 @@ function renderTable() {
       </tr>
       <!-- Expanded: Receipt + Edit -->
       <tr class="row-detail" id="detail-${b.id}">
-        <td colspan="9">
+        <td colspan="10">
           <div class="row-detail-inner">
 
             <!-- LEFT: Itemized Receipt -->
@@ -463,6 +465,7 @@ function renderTable() {
           <span>&#128197; ${formatDate(b.preferred_date)}</span>
           <span>&#128336; ${formatTime(b.preferred_time)}</span>
           <span>${b.deposit_paid ? '✓ $'+((b.deposit_amount||5000)/100).toFixed(0)+' paid' : 'No deposit'}</span>
+          ${b._invoice ? `<span style="color:${b._invoice.status==='paid'?'#4ade80':b._invoice.status==='viewed'?'#f59e0b':'#e91e8c'}">${b._invoice.status==='paid'?'✓ Invoice Paid':b._invoice.status==='viewed'?'👁 Invoice Viewed':'⬡ Invoice Sent'}</span>` : ''}
         </div>
         <div class="booking-card-mobile__actions" onclick="event.stopPropagation()">${rowActions.join('')}</div>
       </div>`;
@@ -476,7 +479,7 @@ function renderTable() {
       <table>
         <thead>
           <tr>
-            <th>Date</th><th>Time</th><th>Client</th><th>Phone</th><th>Service</th><th>Vehicle</th><th>Status</th><th>Deposit</th><th>Actions</th>
+            <th>Date</th><th>Time</th><th>Client</th><th>Phone</th><th>Service</th><th>Vehicle</th><th>Status</th><th>Deposit</th><th>Invoice</th><th>Actions</th>
           </tr>
         </thead>
         <tbody>${rows}</tbody>
@@ -516,7 +519,10 @@ function openSheet(id) {
   document.getElementById('sheetBody').innerHTML = `
     <div style="display:flex;justify-content:space-between;align-items:flex-start;margin-bottom:1.25rem">
       <div><div style="font-size:1.125rem;font-weight:700;color:#f5f5f5">${name}</div><div style="font-size:.8rem;color:#888;margin-top:3px">${b.service_name||''} · ${b.vehicle_type||''}</div></div>
-      <span class="badge badge--${b.status}">${b.status}</span>
+      <div style="display:flex;flex-direction:column;align-items:flex-end;gap:.35rem">
+        <span class="badge badge--${b.status}">${b.status}</span>
+        ${b._invoice ? `<span style="font-size:.72rem;padding:2px 7px;border-radius:4px;font-weight:600;background:${b._invoice.status==='paid'?'#4ade8022':b._invoice.status==='viewed'?'#f59e0b22':'#e91e8c22'};color:${b._invoice.status==='paid'?'#4ade80':b._invoice.status==='viewed'?'#f59e0b':'#e91e8c'};border:1px solid ${b._invoice.status==='paid'?'#4ade8044':b._invoice.status==='viewed'?'#f59e0b44':'#e91e8c44'}">${b._invoice.status==='paid'?'✓ Invoice Paid':b._invoice.status==='viewed'?'👁 Invoice Viewed':'⬡ Invoice Sent'}</span>` : ''}
+      </div>
     </div>
     ${SH('Client')}${R('Phone',phone)}${R('Email',email)}
     ${SH('Appointment')}${R('Date',formatDate(b.preferred_date))}${R('Time',formatTime(b.preferred_time))}${address?R('Address',address):''}
@@ -553,7 +559,7 @@ async function sendInvoice(id) {
   try {
     const res = await fetch('https://fjafmptbzydqizafuaru.supabase.co/functions/v1/process-invoice', {
       method: 'POST',
-      headers: { 'Content-Type': 'application/json', 'Authorization': `Bearer ${SUPABASE_ANON_KEY}` },
+      headers: { 'Content-Type': 'application/json', 'Authorization': `Bearer ${session.access_token}` },
       body: JSON.stringify({ action: 'create', bookingId: id, adminToken: session.access_token }),
     });
     const data = await res.json();
