@@ -544,6 +544,7 @@ tbody td {
   display: flex;
   align-items: stretch;
   height: 100%;
+  width: 100%;
 }
 
 .tab-bar__item {
@@ -701,7 +702,10 @@ tbody td {
   }
 
   .portal-main__inner {
-    padding: 1.5rem 1rem;
+    padding: 1.25rem 1rem;
+    max-width: 100%;
+    box-sizing: border-box;
+    overflow-x: hidden;
   }
 
   .tab-bar {
@@ -722,6 +726,19 @@ tbody td {
 @media (max-width: 480px) {
   .stat-grid {
     grid-template-columns: 1fr 1fr;
+    gap: .625rem;
+  }
+
+  .stat-card {
+    padding: 1rem;
+  }
+
+  .stat-card__label {
+    font-size: .65rem;
+  }
+
+  .stat-card__value {
+    font-size: 1.5rem;
   }
 
   .auth-box {
