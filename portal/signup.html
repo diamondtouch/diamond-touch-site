@@ -156,15 +156,18 @@
       return;
     }
 
-    // Save marketing consent + phone to profile
+    // Save marketing consent + phone to profile (fire and forget — don't await)
     if (signUpData?.user?.id) {
-      await _supabase.from('profiles').update({
+      _supabase.from('profiles').update({
         phone,
-        email_marketing:        emailConsent,
-        sms_marketing:          smsConsent,
-        marketing_consent_at:   new Date().toISOString(),
-      }).eq('id', signUpData.user.id).catch(() => {});
+        email_marketing:      emailConsent,
+        sms_marketing:        smsConsent,
+        marketing_consent_at: new Date().toISOString(),
+      }).eq('id', signUpData.user.id).then(() => {}).catch(() => {});
     }
+
+    submitBtn.disabled = false;
+    submitBtn.textContent = 'Create Account';
 
     // Handle redirect back to booking if came from there
     const params = new URLSearchParams(window.location.search);
@@ -173,7 +176,7 @@
       showSuccess('Account created! Redirecting you back to your booking…');
       setTimeout(() => { window.location.href = redirect; }, 1500);
     } else {
-      showSuccess('Account created! Check your email to confirm, then sign in.');
+      showSuccess('Account created! Check your email to verify, then sign in.');
     }
   });
 })();
